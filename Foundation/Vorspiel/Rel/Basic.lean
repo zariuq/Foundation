@@ -1,5 +1,6 @@
 import Mathlib.Data.PNat.Basic
 import Mathlib.Data.Rel
+import Mathlib.Order.Defs.Unbundled
 
 
 namespace Rel
@@ -97,7 +98,7 @@ lemma unwrap_of_trans_of_pos {n : ℕ} (h : 0 < n) [IsTrans _ R] (Rxy : R.Iterat
 
 lemma unwrap_of_refl_trans {n : ℕ} [IsRefl _ R] [IsTrans _ R] (Rxy : R.Iterate n x y) : R x y := by
   induction n generalizing x with
-  | zero => subst Rxy; apply IsRefl.refl;
+  | zero => subst Rxy; apply Std.Refl.refl;
   | succ n ih =>
     obtain ⟨z, Rxz, Rzy⟩ := Rxy;
     exact IsTrans.trans _ _ _ Rxz (ih Rzy);
@@ -131,7 +132,7 @@ instance [IsTrans _ R] : IsTrans α (R.ReflGen) := ⟨by
 instance [IsSymm _ R] : IsSymm α (ReflGen R) := ⟨by
   rintro a b (rfl | Rab);
   . exact Relation.ReflGen.refl;
-  . exact Relation.ReflGen.single $ IsSymm.symm _ _ Rab;
+  . exact Relation.ReflGen.single $ Std.Symm.symm _ _ Rab;
 ⟩
 
 instance [IsIrrefl _ R] [IsTrans _ R] : IsAntisymm α (ReflGen R) := ⟨by
@@ -140,7 +141,7 @@ instance [IsIrrefl _ R] [IsTrans _ R] : IsAntisymm α (ReflGen R) := ⟨by
   . trivial;
   . trivial;
   . exfalso;
-    exact IsIrrefl.irrefl a $ IsTrans.trans a b a Rab Rba
+    exact irrefl a $ IsTrans.trans a b a Rab Rba
 ⟩
 
 instance [IsTrans _ R] [IsIrrefl _ R] : IsPartialOrder α (ReflGen R) where
@@ -196,21 +197,21 @@ lemma unwrap [IsTrans _ R] (Rxy : R.TransGen x y) : R x y := by
 @[simp] lemma unwrap_iff [IsTrans _ R] : R.TransGen x y ↔ R x y :=
   ⟨unwrap, single⟩
 
-instance [IsRefl _ R] : IsRefl α R.TransGen := ⟨fun x ↦ Relation.TransGen.single (IsRefl.refl x)⟩
+instance [IsRefl _ R] : IsRefl α R.TransGen := ⟨fun x ↦ Relation.TransGen.single (Std.Refl.refl x)⟩
 
 instance [IsSymm _ R] : IsSymm α R.TransGen := ⟨by
   rintro x y Rxy;
   induction Rxy with
   | single Rxy =>
     apply single;
-    apply IsSymm.symm _ _ Rxy;
+    apply Std.Symm.symm _ _ Rxy;
   | tail _ hyz ih =>
-    exact trans (Relation.TransGen.single $ (IsSymm.symm _ _) hyz) ih
+    exact trans (Relation.TransGen.single $ Std.Symm.symm _ _ hyz) ih
 ⟩
 
 instance [IsTrans _ R] [IsAntisymm _ R] : IsAntisymm α R.TransGen := ⟨by
   rintro x y Rxy Ryx;
-  exact IsAntisymm.antisymm _ _ Rxy.unwrap Ryx.unwrap;
+  exact Std.Antisymm.antisymm _ _ Rxy.unwrap Ryx.unwrap;
 ⟩
 
 end TransGen
@@ -254,7 +255,7 @@ instance [IsSymm _ R] : IsSymm _ (R.ReflTransGen) := ⟨by
   rintro x y Rxy;
   induction Rxy with
   | refl => apply Relation.ReflTransGen.refl;
-  | @tail y z Rxy Ryz Ryx => exact Relation.ReflTransGen.head (IsSymm.symm _ _ Ryz) Ryx;
+  | @tail y z Rxy Ryz Ryx => exact Relation.ReflTransGen.head (Std.Symm.symm _ _ Ryz) Ryx;
 ⟩
 
 end ReflTransGen
@@ -272,7 +273,7 @@ instance [IsTrans _ R] [IsAntisymm _ R] : IsTrans _ (R.IrreflGen) := ⟨by
   . exact IsTrans.trans a b c Rab Rbc;
   . by_contra hC;
     subst hC;
-    exact hne $ IsAntisymm.antisymm a b Rab Rbc;
+    exact hne $ Std.Antisymm.antisymm a b Rab Rbc;
 ⟩
 
 instance [IsPartialOrder _ R] : IsStrictOrder _ (R.IrreflGen) where

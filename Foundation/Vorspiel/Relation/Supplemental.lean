@@ -87,7 +87,7 @@ lemma serial_of_refl (hRefl : Reflexive rel) : Serial rel := by
   use w;
   exact hRefl w;
 
-instance [IsRefl α rel] : IsSerial α rel := ⟨serial_of_refl IsRefl.reflexive⟩
+instance [IsRefl α rel] : IsSerial α rel := ⟨serial_of_refl Std.Refl.reflexive⟩
 
 
 lemma eucl_of_symm_trans (hSymm : Symmetric rel) (hTrans : Transitive rel) : Euclidean rel := by
@@ -95,28 +95,28 @@ lemma eucl_of_symm_trans (hSymm : Symmetric rel) (hTrans : Transitive rel) : Euc
   have Ryx := hSymm Rxy;
   exact hSymm $ hTrans Ryx Rxz;
 
-instance [IsSymm α rel] [IsTrans α rel] : IsEuclidean α rel := ⟨eucl_of_symm_trans IsSymm.symm IsTrans.trans⟩
+instance [IsSymm α rel] [IsTrans α rel] : IsEuclidean α rel := ⟨eucl_of_symm_trans Std.Symm.symm IsTrans.trans⟩
 
 
 lemma trans_of_symm_eucl (hSymm : Symmetric rel) (hEucl : Euclidean rel) : Transitive rel := by
   rintro x y z Rxy Ryz;
   exact hSymm $ hEucl (hSymm Rxy) Ryz;
 
-instance [IsSymm α rel] [IsEuclidean α rel] : IsTrans α rel := ⟨trans_of_symm_eucl IsSymm.symm IsEuclidean.euclidean⟩
+instance [IsSymm α rel] [IsEuclidean α rel] : IsTrans α rel := ⟨trans_of_symm_eucl Std.Symm.symm IsEuclidean.euclidean⟩
 
 
 lemma symm_of_refl_eucl (hRefl : Reflexive rel) (hEucl : Euclidean rel) : Symmetric rel := by
   intro x y Rxy;
   exact hEucl (hRefl x) Rxy;
 
-instance [IsRefl α rel] [IsEuclidean α rel] : IsSymm α rel := ⟨symm_of_refl_eucl IsRefl.reflexive IsEuclidean.euclidean⟩
+instance [IsRefl α rel] [IsEuclidean α rel] : IsSymm α rel := ⟨symm_of_refl_eucl Std.Refl.reflexive IsEuclidean.euclidean⟩
 
 
 lemma trans_of_refl_eucl (hRefl : Reflexive rel) (hEucl : Euclidean rel) : Transitive rel := by
   have hSymm := symm_of_refl_eucl hRefl hEucl;
   exact trans_of_symm_eucl hSymm hEucl;
 
-instance [IsRefl α rel] [IsEuclidean α rel] : IsTrans α rel := ⟨trans_of_refl_eucl IsRefl.reflexive IsEuclidean.euclidean⟩
+instance [IsRefl α rel] [IsEuclidean α rel] : IsTrans α rel := ⟨trans_of_refl_eucl Std.Refl.reflexive IsEuclidean.euclidean⟩
 
 
 lemma refl_of_symm_serial_eucl (hSymm : Symmetric rel) (hSerial : Serial rel) (hEucl : Euclidean rel) : Reflexive rel := by
@@ -125,7 +125,7 @@ lemma refl_of_symm_serial_eucl (hSymm : Symmetric rel) (hSerial : Serial rel) (h
   have Ryx := hSymm Rxy;
   exact trans_of_symm_eucl hSymm hEucl Rxy Ryx;
 
-instance [IsSymm α rel] [IsSerial α rel] [IsEuclidean α rel] : IsRefl α rel := ⟨refl_of_symm_serial_eucl IsSymm.symm IsSerial.serial IsEuclidean.euclidean⟩
+instance [IsSymm α rel] [IsSerial α rel] [IsEuclidean α rel] : IsRefl α rel := ⟨refl_of_symm_serial_eucl Std.Symm.symm IsSerial.serial IsEuclidean.euclidean⟩
 
 
 lemma corefl_of_refl_assym_eucl (hRefl : Reflexive rel) (hAntisymm : AntiSymmetric rel) (hEucl : Euclidean rel) : Coreflexive rel := by
@@ -133,7 +133,7 @@ lemma corefl_of_refl_assym_eucl (hRefl : Reflexive rel) (hAntisymm : AntiSymmetr
   have Ryx := hEucl (hRefl x) Rxy;
   exact hAntisymm Rxy Ryx;
 
-instance [IsRefl α rel] [IsAntisymm α rel] [IsEuclidean α rel] : IsCoreflexive α rel := ⟨corefl_of_refl_assym_eucl IsRefl.reflexive IsAntisymm.antisymm IsEuclidean.euclidean⟩
+instance [IsRefl α rel] [IsAntisymm α rel] [IsEuclidean α rel] : IsCoreflexive α rel := ⟨corefl_of_refl_assym_eucl Std.Refl.reflexive Std.Antisymm.antisymm IsEuclidean.euclidean⟩
 
 
 lemma equality_of_refl_corefl (hRefl : Reflexive rel) (hCorefl : Coreflexive rel) : Equality rel := by
@@ -142,7 +142,7 @@ lemma equality_of_refl_corefl (hRefl : Reflexive rel) (hCorefl : Coreflexive rel
   . apply hCorefl;
   . rintro rfl; apply hRefl;
 
-instance [IsRefl α rel] [IsCoreflexive α rel] : IsEquality α rel := ⟨equality_of_refl_corefl IsRefl.reflexive IsCoreflexive.coreflexive⟩
+instance [IsRefl α rel] [IsCoreflexive α rel] : IsEquality α rel := ⟨equality_of_refl_corefl Std.Refl.reflexive IsCoreflexive.coreflexive⟩
 
 
 lemma refl_of_equality (h : Equality rel) : Reflexive rel := by
@@ -262,7 +262,7 @@ lemma connected_of_trichotomy
   . left; assumption;
   . left; apply hRefl;
   . right; assumption;
-instance [IsRefl α rel] [IsTrichotomous α rel] : IsConnected α rel := ⟨connected_of_trichotomy IsRefl.reflexive IsTrichotomous.trichotomous⟩
+instance [IsRefl α rel] [IsTrichotomous α rel] : IsConnected α rel := ⟨connected_of_trichotomy Std.Refl.reflexive IsTrichotomous.trichotomous⟩
 
 
 lemma confluent_of_refl_connected (hRefl : Reflexive rel) (hConfl : Connected rel) : Confluent rel := by
@@ -277,7 +277,7 @@ lemma confluent_of_refl_connected (hRefl : Reflexive rel) (hConfl : Connected re
     . apply hRefl;
     . assumption;
 
-instance [IsRefl α rel] [IsConnected α rel] : IsConfluent α rel := ⟨confluent_of_refl_connected IsRefl.reflexive IsConnected.connected⟩
+instance [IsRefl α rel] [IsConnected α rel] : IsConfluent α rel := ⟨confluent_of_refl_connected Std.Refl.reflexive IsConnected.connected⟩
 
 
 instance weakConnected_of_euclidean (h : Euclidean rel) : WeakConnected rel := by

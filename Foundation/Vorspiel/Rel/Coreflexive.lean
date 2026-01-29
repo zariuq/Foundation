@@ -9,9 +9,9 @@ class IsCoreflexive (R : Rel α α) where
 
 instance [IsSymm _ R] [IsAntisymm _ R] : IsCoreflexive R := ⟨by
   intro x y Rxy;
-  apply IsAntisymm.antisymm (r := R);
+  apply Std.Antisymm.antisymm (r := R);
   . assumption;
-  . exact IsSymm.symm _ _ Rxy;
+  . exact Std.Symm.symm _ _ Rxy;
 ⟩
 
 instance [IsCoreflexive R] : IsTrans _ R := ⟨by

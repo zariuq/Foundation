@@ -11,9 +11,9 @@ lemma IsRightEuclidean.reucl' [IsRightEuclidean R] {x y z : α} (Rxy : R x y) (R
 
 instance [IsSymm _ R] [IsTrans _ R] : IsRightEuclidean R := ⟨by
   intro x y z Rxy Rxz;
-  apply IsSymm.symm;
+  apply Std.Symm.symm;
   apply IsTrans.trans;
-  . exact IsSymm.symm _ _ Rxz;
+  . exact Std.Symm.symm _ _ Rxz;
   . assumption;
 ⟩
 
@@ -21,15 +21,15 @@ instance [IsSymm _ R] [IsTrans _ R] : IsRightEuclidean R := ⟨by
 instance [IsRefl _ R] [IsRightEuclidean R] : IsSymm α R := ⟨by
   intro x y Rxy;
   apply IsRightEuclidean.reucl Rxy;
-  . apply IsRefl.refl
+  . apply Std.Refl.refl
 ⟩
 
 instance [IsSymm _ R] [IsRightEuclidean R] : IsTrans α R := ⟨by
   intro x y z Rxy Ryz;
-  apply IsSymm.symm;
+  apply Std.Symm.symm;
   apply IsRightEuclidean.reucl;
   . exact Ryz;
-  . exact IsSymm.symm _ _ Rxy;
+  . exact Std.Symm.symm _ _ Rxy;
 ⟩
 
 instance [IsRefl _ R] [IsRightEuclidean R] : IsTrans α R := inferInstance
@@ -39,7 +39,7 @@ instance [IsSymm _ R] [IsTrans _ R] [IsSerial R] : IsRefl α R := ⟨by
   obtain ⟨y, Rxy⟩ := IsSerial.serial (R := R) x;
   apply IsTrans.trans;
   . exact Rxy;
-  . apply IsSymm.symm; exact Rxy;
+  . apply Std.Symm.symm; exact Rxy;
 ⟩
 
 

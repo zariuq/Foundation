@@ -406,7 +406,6 @@ lemma iff_provable_include₁ : T *⊢[𝓢] φ ↔ ∀ t : SaturatedConsistentT
       intro Γ Δ hΓ hΔ;
       revert hC;
       contrapose;
-      simp only [not_not];
       intro h;
       replace h : T *⊢[𝓢] Δ.disj := Context.weakening! (by simpa using hΓ) $ FConj_DT.mp h;
       rcases Set.subset_singleton_iff_eq.mp hΔ with (hΔ | hΔ);

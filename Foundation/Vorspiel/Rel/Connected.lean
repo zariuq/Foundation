@@ -25,7 +25,7 @@ def PiecewiseStronglyConnected (R : Rel α α) := ∀ ⦃x y z⦄, R x y → R x
 class IsPiecewiseStronglyConnected (R : Rel α α) where
   ps_connected : PiecewiseStronglyConnected R
 
-instance [IsTotal _ R] : IsPiecewiseStronglyConnected R := ⟨fun ⦃_ y z⦄ _ _ ↦ IsTotal.total y z⟩
+instance [IsTotal _ R] : IsPiecewiseStronglyConnected R := ⟨fun ⦃_ y z⦄ _ _ ↦ Std.Total.total y z⟩
 
 instance [IsPiecewiseConnected R] [IsRefl _ R] : IsPiecewiseStronglyConnected R := ⟨by
   intro x y z Rxy Rxz;
@@ -46,9 +46,9 @@ instance [IsRefl _ R] [IsPiecewiseStronglyConnected R] : IsPiecewiseStronglyConv
   . use z;
     constructor;
     . assumption;
-    . apply IsRefl.refl;
+    . apply Std.Refl.refl;
   . use y;
     constructor;
-    . apply IsRefl.refl;
+    . apply Std.Refl.refl;
     . assumption;
 ⟩

@@ -1,5 +1,6 @@
 import Foundation.FirstOrder.Arithmetic.Exponential.PPow2
 import Mathlib.Algebra.Order.Ring.Basic
+import Mathlib.Algebra.Order.Monoid.Unbundled.Pow
 
 /-!
 # Exponential function

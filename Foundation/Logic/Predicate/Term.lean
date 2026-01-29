@@ -60,13 +60,13 @@ variable [∀ k, DecidableEq (L.Func k)] [DecidableEq ξ]
 
 def hasDecEq : (t u : Semiterm L ξ n) → Decidable (Eq t u)
   |                   #x,                   #y => by simpa using decEq x y
-  |                   #_,                   &_ => isFalse Semiterm.noConfusion
-  |                   #_,             func _ _ => isFalse Semiterm.noConfusion
-  |                   &_,                   #_ => isFalse Semiterm.noConfusion
+  |                   #_,                   &_ => isFalse (fun h => nomatch h)
+  |                   #_,             func _ _ => isFalse (fun h => nomatch h)
+  |                   &_,                   #_ => isFalse (fun h => nomatch h)
   |                   &x,                   &y => by simpa using decEq x y
-  |                   &_,             func _ _ => isFalse Semiterm.noConfusion
-  |             func _ _,                   #_ => isFalse Semiterm.noConfusion
-  |             func _ _,                   &_ => isFalse Semiterm.noConfusion
+  |                   &_,             func _ _ => isFalse (fun h => nomatch h)
+  |             func _ _,                   #_ => isFalse (fun h => nomatch h)
+  |             func _ _,                   &_ => isFalse (fun h => nomatch h)
   | @func L ξ _ k₁ r₁ v₁, @func L ξ _ k₂ r₂ v₂ => by
       by_cases e : k₁ = k₂
       · rcases e with rfl

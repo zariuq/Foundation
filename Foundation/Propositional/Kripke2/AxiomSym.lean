@@ -17,7 +17,7 @@ variable {F : Kripke2.Frame} {φ ψ : Formula ℕ}
 namespace Frame
 
 protected abbrev IsSymmetric (F : Kripke2.Frame) := _root_.IsSymm _ F.Rel
-@[simp, grind →] lemma symm [F.IsSymmetric] : ∀ {x y : F}, x ≺ y → y ≺ x := by apply IsSymm.symm
+@[simp, grind →] lemma symm [F.IsSymmetric] : ∀ {x y : F}, x ≺ y → y ≺ x := by apply Std.Symm.symm
 
 instance [F.IsSymmetric] : Frame.IsSerial F where
   serial x := by

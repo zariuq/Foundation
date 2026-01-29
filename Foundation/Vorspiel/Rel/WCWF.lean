@@ -86,7 +86,7 @@ instance [Finite α] [IsTrans _ rel] [IsAntisymm _ rel] : IsWeaklyConverseWellFo
   apply weaklyConverseWellFounded_of_finite_trans_antisymm;
   . assumption;
   . exact IsTrans.trans;
-  . exact IsAntisymm.antisymm;
+  . exact Std.Antisymm.antisymm;
 ⟩
 
 end

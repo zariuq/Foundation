@@ -17,7 +17,7 @@ class IsGeachConvergent (F : Frame) (g : Axioms.Geach.Taple) where
 
 protected abbrev IsReflexive (F : Frame) := _root_.IsRefl _ F
 
-@[simp] lemma refl [F.IsReflexive] : ∀ {x : F.World}, x ≺ x := by apply IsRefl.refl
+@[simp] lemma refl [F.IsReflexive] : ∀ {x : F.World}, x ≺ x := by apply Std.Refl.refl
 
 @[simp]
 instance [F.IsGeachConvergent ⟨0, 0, 1, 0⟩] : F.IsReflexive where
@@ -60,7 +60,7 @@ instance [F.IsTransitive] : F.IsGeachConvergent ⟨0, 2, 1, 0⟩ where
 
 protected abbrev IsSymmetric (F : Frame) := _root_.IsSymm _ F.Rel
 
-lemma symm [F.IsSymmetric] : ∀ {x y : F.World}, x ≺ y → y ≺ x := by apply IsSymm.symm
+lemma symm [F.IsSymmetric] : ∀ {x y : F.World}, x ≺ y → y ≺ x := by apply Std.Symm.symm
 
 @[simp]
 instance [F.IsGeachConvergent ⟨0, 1, 0, 1⟩] : F.IsSymmetric where
@@ -72,7 +72,7 @@ instance [F.IsSymmetric] : F.IsGeachConvergent ⟨0, 1, 0, 1⟩ where
   gconv x y z Rxy Rxz := by
     simp_all only [Rel.Iterate.iff_zero, Rel.Iterate.iff_succ, exists_eq_right, exists_eq_left'];
     subst Rxy;
-    exact _root_.IsSymm.symm _ _ Rxz;
+    exact _root_.Std.Symm.symm _ _ Rxz;
 
 
 protected abbrev IsEuclidean (F : Frame) := _root_.IsRightEuclidean F.Rel

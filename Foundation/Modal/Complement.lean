@@ -18,9 +18,9 @@ variable {φ ψ : Formula α}
 @[simp] lemma neg_def : -(∼φ) = φ := by
   induction φ <;> simp_all [complement]
 
-@[simp] lemma bot_def : -(⊥ : Formula α) = ∼(⊥) := by simp only [complement]; rfl;
+@[simp] lemma bot_def : -(⊥ : Formula α) = ∼(⊥) := by simp only [complement]
 
-@[simp] lemma box_def : -(□φ) = ∼(□φ) := by simp only [complement]; rfl;
+@[simp] lemma box_def : -(□φ) = ∼(□φ) := by simp only [complement]
 
 lemma imp_def₁ (hq : ψ ≠ ⊥) : -(φ ➝ ψ) = ∼(φ ➝ ψ) := by
   simp only [complement];
@@ -44,7 +44,7 @@ lemma or [DecidableEq α] (φ : Formula α) : -φ = ∼φ ∨ ∃ ψ, ∼ψ = φ
   | hfalsum => simp;
   | hneg => simp;
   | hatom a => simp [complement];
-  | hbox φ => simp [complement]; rfl;
+  | hbox φ => simp [complement]
 
 end complement
 

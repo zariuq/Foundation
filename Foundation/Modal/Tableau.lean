@@ -393,12 +393,10 @@ lemma equality_of₂ (e₂ : t₁.1.2 = t₂.1.2) : t₁ = t₂ := equality_of�
 
 lemma ne₁_of_ne : t₁ ≠ t₂ → t₁.1.1 ≠ t₂.1.1 := by
   contrapose;
-  push_neg;
   exact equality_of₁;
 
 lemma ne₂_of_ne : t₁ ≠ t₂ → t₁.1.2 ≠ t₂.1.2 := by
   contrapose;
-  push_neg;
   exact equality_of₂;
 
 lemma intro_equality (h₁ : ∀ {φ}, φ ∈ t₁.1.1 → φ ∈ t₂.1.1) (h₂ : ∀ {φ}, φ ∈ t₁.1.2 → φ ∈ t₂.1.2) : t₁ = t₂ := by
@@ -436,7 +434,6 @@ lemma iff_provable_include₁ : T *⊢[𝓢] φ ↔ ∀ t : MaximalConsistentTab
       intro Γ Δ hΓ hΔ;
       revert hC;
       contrapose;
-      simp only [not_not];
       intro h;
       replace h : T *⊢[𝓢] Δ.disj := Context.weakening! (by simpa using hΓ) $ FConj_DT.mp h;
       rcases Set.subset_singleton_iff_eq.mp hΔ with (hΔ | hΔ);

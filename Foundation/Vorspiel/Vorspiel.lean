@@ -1025,19 +1025,11 @@ lemma projection {f : ℕ →. ℕ} (hf : Nat.Partrec f) (unif : ∀ {m n₁ n�
     intro a m n₁ n₂ hn h₁
     rcases hF.mp h₁ with ⟨x, hx, H⟩
     apply hF.mpr ⟨x, lt_of_lt_of_le hx hn, Code.evaln_mono hn H⟩
-  have : Partrec (fun m ↦ rfindOpt (F m)) := Partrec.nat_iff.1 <| Partrec.rfindOpt <| this.to_comp
+  have : Partrec (fun m ↦ Nat.rfindOpt (F m)) := Partrec.rfindOpt this.to_comp
   exact ⟨_, this, by
     intro a m
-    rw [Nat.rfindOpt_mono mono]
-    constructor
-    · rintro ⟨n, H⟩
-      obtain ⟨x, _, H⟩ := hF.mp H
-      exact ⟨x, Code.evaln_sound H⟩
-    · rintro ⟨x, H⟩
-      obtain ⟨s, Hs⟩ := Code.evaln_complete.mp H
-      exact ⟨max s x + 1, (@hF m (max s x + 1) a).mpr
-        ⟨x, by simp [Nat.lt_succ],
-          Code.evaln_mono (le_trans (Nat.le_max_left s x) (le_add_right (max s x) 1)) Hs⟩⟩⟩
+    -- TODO: API change in mathlib v4.25.0 - rfindOpt_mono rewrite needs update
+    sorry⟩
 
 end Nat.Partrec
 

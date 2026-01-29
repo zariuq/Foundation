@@ -126,7 +126,6 @@ lemma formula_hereditary
 
 lemma formula_hereditary_not (hw : w ≺ w') : ¬w' ⊧ φ → ¬w ⊧ φ := by
   contrapose;
-  push_neg;
   exact formula_hereditary hw;
 
 lemma negEquiv : w ⊧ ∼φ ↔ w ⊧ φ ➝ ⊥ := by simp_all [Satisfies];

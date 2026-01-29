@@ -1,5 +1,6 @@
 import Mathlib.Data.List.Nodup
 import Mathlib.Data.List.Range
+import Mathlib.Order.Defs.Unbundled
 import Foundation.Vorspiel.Fin.Supplemental
 
 lemma Nat.zero_lt_of_not_zero {n : ℕ} (hn : n ≠ 0) : 0 < n := by omega;
@@ -20,9 +21,9 @@ def finIdxOf (l : List α) (hx : x ∈ l) : Fin l.length := ⟨l.idxOf x, idxOf_
 @[simp] lemma get_finIdxOf {hx : x ∈ l} : l.get (l.finIdxOf hx) = x := by simp [finIdxOf]
 
 lemma neq_findIdxOf_of_neq {hx : x ∈ l} {hy : y ∈ l} (exy : x ≠ y) : l.finIdxOf hx ≠ l.finIdxOf hy := by
-  simp only [finIdxOf, ne_eq, Fin.mk.injEq];
-  apply List.idxOf_inj hx hy |>.not.mpr;
-  exact exy;
+  simp only [finIdxOf, ne_eq, Fin.mk.injEq]
+  intro h
+  exact exy ((List.idxOf_inj hx).mp h)
 
 end
 
@@ -96,7 +97,7 @@ lemma noDup_of_irrefl_trans (h : List.IsChain R l) [IsIrrefl _ R] : l.Nodup := b
   ] using hC;
   have : R (l.get i') (l.get j') := of_lt h (by simpa);
   rw [hC] at this;
-  exact IsIrrefl.irrefl _ this;
+  exact irrefl _ this;
 
 end IsChain
 

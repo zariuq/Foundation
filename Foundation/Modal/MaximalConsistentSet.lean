@@ -477,7 +477,6 @@ lemma iff_mem_boxItr : (□^[n]φ ∈ Ω) ↔ (∀ {Ω' : MaximalConsistentSet �
         );
         revert this;
         contrapose;
-        simp only [not_not];
         exact C!_trans collect_boxItr_conj!;
       contradiction;
     );
