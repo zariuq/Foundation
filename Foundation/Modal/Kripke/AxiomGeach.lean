@@ -17,7 +17,7 @@ class IsGeachConvergent (F : Frame) (g : Axioms.Geach.Taple) where
 
 protected abbrev IsReflexive (F : Frame) := _root_.IsRefl _ F
 
-@[simp] lemma refl [F.IsReflexive] : ∀ {x : F.World}, x ≺ x := by apply IsRefl.refl
+@[simp] lemma refl [F.IsReflexive] : ∀ {x : F.World}, x ≺ x := by apply Std.Refl.refl
 
 @[simp]
 instance [F.IsGeachConvergent ⟨0, 0, 1, 0⟩] : F.IsReflexive where

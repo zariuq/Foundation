@@ -46,17 +46,27 @@ def axL' (a : α)
     (h : NNFormula.atom a ∈ Δ) (hn : NNFormula.natom a ∈ Δ) : T ⟹ Δ := (axL Δ a).wk (by simp [h, hn])
 
 def em {φ : NNFormula α} {Δ : Sequent α} (hpos : φ ∈ Δ) (hneg : ∼φ ∈ Δ) : T ⟹ Δ := by
-  induction φ using NNFormula.rec' generalizing Δ <;> simp at hneg
-  case hverum           => exact verum' hpos
-  case hfalsum          => exact verum' hneg
-  case hatom a          => exact axL' a hpos hneg
-  case hnatom a         => exact axL' a hneg hpos
+  induction φ using NNFormula.rec' generalizing Δ
+  case hverum =>
+    simp only [DeMorgan.verum] at hneg
+    exact verum' hpos
+  case hfalsum =>
+    simp only [DeMorgan.falsum] at hneg
+    exact verum' hneg
+  case hatom a =>
+    simp only [NNFormula.neg_atom] at hneg
+    exact axL' a hpos hneg
+  case hnatom a =>
+    simp only [NNFormula.neg_natom] at hneg
+    exact axL' a hneg hpos
   case hand φ ψ ihp ihq =>
+    simp only [DeMorgan.and] at hneg
     have ihp : T ⟹ φ :: ∼φ :: ∼ψ :: Δ := ihp (by simp) (by simp)
     have ihq : T ⟹ ψ :: ∼φ :: ∼ψ :: Δ := ihq (by simp) (by simp)
     have : T ⟹ ∼φ :: ∼ψ :: Δ := (ihp.and ihq).wk (by simp [hpos])
     exact this.or.wk (by simp [hneg])
   case hor φ ψ ihp ihq  =>
+    simp only [DeMorgan.or] at hneg
     have ihp : T ⟹ ∼φ :: φ :: ψ :: Δ := ihp (by simp) (by simp)
     have ihq : T ⟹ ∼ψ :: φ :: ψ :: Δ := ihq (by simp) (by simp)
     have : T ⟹ φ :: ψ :: Δ := (ihp.and ihq).wk (by simp [hneg])

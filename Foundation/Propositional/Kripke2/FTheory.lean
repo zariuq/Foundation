@@ -144,14 +144,14 @@ lemma not_of_mem_construction_omega {φ : Formula ℕ}
   {Γ : Finset (Formula ℕ)} (hΓ : ↑Γ ⊆ construction T hT (encode φ))
   (hφ : Γ.conj ⋏ φ ➝ ξ ∈ T.theory) :
   φ ∉ (construction_omega T hT) := by
-  simp [construction_omega, Set.mem_iUnion];
+  simp only [construction_omega, Set.mem_iUnion, not_exists];
   intro i;
   induction i with
   | zero =>
     simp [construction];
     sorry;
   | succ i ih =>
-    simp [construction];
+    simp only [construction];
     split;
     . split_ifs with h;
       . rename_i δ hδ;
@@ -216,7 +216,7 @@ lemma construction_omega_impClosed :
   rintro hφψ hφ;
   simp only [construction_omega, Set.mem_iUnion];
   use (encode ψ) + 1;
-  simp [construction];
+  simp only [construction, encodek];
   split_ifs with h;
   . tauto;
   . exfalso;
@@ -271,7 +271,7 @@ lemma construction_omega_prime :
 lemma construction_omega_noBot :
   letI U := construction_omega T hT
   ⊥ ∉ U := by
-  simp [construction_omega, Set.mem_iUnion, not_exists];
+  simp only [construction_omega, Set.mem_iUnion, not_exists];
   intro i;
   induction i with
   | zero =>

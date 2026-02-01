@@ -143,12 +143,12 @@ lemma either {l : List (Formula α)} (hp : φ ∈ l) : φ ∈ Φ[l] ∨ -φ ∈ 
   induction l with
   | nil => simp_all;
   | cons ψ qs ih =>
-    simp at hp;
-    simp [enum, next];
+    simp only [List.mem_cons] at hp
+    simp only [enum, next];
     rcases hp with (rfl | hp);
     . split <;> simp [Finset.mem_insert];
     . split <;> {
-        simp [Finset.mem_insert];
+        simp only [Finset.mem_insert];
         rcases (ih hp) with (_ | _) <;> tauto;
       }
 
@@ -158,7 +158,8 @@ lemma subset {l : List (Formula α)} {φ : Formula α} (h : φ ∈ Φ[l])
   | nil =>
     simp_all;
   | cons ψ qs ih =>
-    simp_all [enum, next];
+    dsimp [enum, next] at h
+    simp_all only [List.mem_cons, exists_eq_or_imp];
     split at h;
     . rcases Finset.mem_insert.mp h with (rfl | h)
       . tauto;
@@ -184,7 +185,7 @@ lemma exists_consistent_complementary_closed
     simp only [Finset.mem_union, Finset.mem_image];
     rcases subset hp with (h | h | ⟨ψ, hq₁, hq₂⟩);
     . replace h := h_sub h;
-      simp [complementary] at h;
+      simp only [complementary, Finset.mem_union, Finset.mem_image] at h;
       rcases h with (_ | ⟨a, b, rfl⟩);
       . tauto;
       . right;
@@ -255,10 +256,9 @@ lemma membership_iff (hq_sub : ψ ∈ Ψ) : (ψ ∈ X) ↔ (X *⊢[𝓢] ψ) := 
   constructor;
   . intro h; exact Context.by_axm! h;
   . intro hp;
-    suffices -ψ ∉ X by
-      apply or_iff_not_imp_right.mp $ ?_;
-      assumption;
-      exact X.closed.either ψ hq_sub;
+    suffices hnot : -ψ ∉ X by
+      have hEither : ψ ∈ X ∨ -ψ ∈ X := X.closed.either ψ hq_sub;
+      exact (or_iff_not_imp_right.mp hEither) hnot
     by_contra hC;
     have hnp : X *⊢[𝓢] -ψ := Context.by_axm! hC;
     have := complement_derive_bot hp hnp;

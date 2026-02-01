@@ -15,7 +15,7 @@ infix:80 " ⨳ " => Smash.smash
 class Length (α : Type*) where
   length : α → α
 
-notation "‖" x "‖" => Length.length x
+notation "‖" x "‖ₗ" => Length.length x
 
 namespace LO
 

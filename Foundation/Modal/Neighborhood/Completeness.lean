@@ -37,36 +37,36 @@ lemma not_isNonproofset_proofset : ¬(proofset 𝓢 φ).IsNonproofset := by simp
 
 namespace proofset
 
-local notation "‖" φ "‖" => proofset 𝓢 φ
+local notation "⟪" φ "⟫" => proofset 𝓢 φ
 
 variable {φ ψ : Formula α} {Γ : MaximalConsistentSet 𝓢}
 
 omit [DecidableEq α] [Entailment.Cl 𝓢] in
 @[grind]
-lemma iff_mem : φ ∈ Γ ↔ Γ ∈ ‖φ‖ := by simp [proofset];
+lemma iff_mem : φ ∈ Γ ↔ Γ ∈ ⟪φ⟫ := by simp [proofset];
 
 omit [DecidableEq α] [Entailment.Cl 𝓢] in
-lemma mem_of_mem_of_subset (h : ‖φ‖ ⊆ ‖ψ‖) : φ ∈ Γ → ψ ∈ Γ := by
+lemma mem_of_mem_of_subset (h : ⟪φ⟫ ⊆ ⟪ψ⟫) : φ ∈ Γ → ψ ∈ Γ := by
   intro hφ;
   grind;
 
 omit [DecidableEq α] [Entailment.Cl 𝓢] in
-@[grind] lemma iff_mem_of_eq (h : ‖φ‖ = ‖ψ‖) : φ ∈ Γ ↔ ψ ∈ Γ := by grind;
+@[grind] lemma iff_mem_of_eq (h : ⟪φ⟫ = ⟪ψ⟫) : φ ∈ Γ ↔ ψ ∈ Γ := by grind;
 
-lemma eq_top : ‖⊤‖ = Set.univ := by simp [proofset];
+lemma eq_top : ⟪⊤⟫ = Set.univ := by simp [proofset];
 
-lemma eq_bot : ‖⊥‖ = ∅ := by simp [proofset];
+lemma eq_bot : ⟪⊥⟫ = ∅ := by simp [proofset];
 
-lemma eq_neg : ‖∼φ‖ = ‖φ‖ᶜ := by simp [proofset]; tauto;
+lemma eq_neg : ⟪∼φ⟫ = ⟪φ⟫ᶜ := by simp [proofset]; tauto;
 
-lemma eq_imp : ‖φ ➝ ψ‖ = (‖φ‖ᶜ ∪ ‖ψ‖) := by
+lemma eq_imp : ⟪φ ➝ ψ⟫ = (⟪φ⟫ᶜ ∪ ⟪ψ⟫) := by
   ext;
   simp [proofset];
   tauto;
 
-lemma eq_and : ‖φ ⋏ ψ‖ = ‖φ‖ ∩ ‖ψ‖ := by simp [proofset]; tauto;
+lemma eq_and : ⟪φ ⋏ ψ⟫ = ⟪φ⟫ ∩ ⟪ψ⟫ := by simp [proofset]; tauto;
 
-lemma eq_or : ‖φ ⋎ ψ‖ = ‖φ‖ ∪ ‖ψ‖ := by simp [proofset]; tauto;
+lemma eq_or : ⟪φ ⋎ ψ⟫ = ⟪φ⟫ ∪ ⟪ψ⟫ := by simp [proofset]; tauto;
 
 attribute [simp, grind]
   eq_top
@@ -76,7 +76,7 @@ attribute [simp, grind]
   eq_and
   eq_or
 
-lemma iff_provable_eq_univ : 𝓢 ⊢ φ ↔ ‖φ‖ = Set.univ := by
+lemma iff_provable_eq_univ : 𝓢 ⊢ φ ↔ ⟪φ⟫ = Set.univ := by
   constructor;
   . intro h;
     apply Set.eq_univ_of_forall;
@@ -91,7 +91,7 @@ lemma iff_provable_eq_univ : 𝓢 ⊢ φ ↔ ‖φ‖ = Set.univ := by
     tauto;
 
 @[grind]
-lemma imp_subset : 𝓢 ⊢ φ ➝ ψ ↔ ‖φ‖ ⊆ ‖ψ‖ := by
+lemma imp_subset : 𝓢 ⊢ φ ➝ ψ ↔ ⟪φ⟫ ⊆ ⟪ψ⟫ := by
   constructor;
   . intro h Γ;
     apply iff_mem_imp.mp $ iff_forall_mem_provable.mpr h Γ;
@@ -101,7 +101,7 @@ lemma imp_subset : 𝓢 ⊢ φ ➝ ψ ↔ ‖φ‖ ⊆ ‖ψ‖ := by
     apply iff_mem_imp.mpr $ @h Γ;
 
 @[grind]
-lemma iff_subset : 𝓢 ⊢ φ ⭤ ψ ↔ ‖φ‖ = ‖ψ‖ := by
+lemma iff_subset : 𝓢 ⊢ φ ⭤ ψ ↔ ⟪φ⟫ = ⟪ψ⟫ := by
   constructor;
   . intro h;
     apply Set.eq_of_subset_of_subset <;>
@@ -113,7 +113,7 @@ lemma iff_subset : 𝓢 ⊢ φ ⭤ ψ ↔ ‖φ‖ = ‖ψ‖ := by
     replace h₂ := imp_subset.mpr h₂;
     cl_prover [h₁, h₂];
 
-lemma eq_boxed_of_eq [Entailment.E 𝓢] : ‖φ‖ = ‖ψ‖ → ‖□φ‖ = ‖□ψ‖ := by
+lemma eq_boxed_of_eq [Entailment.E 𝓢] : ⟪φ⟫ = ⟪ψ⟫ → ⟪□φ⟫ = ⟪□ψ⟫ := by
   intro h;
   apply iff_subset.mp;
   apply re!;
@@ -121,7 +121,7 @@ lemma eq_boxed_of_eq [Entailment.E 𝓢] : ‖φ‖ = ‖ψ‖ → ‖□φ‖ =
   assumption;
 
 @[grind]
-lemma box_subset_of_subset [Entailment.EM 𝓢] : ‖φ‖ ⊆ ‖ψ‖ → ‖□φ‖ ⊆ ‖□ψ‖ := by
+lemma box_subset_of_subset [Entailment.EM 𝓢] : ⟪φ⟫ ⊆ ⟪ψ⟫ → ⟪□φ⟫ ⊆ ⟪□ψ⟫ := by
   suffices 𝓢 ⊢ φ ➝ ψ → 𝓢 ⊢ □φ ➝ □ψ by simpa [imp_subset];
   apply Entailment.rm!;
 

@@ -304,7 +304,8 @@ protected def pMorphism_extendRoot : M.extendRoot n →ₚ (tailModel₀ M o) wh
   back := by
     rintro (x | x) (y | y | y) Rxy;
     case inl.inr.inl =>
-      simp_all [Frame.Rel', tailModel₀, Model.extendRoot, Frame.extendRoot];
+      simp_all only [Frame.Rel', tailModel₀, gt_iff_lt, Model.extendRoot, Frame.extendRoot, Sum.exists,
+        Sum.inr.injEq, Sum.inl.injEq, reduceCtorEq, and_true, exists_const, or_false];
       use ⟨n - y - 1, by omega⟩;
       constructor;
       . simp;
@@ -312,7 +313,7 @@ protected def pMorphism_extendRoot : M.extendRoot n →ₚ (tailModel₀ M o) wh
       . apply Fin.lt_def.mpr;
         simp;
         omega;
-    all_goals simp_all [Frame.Rel', tailModel₀, Model.extendRoot, Frame.extendRoot];
+    all_goals simp_all? [Frame.Rel', tailModel₀, Model.extendRoot, Frame.extendRoot];
   atomic := by
     rintro a (w | w) <;> simp [Model.extendRoot, tailModel₀];
 
@@ -529,7 +530,7 @@ theorem GL_D_TFAE :
                   apply hx;
                   assumption;
                 have : r ⊧ (□ψ) := by
-                  simp [X, Finset.LO.preboxItr, Finset.LO.boxItr] at this;
+                  simp [X, Finset.LO.preboxItr] at this;
                   tauto;
                 apply this;
                 assumption;

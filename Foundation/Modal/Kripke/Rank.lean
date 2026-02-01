@@ -166,7 +166,74 @@ instance [Fintype F] : Fintype (F↾x) := by apply Subtype.fintype;
 
 instance [F.IsTree r] : (F↾x).IsTree ⟨x, by tauto⟩ := by constructor;
 
-axiom eq_original_height (hxy : y = x ∨ x ≺^+ y) : Frame.rank (F := F↾x) (⟨y, hxy⟩) = Frame.rank y
+theorem eq_original_height (hxy : y = x ∨ x ≺^+ y) :
+    Frame.rank (F := F↾x) (⟨y, hxy⟩) = Frame.rank y := by
+  let y' : (F↾x) := ⟨y, hxy⟩
+
+  have proj_iterate :
+      ∀ {n : ℕ} {a b : (F↾x)},
+        Frame.RelItr' (F := (F↾x)) n a b → a.1 ≺^[n] b.1 := by
+    intro n a b hab
+    induction n generalizing a b with
+    | zero =>
+      have : a = b := (Rel.Iterate.iff_zero).1 hab
+      subst this
+      simp [Rel.Iterate.iff_zero]
+    | succ n ih =>
+      rcases (Rel.Iterate.iff_succ).1 hab with ⟨w, haw, hwb⟩
+      have haw' : a.1 ≺ w.1 := by simpa using haw
+      have hwb' : w.1 ≺^[n] b.1 := ih hwb
+      apply (Rel.Iterate.iff_succ).2
+      exact ⟨w.1, haw', hwb'⟩
+
+  have lift_iterate :
+      ∀ {n : ℕ} {y z : F} (hy : y = x ∨ x ≺^+ y),
+        y ≺^[n] z →
+          ∃ hz : z = x ∨ x ≺^+ z,
+            Frame.RelItr' (F := (F↾x)) n (⟨y, hy⟩ : (F↾x)) (⟨z, hz⟩ : (F↾x)) := by
+    intro n y z hy hyz
+    classical
+    induction n generalizing y z with
+    | zero =>
+      have : y = z := (Rel.Iterate.iff_zero).1 hyz
+      subst this
+      refine ⟨hy, ?_⟩
+      simp [Frame.RelItr', Rel.Iterate.iff_zero]
+    | succ n ih =>
+      rcases (Rel.Iterate.iff_succ).1 hyz with ⟨w, R_yw, R_wz⟩
+      have hw : w = x ∨ x ≺^+ w := by
+        right
+        rcases hy with rfl | hxy
+        · exact Relation.TransGen.single R_yw
+        · exact Relation.TransGen.tail hxy R_yw
+      rcases ih (y := w) (z := z) hw R_wz with ⟨hz, ih'⟩
+      refine ⟨hz, ?_⟩
+      apply (Rel.Iterate.iff_succ).2
+      refine ⟨⟨w, hw⟩, ?_, ih'⟩
+      exact R_yw
+
+  apply Nat.le_antisymm
+  · by_contra h
+    have hlt : Frame.rank y < Frame.rank (F := F↾x) y' := Nat.lt_of_not_ge h
+    have hn : Frame.rank y + 1 ≤ Frame.rank (F := F↾x) y' := Nat.succ_le_of_lt hlt
+    rcases (Frame.le_height_iff_relItr (F := (F↾x)) (i := y') (n := Frame.rank y + 1)).1 hn with ⟨j, hyj⟩
+    have hyj' : Frame.RelItr' (F := (F↾x)) (Frame.rank y + 1) y' j := hyj
+    have hyj_orig : y ≺^[Frame.rank y + 1] j.1 := proj_iterate hyj'
+    have none : ∀ t : F, ¬y ≺^[Frame.rank y + 1] t :=
+      (Frame.height_lt_iff_relItr (F := F) (i := y) (n := Frame.rank y + 1)).1 (Nat.lt_succ_self (Frame.rank y))
+    exact (none j.1) hyj_orig
+  · by_contra h
+    have hlt : Frame.rank (F := F↾x) y' < Frame.rank y := Nat.lt_of_not_ge h
+    have nle : Frame.rank (F := F↾x) y' + 1 ≤ Frame.rank y := Nat.succ_le_of_lt hlt
+    rcases (Frame.le_height_iff_relItr (F := F) (i := y) (n := Frame.rank (F := F↾x) y' + 1)).1 nle with
+      ⟨z, hyz⟩
+    rcases lift_iterate (y := y) (z := z) hxy hyz with ⟨hz, hyz'⟩
+    have none : ∀ t : (F↾x), ¬y' ≺^[Frame.rank (F := F↾x) y' + 1] t :=
+      (Frame.height_lt_iff_relItr (F := (F↾x)) (i := y') (n := Frame.rank (F := F↾x) y' + 1)).1
+        (Nat.lt_succ_self (Frame.rank (F := F↾x) y'))
+    have hyz'' : y' ≺^[Frame.rank (F := F↾x) y' + 1] (⟨z, hz⟩ : (F↾x)) := by
+      simpa [Frame.RelItr', y'] using hyz'
+    exact (none (⟨z, hz⟩ : (F↾x))) hyz''
 
 end pointGenerate
 

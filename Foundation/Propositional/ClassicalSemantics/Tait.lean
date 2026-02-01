@@ -128,13 +128,15 @@ lemma maximalConsistentTheory_consistent' {φ} :
 
 lemma not_mem_maximalConsistentTheory_iff :
     φ ∉ maximalConsistentTheory consisT ↔ maximalConsistentTheory consisT ⊢ ∼φ := by
-  by_cases hp : φ ∈ maximalConsistentTheory consisT <;> simp [hp]
-  · intro bnp
+  by_cases hp : φ ∈ maximalConsistentTheory consisT
+  · simp only [hp, not_true_eq_false, false_iff]
+    intro bnp
     have : Inconsistent (maximalConsistentTheory consisT) :=
       Entailment.inconsistent_of_provable (neg_mdp bnp (mem_maximalConsistentTheory_iff.mp hp))
     have := this.not_con
     simp_all
-  · exact mem_maximalConsistentTheory_iff.mp
+  · simp only [hp, not_false_eq_true, true_iff]
+    exact mem_maximalConsistentTheory_iff.mp
       (by simpa [hp] using mem_or_neg_mem_maximalConsistentTheory (consisT := consisT) φ)
 
 lemma mem_maximalConsistentTheory_and {φ ψ} (h : φ ⋏ ψ ∈ maximalConsistentTheory consisT) :
@@ -157,18 +159,28 @@ lemma mem_maximalConsistentTheory_or {φ ψ} (h : φ ⋎ ψ ∈ maximalConsisten
 lemma maximalConsistentTheory_satisfiable :
     (NNFormula.atom · ∈ maximalConsistentTheory consisT) ⊧* maximalConsistentTheory consisT := ⟨by
   intro φ hp
-  induction φ using NNFormula.rec' <;> simp
-  case hatom => simpa
-  case hnatom =>
-    simpa using maximalConsistentTheory_consistent' hp
+  induction φ using NNFormula.rec'
+  case hverum =>
+    simp only [Semantics.Top.models_verum]
   case hfalsum =>
-    have : Inconsistent (maximalConsistentTheory consisT) := Entailment.inconsistent_of_provable ⟨Entailment.byAxm hp⟩
+    simp only [Semantics.Bot.models_falsum]
+    have : Inconsistent (maximalConsistentTheory consisT) :=
+      Entailment.inconsistent_of_provable ⟨Entailment.byAxm hp⟩
     have := this.not_con
     simp_all
+  case hatom a =>
+    simp only [NNFormula.models_atom]
+    exact hp
+  case hnatom a =>
+    simp only [NNFormula.models_natom]
+    simpa using maximalConsistentTheory_consistent' (consisT := consisT) hp
   case hand φ ψ ihp ihq =>
-    exact ⟨ihp (mem_maximalConsistentTheory_and hp).1, ihq (mem_maximalConsistentTheory_and hp).2⟩
+    simp only [Semantics.And.models_and]
+    exact ⟨ihp (mem_maximalConsistentTheory_and (consisT := consisT) hp).1,
+      ihq (mem_maximalConsistentTheory_and (consisT := consisT) hp).2⟩
   case hor φ ψ ihp ihq =>
-    rcases mem_maximalConsistentTheory_or hp with (hp | hq)
+    simp only [Semantics.Or.models_or]
+    rcases mem_maximalConsistentTheory_or (consisT := consisT) hp with (hp | hq)
     · left; exact ihp hp
     · right; exact ihq hq⟩
 

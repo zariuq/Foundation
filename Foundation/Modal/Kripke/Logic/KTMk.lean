@@ -66,8 +66,29 @@ lemma validate_axiomFour_of_model_finitely {M : Kripke.Model} (hM : M ⊧* Modal
     | succ n ih =>
       obtain ⟨l, hl_nodup, hl_len, hl_chain, hl⟩ := ih;
       let m : Fin l.length := ⟨n - 1, by simp [hl_len]⟩;
-      have : l[m] ⊧ ◇(□^[(m + 2)]φ ⋏ ∼□^[(m + 3)]φ) := Satisfies.mdp ?_ $ hl m;
-      obtain ⟨y, Rmy, hy₂⟩ := Satisfies.dia_def.mp this;
+      have hDia : l[m] ⊧ ◇(□^[(m + 2)]φ ⋏ ∼□^[(m + 3)]φ) := by
+        apply (Satisfies.mdp (φ := (□^[(m + 1)]φ ⋏ ∼□^[(m + 2)]φ)));
+        · intro h;
+          have hImp :
+              l[m] ⊧
+                □^[(m + 1)]φ ⋏ ∼□^[(m + 2)]φ ➝ ◇(□^[(m + 2)]φ ⋏ ◇(∼□^[(m + 2)]φ)) := by
+            apply hM.models;
+            apply Logic.iff_provable.mp;
+            simp;
+          have hDia' : l[m] ⊧ ◇(□^[(m + 2)]φ ⋏ ◇(∼□^[(m + 2)]φ)) := hImp h;
+          obtain ⟨y, hy₁, hy₂⟩ := Satisfies.dia_def.mp hDia';
+          apply Satisfies.dia_def.mpr;
+          refine ⟨y, hy₁, ?_⟩;
+          apply Satisfies.and_def.mpr;
+          refine ⟨Satisfies.and_def.mp hy₂ |>.1, ?_⟩;
+          apply Satisfies.not_def.mpr;
+          simpa using
+            Satisfies.box_dn.not.mp <|
+              Satisfies.not_def.mp <|
+                Satisfies.dia_dual.mp <|
+                  Satisfies.and_def.mp hy₂ |>.2;
+        · exact hl m
+      obtain ⟨y, Rmy, hy₂⟩ := Satisfies.dia_def.mp hDia;
       let l' := l.concat y;
       use l';
       have hl' : ∀ (i : Fin l'.length), l'[i] ⊧ □^[(i + 1)]φ ⋏ ∼□^[(i + 2)]φ := by
@@ -106,22 +127,6 @@ lemma validate_axiomFour_of_model_finitely {M : Kripke.Model} (hM : M ⊧* Modal
           trans l[l.length - 1]'(by simp [hl_len]);
           . apply List.getLast_eq_getElem;
           . simp [m, hl_len];
-      . intro h;
-        have : l[m] ⊧ □^[(m + 1)]φ ⋏ ∼□^[(m + 2)]φ ➝ ◇(□^[(m + 2)]φ ⋏ ◇(∼□^[(m + 2)]φ)) := by
-          apply hM.models;
-          apply Logic.iff_provable.mp;
-          simp;
-        replace : l[m] ⊧ ◇(□^[(m + 2)]φ ⋏ ◇(∼□^[(m + 2)]φ)) := this h;
-        obtain ⟨y, hy₁, hy₂⟩ := Satisfies.dia_def.mp this;
-        apply Satisfies.dia_def.mpr;
-        use y;
-        constructor;
-        . assumption;
-        . apply Satisfies.and_def.mpr;
-          constructor;
-          . exact Satisfies.and_def.mp hy₂ |>.1;
-          . apply Satisfies.not_def.mpr;
-            simpa using Satisfies.box_dn.not.mp $ Satisfies.not_def.mp $ Satisfies.dia_dual.mp $ Satisfies.and_def.mp hy₂ |>.2;
   apply Infinite.of_injective (β := ℕ+) (λ n => ⟨H n |>.choose, H n |>.choose_spec.1⟩);
   intro i j;
   simp only [Subtype.mk.injEq];
@@ -135,7 +140,7 @@ lemma model_infinitity_of_not_validate_axiomFour {M : Kripke.Model} (hM : M ⊧*
   contrapose!;
   intro h;
   apply validate_axiomFour_of_model_finitely hM;
-  simpa using h;
+  simp;
 
 abbrev recessionFrame : Kripke.Frame where
   World := ℕ

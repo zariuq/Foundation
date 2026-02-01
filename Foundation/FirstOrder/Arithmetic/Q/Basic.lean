@@ -32,8 +32,13 @@ open ORingStructure
 
 @[simp] instance : ℕ ⊧ₘ* 𝗤 := ⟨by
   intro σ h
-  rcases h <;> simp [models_iff, add_assoc, mul_add]
-  case ltDef =>
+  cases h with
+  | ltDef =>
+    simp only [Nat.reduceAdd, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      LogicalConnective.HomClass.map_iff, Semiformula.eval_operator_two, Semiterm.val_bvar, Matrix.cons_val_one,
+      Fin.Fin1.eq_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, Structure.LT.lt, Semiformula.eval_ex,
+      Semiterm.val_operator₂, Matrix.cons_app_two, Semiterm.val_operator₀, Structure.numeral_eq_numeral, one_eq_one,
+      Structure.Add.add, Structure.Eq.eq, LogicalConnective.Prop.iff_eq]
     intro a b
     constructor;
     . intro h;
@@ -41,10 +46,48 @@ open ORingStructure
       omega;
     . rintro ⟨c, hc⟩;
       simp [←hc];
-  case zeroOrSucc => omega;
-  case equal h =>
+  | zeroOrSucc =>
+    simp only [Nat.reduceAdd, Fin.Fin1.eq_one, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      LogicalConnective.HomClass.map_or, Semiformula.eval_operator_two, Semiterm.val_bvar, Matrix.cons_val_fin_one,
+      Semiterm.val_operator₀, Structure.numeral_eq_numeral, zero_eq_zero, Structure.Eq.eq, Semiformula.eval_ex,
+      Matrix.cons_val_one, Semiterm.val_operator₂, Matrix.cons_val_zero, one_eq_one, Structure.Add.add,
+      Nat.exists_eq_add_one, LogicalConnective.Prop.or_eq]
+    omega;
+  | equal _ h =>
     have : ℕ ⊧ₘ* (𝗘𝗤 : ArithmeticTheory) := inferInstance
-    exact modelsTheory_iff.mp this h⟩
+    exact modelsTheory_iff.mp this h
+  | succNeZero =>
+    simp only [Nat.reduceAdd, Fin.Fin1.eq_one, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      LogicalConnective.HomClass.map_neg, Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar,
+      Matrix.cons_val_fin_one, Semiterm.val_operator₀, Structure.numeral_eq_numeral, one_eq_one, Structure.Add.add,
+      zero_eq_zero, Structure.Eq.eq, Nat.add_eq_zero_iff, _root_.one_ne_zero, and_false, LogicalConnective.Prop.neg_eq,
+      not_false_eq_true, implies_true]
+  | succInj =>
+    simp only [Nat.reduceAdd, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      LogicalConnective.HomClass.map_imply, Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar,
+      Matrix.cons_val_one, Fin.Fin1.eq_one, Matrix.cons_val_fin_one, Semiterm.val_operator₀,
+      Structure.numeral_eq_numeral, one_eq_one, Structure.Add.add, Matrix.cons_val_zero, Structure.Eq.eq,
+      Nat.add_right_cancel_iff, LogicalConnective.Prop.arrow_eq, imp_self, implies_true]
+  | addZero =>
+    simp only [Nat.reduceAdd, Fin.Fin1.eq_one, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar, Matrix.cons_val_fin_one,
+      Semiterm.val_operator₀, Structure.numeral_eq_numeral, zero_eq_zero, Structure.Add.add, add_zero, Structure.Eq.eq,
+      implies_true]
+  | addSucc =>
+    simp only [Nat.reduceAdd, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar, Matrix.cons_val_one, Fin.Fin1.eq_one,
+      Matrix.cons_val_fin_one, Matrix.cons_val_zero, Semiterm.val_operator₀, Structure.numeral_eq_numeral, one_eq_one,
+      Structure.Add.add, add_assoc, Structure.Eq.eq, implies_true]
+  | mulZero =>
+    simp only [Nat.reduceAdd, Fin.Fin1.eq_one, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar, Matrix.cons_val_fin_one,
+      Semiterm.val_operator₀, Structure.numeral_eq_numeral, zero_eq_zero, Structure.Mul.mul, mul_zero, Structure.Eq.eq,
+      implies_true]
+  | mulSucc =>
+    simp only [Nat.reduceAdd, Fin.isValue, models_iff, Semiformula.eval_all, Nat.succ_eq_add_one,
+      Semiformula.eval_operator_two, Semiterm.val_operator₂, Semiterm.val_bvar, Matrix.cons_val_one, Fin.Fin1.eq_one,
+      Matrix.cons_val_fin_one, Matrix.cons_val_zero, Semiterm.val_operator₀, Structure.numeral_eq_numeral, one_eq_one,
+      Structure.Add.add, Structure.Mul.mul, mul_add, mul_one, Structure.Eq.eq, implies_true]⟩
 
 instance : 𝗘𝗤 ⪯ 𝗤 := Entailment.WeakerThan.ofSubset <| fun φ hp ↦ equal φ hp
 

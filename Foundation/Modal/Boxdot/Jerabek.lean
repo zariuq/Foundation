@@ -139,8 +139,7 @@ def BoxdotProperty (L₀ : Logic α) := ∀ {L : Logic _}, L.IsNormal → Lᵇ�
 def StrongBoxdotProperty (L₀ : Logic α) := ∀ {L : Logic _}, L.IsNormal → Lᵇ⁻¹ ⊆ L₀ → L ⊆ L₀
 
 lemma BDP_of_SBDP : StrongBoxdotProperty L₀ → BoxdotProperty L₀ := by
-  intro hSBDP;
-  intro L _ hL;
+  intro hSBDP L _ hL;
   apply hSBDP;
   . assumption;
   . rw [hL];

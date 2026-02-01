@@ -65,7 +65,7 @@ abbrev counterexampleDPFrame (F₁ : Kripke.Frame) (F₂ : Kripke.Frame) (w₁ :
   rel_partial_order := {
     refl := by simp;
     trans := by
-      simp only [Sum.forall, true_implies, imp_self, implies_true, true_and, false_implies, and_true, and_self, forall_const, imp_false];
+      simp only [Sum.forall, imp_self, implies_true, true_and, false_implies, and_true, and_self, forall_const, imp_false];
       constructor;
       . constructor;
         . intro _ _; apply F₁.trans;
@@ -89,7 +89,7 @@ abbrev counterexampleDPModel (M₁ : Kripke.Model) (M₂ : Kripke.Model) (w₁ :
       | Sum.inr $ Sum.inr w => M₂ w a
       | _ => False,
     by
-      simp only [counterexampleDPFrame, Sum.forall, imp_false, not_false_eq_true, implies_true, imp_self, IsEmpty.forall_iff, and_self, and_true, true_and];
+      simp only [counterexampleDPFrame, Sum.forall, imp_false, not_false_eq_true, implies_true, IsEmpty.forall_iff, and_self, and_true, true_and];
       constructor;
       . intro _ _;
         apply M₁.Val.hereditary;
@@ -105,7 +105,7 @@ lemma satisfies_left_on_counterexampleDPModel :
     . intro hpq X hWX hp;
       obtain ⟨x, hx, ex⟩ : ∃ x, (M₁.Rel w x) ∧ (Sum.inr $ Sum.inl x) = X := by
         replace hWX : (counterexampleDPModel M₁ M₂ w₁ w₂).Rel _ X := hWX;
-        simp only [counterexampleDPModel, counterexampleDPFrame] at hWX;
+        dsimp [counterexampleDPModel, counterexampleDPFrame] at hWX;
         split at hWX;
         all_goals simp_all;
       subst ex;
@@ -122,7 +122,7 @@ lemma satisfies_right_on_counterexampleDPModel :
     . intro h X hWX hp;
       obtain ⟨x, hx, ex⟩ : ∃ x, (M₂.Rel w x) ∧ (Sum.inr $ Sum.inr x) = X := by
         replace hWX : (counterexampleDPModel M₁ M₂ w₁ w₂).Rel _ X := hWX;
-        simp only [counterexampleDPModel, counterexampleDPFrame] at hWX;
+        dsimp [counterexampleDPModel, counterexampleDPFrame] at hWX;
         split at hWX;
         all_goals simp_all;
       subst ex;

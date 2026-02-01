@@ -37,7 +37,7 @@ lemma rotate_right_inv (hφ : Γ ⟹ φ :: Δ) : Γ ⟹ Δ ++ [φ] := weakening 
 
 lemma rotate_left_inv (hφ : (φ :: Γ) ⟹ Δ) : (Γ ++ [φ]) ⟹ Δ := weakening hφ
 
-lemma to_provable {φ} (h : [] ⟹ [φ]) : 𝓢 ⊢ φ :=
+lemma to_provable {φ} (h : [] ⟹ [φ]) : (let _ := (inferInstance : DecidableEq F); 𝓢 ⊢ φ) :=
   FiniteContext.provable_iff_provable.mpr <| left_Disj!_intro [φ] (by simp) ⨀! h
 
 lemma add_hyp {𝒯 : S} [𝒯 ⪯ 𝓢] (hφ : 𝒯 ⊢ φ) (h : (φ :: Γ) ⟹ Δ) : Γ ⟹ Δ :=
@@ -256,7 +256,7 @@ lemma remove : Valid 𝓢 T → Valid 𝓢 ((Γ ⟶ Δ) :: T) :=
 
 variable [DecidableEq F] [Entailment.Int 𝓢]
 
-lemma to_provable (h : Valid 𝓢 [[] ⟶ [φ]]) : 𝓢 ⊢ φ := by
+lemma to_provable (h : Valid 𝓢 [[] ⟶ [φ]]) : (let _ := (inferInstance : DecidableEq F); 𝓢 ⊢ φ) := by
   rcases h
   · exact TwoSided.to_provable <| by assumption
   · simp_all

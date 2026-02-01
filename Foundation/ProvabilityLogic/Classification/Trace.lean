@@ -256,9 +256,10 @@ instance isTree [M.IsTree r] (hra : r ≠ a) : (M.boneLengthening a k).IsTree r 
       tauto;
 
 @[simp]
-axiom eq_height [M.IsTree r] [Fintype M] (hra : r ≠ a) :
+theorem eq_height [M.IsTree r] [Fintype M] (hra : r ≠ a) :
   have : (M.boneLengthening a k).IsTree r := isTree hra;
-  (M.boneLengthening a k).height = M.height + k
+  (M.boneLengthening a k).height = M.height + k := by
+  sorry
   /-
   := by
   intro _;
@@ -278,7 +279,9 @@ axiom eq_height [M.IsTree r] [Fintype M] (hra : r ≠ a) :
     sorry;
   -/
 
-axiom equivalence {x : M} (hx : x = a ∨ a ≺ x) : ∀ φ, x ⊧ φ ↔ ((x : M.boneLengthening a k) ⊧ φ) -- := by sorry
+theorem equivalence {x : M} (hx : x = a ∨ a ≺ x) :
+    ∀ φ, x ⊧ φ ↔ ((x : M.boneLengthening a k) ⊧ φ) := by
+  sorry
 
 lemma mainlemma_aux
   (hrfl : a ⊧ φ.rflSubformula.conj)
@@ -336,7 +339,9 @@ end Model.boneLengthening
 
 end Kripke
 
-axiom GL.formalized_validates_axiomT_set_in_irrefl_trans_chain : Modal.GL ⊢ ∼□^[(φ.rflSubformula.card + 1)]⊥ ➝ ◇φ.rflSubformula.conj
+theorem GL.formalized_validates_axiomT_set_in_irrefl_trans_chain :
+    Modal.GL ⊢ ∼□^[(φ.rflSubformula.card + 1)]⊥ ➝ ◇φ.rflSubformula.conj := by
+  sorry
 
 @[grind .]
 lemma Formula.trace.finite_or_cofinite : φ.trace.Finite ∨ φ.trace.Cofinite := by

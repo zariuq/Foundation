@@ -151,7 +151,7 @@ variable [DecidableEq α]
 def hasDecEq : (φ ψ : Formula α) → Decidable (φ = ψ)
   | ⊥, ψ => by
     cases ψ using cases' <;>
-    { simp; try { exact isFalse not_false }; try { exact isTrue trivial } }
+    { simp only [reduceCtorEq]; try { exact isFalse not_false }; try { exact isTrue trivial } }
   | atom a, ψ => by
     cases ψ using cases';
     case hatom b =>
@@ -414,7 +414,8 @@ lemma subset_of_mem (hψ : ψ ∈ φ.subformulas) : (ψ.subformulas ⊆ φ.subfo
 end Formula.subformulas
 
 
-def FormulaSet.SubformulaClosed [DecidableEq α] (Γ : FormulaSet α) : Prop := ∀ φ ∈ Γ, φ.subformulas.toSet ⊆ Γ
+def FormulaSet.SubformulaClosed [DecidableEq α] (Γ : FormulaSet α) : Prop :=
+  ∀ φ ∈ Γ, ((φ.subformulas : Set (Formula α)) ⊆ Γ)
 
 namespace FormulaSet.SubformulaClosed
 
@@ -452,7 +453,7 @@ lemma of_mem_box : □φ ∈ Γ → φ ∈ Γ := SubformulaClosed.of_mem_box IsS
 end FormulaSet.IsSubformulaClosed
 
 
-instance {φ : Formula α} [DecidableEq α] : FormulaSet.IsSubformulaClosed (φ.subformulas.toSet) where
+instance {φ : Formula α} [DecidableEq α] : FormulaSet.IsSubformulaClosed ((φ.subformulas : Set (Formula α))) where
   closed := fun _ hψ ↦ Formula.subformulas.subset_of_mem hψ
 
 

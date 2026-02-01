@@ -22,7 +22,17 @@ noncomputable def descendingChain (z : α) : ℕ → α
   | (i + 1) => @Classical.epsilon α ⟨z⟩ (fun y => y ≺ descendingChain z i ∧ ¬Acc r y)
 
 lemma not_acc_iff {x : α} : ¬Acc r x ↔ ∃ y, y ≺ x ∧ ¬Acc r y :=
-  ⟨by contrapose; simp; exact Acc.intro x, by contrapose; simp; rintro ⟨h⟩; assumption⟩
+  ⟨
+    by
+      contrapose
+      simp only [not_exists, not_and, not_not]
+      exact Acc.intro x,
+    by
+      contrapose
+      simp only [not_exists, not_and, not_not]
+      rintro ⟨h⟩
+      assumption
+  ⟩
 
 @[simp] lemma descending_chain_zero (z : α) : descendingChain r z 0 = z := rfl
 
@@ -31,7 +41,8 @@ lemma isInfiniteDescendingChain_of_non_acc (z : α) (hz : ¬Acc r z) :
   have : ∀ i, (i ≠ 0 → descendingChain r z i ≺ descendingChain r z i.pred) ∧ ¬Acc r (descendingChain r z i) := by
     intro i; induction' i with i ih
     · simpa using hz
-    · simp [descendingChain]
+    · simp only [ne_eq, Nat.add_eq_zero_iff, one_ne_zero, and_false, not_false_eq_true, Nat.pred_eq_sub_one,
+        add_tsub_cancel_right, forall_const]
       have : ∃ y, y ≺ (descendingChain r z i) ∧ ¬Acc r y := (not_acc_iff r).mp ih.2
       exact Classical.epsilon_spec this
   intro i; simpa using (this (i + 1)).1

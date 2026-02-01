@@ -94,7 +94,10 @@ lemma correspondence_satisfies : x ⊧ φ ↔ M ⊧/![x] φ¹ := by
   induction φ using NNFormula.rec' generalizing x with
   | hBox φ ihφ =>
     suffices x ⊧ □φ ↔ ∀ y, x ≺ y → M ⊧/![y] (φ¹) by
-      simp [standardTranslation];
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, standardTranslation, Fin.isValue, Semiformula.eval_all,
+        LogicalConnective.HomClass.map_imply, Semiformula.eval_operator_two, Semiterm.val_bvar, Matrix.cons_val_one,
+        Fin.Fin1.eq_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, lt_iff_rel, Semiformula.eval_substs,
+        LogicalConnective.Prop.arrow_eq];
       convert this;
       simp;
     constructor;
@@ -104,7 +107,10 @@ lemma correspondence_satisfies : x ⊧ φ ↔ M ⊧/![x] φ¹ := by
       exact ihφ.mpr $ h y Rxy;
   | hDia φ ihφ =>
     suffices x ⊧ ◇φ ↔ ∃ y, x ≺ y ∧ M ⊧/![y] (φ¹) by
-      simp [standardTranslation];
+      simp only [Nat.succ_eq_add_one, Nat.reduceAdd, standardTranslation, Fin.isValue, Semiformula.eval_ex,
+        LogicalConnective.HomClass.map_and, Semiformula.eval_operator_two, Semiterm.val_bvar, Matrix.cons_val_one,
+        Fin.Fin1.eq_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, lt_iff_rel, Semiformula.eval_substs,
+        LogicalConnective.Prop.and_eq];
       convert this;
       simp;
     constructor;

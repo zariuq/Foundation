@@ -129,7 +129,7 @@ namespace Positive
 end Positive
 
 lemma bv_eq_empty_of_positive {t : Semiterm L ξ 1} (ht : t.Positive) : t.bv = ∅ :=
-  Finset.eq_empty_of_forall_notMem <| by simp_all [Positive, Fin.eq_zero]
+  Finset.eq_empty_of_forall_notMem <| by simp_all [Positive]
 
 section freeVariables
 

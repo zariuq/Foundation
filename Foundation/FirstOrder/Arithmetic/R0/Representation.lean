@@ -1,7 +1,7 @@
 module
 
 public import Foundation.FirstOrder.Arithmetic.R0.Basic
-public import Mathlib.Computability.Primrec
+public import Mathlib.Computability.Primrec.List
 public import Foundation.Vorspiel.Arithmetic
 
 @[expose] public section

@@ -64,17 +64,28 @@ lemma or_eq (n m : ℕ) : or n m = if 0 < n ∨ 0 < m then 1 else 0 := by simp [
 def ball (n : ℕ) (φ : ℕ → ℕ) : ℕ := n.rec 1 (fun n ih => (φ n).pos.and ih)
 
 @[simp] lemma ball_pos_iff {φ : ℕ → ℕ} {n : ℕ} : 0 < ball n φ ↔ ∀ m < n, 0 < φ m := by
-  induction' n with n ih <;> simp [ball, Nat.lt_succ_iff] at*
-  · simp [ih]; exact ⟨
-    by rintro ⟨hn, hp⟩ m hm; rcases lt_or_eq_of_le hm with (hm | rfl); { exact hp _ hm }; { exact hn },
-    by intro h; exact ⟨h n (Nat.le_refl n), fun m hm => h m (le_of_lt hm)⟩⟩
+  induction' n with n ih
+  · simp only [ball, rec_zero, zero_lt_one, _root_.not_lt_zero, IsEmpty.forall_iff, implies_true]
+  · simp only [ball, and_pos_iff, pos_pos_iff, Nat.lt_succ_iff]
+    exact ⟨
+      by
+        rintro ⟨hn, hp⟩ m hm
+        rcases lt_or_eq_of_le hm with (hm | rfl)
+        · exact (ih.mp hp) _ hm
+        · exact hn
+      , by
+        intro h
+        refine ⟨h n (Nat.le_refl n), ?_⟩
+        exact ih.mpr (fun m hm => h m (le_of_lt hm))⟩
 
 @[simp] lemma ball_eq_zero_iff {φ : ℕ → ℕ} {n : ℕ} : ball n φ = 0 ↔ ∃ m < n, φ m = 0 := by
   simpa [-ball_pos_iff] using not_iff_not.mpr (ball_pos_iff (φ := φ) (n := n))
 
 lemma ball_pos_iff_eq_one {φ : ℕ → ℕ} {n : ℕ} : ball n φ = 1 ↔ 0 < ball n φ := by
-  induction' n with n _ <;> simp [ball, Nat.lt_succ_iff] at*
-  · constructor
+  induction' n with n _
+  · simp only [ball, rec_zero, zero_lt_one]
+  · simp only [ball, and_pos_iff, pos_pos_iff]
+    constructor
     · intro h; simpa using pos_of_eq_one h
     · intro h; simpa [and_eq_one] using h
 
@@ -142,11 +153,14 @@ lemma of_eq {n} {f g : List.Vector ℕ n →. ℕ} (hf : ArithPart₁ f) (H : �
 
 lemma bind (f : List.Vector ℕ n → ℕ →. ℕ) (hf : @ArithPart₁ (n + 1) fun v => f v.tail v.head) {g} (hg : @ArithPart₁ n g) :
     @ArithPart₁ n fun v => (g v).bind (f v) :=
-  (hf.comp (g :> fun i v => v.get i) (fun i => by cases i using Fin.cases <;> simp [*]; exact proj _)).of_eq (by
-    intro v; simp
+  (hf.comp (g :> fun i v => v.get i) (fun i => by
+    cases i using Fin.cases
+    · simp only [coe_some, Matrix.cons_val_zero, hg]
+    · simp only [coe_some, Matrix.cons_val_succ]; exact proj _)).of_eq (by
+    intro v; simp only [succ_eq_add_one, coe_some, bind_eq_bind]
     rcases Part.eq_none_or_eq_some (g v) with (hgv | ⟨x, hgv⟩)
     · simp [hgv, List.Vector.mOfFn]
-    · simp [hgv, Matrix.comp_vecCons']
+    · simp [hgv]
       have : List.Vector.mOfFn (fun i => (g :> fun j v => Part.some $ v.get j) i v) = pure (List.Vector.ofFn (x :> fun j => v.get j)) := by
         rw [←List.Vector.mOfFn_pure]; apply congr_arg
         funext i; cases i using Fin.cases <;> simp [hgv]
@@ -166,8 +180,8 @@ lemma comp₂ (f : ℕ → ℕ →. ℕ) (hf : @ArithPart₁ 2 fun v => f (v.get
   (hf.comp ![g, h] (fun i => i.cases hg (fun i => by simpa using hh))).of_eq
     (by intro i
         have : (fun j => (![↑g, h] : Fin 2 → List.Vector ℕ n →. ℕ) j i) = (fun j => pure (![g i, h i] j)) := by
-          funext j; cases j using Fin.cases <;> simp [Fin.eq_zero]
-        simp [Matrix.comp_vecCons']; simp [this] )
+          funext j; cases j using Fin.cases <;> simp
+        simp; simp [this] )
 
 lemma rfind' {n} {f : ℕ → List.Vector ℕ n → ℕ} (h : Arithmetic₁ (n := n + 1) (fun v => f v.head v.tail)) :
     ArithPart₁ (fun v => Nat.rfind fun n => Part.some (f n v = 0)) := rfind h
@@ -223,7 +237,7 @@ lemma comp₁ (f : ℕ → ℕ) (hf : @Arithmetic₁ 1 fun v => f (v.get 0)) {n 
 
 lemma comp₂ (f : ℕ → ℕ → ℕ) (hf : @Arithmetic₁ 2 fun v => f (v.get 0) (v.get 1)) {n g h} (hg : @Arithmetic₁ n g) (hh : @Arithmetic₁ n h) :
     @Arithmetic₁ n fun v => f (g v) (h v) :=
-  (hf.comp ![g, h] (fun i => i.cases hg (fun i => by simpa using hh))).of_eq (by intro i; simp [Matrix.comp_vecCons'])
+  (hf.comp ![g, h] (fun i => i.cases hg (fun i => by simpa using hh))).of_eq (by intro i; simp)
 
 lemma succ {n} (i : Fin n) : Arithmetic₁ (fun v => v.get i + 1) := (add 0 1).comp₂ _ (proj i) one
 
@@ -296,7 +310,7 @@ protected lemma sqrt {n} (i : Fin n) : Arithmetic₁ (fun v => sqrt (v.get i)) :
   exact this.of_eq <| by
     intro v; simp only [Bool.decide_and, PFun.coe_val, eq_some_iff, mem_rfind, mem_some_iff]
     constructor
-    · symm; simp; constructor
+    · symm; simp only [Bool.and_eq_true, decide_eq_true_eq]; constructor
       · exact sqrt_le (List.Vector.get v i)
       · exact lt_succ_sqrt (List.Vector.get v i)
     · intro m hm; symm
@@ -317,7 +331,7 @@ lemma sub {n} (i j : Fin n) : Arithmetic₁ (fun v => v.get i - v.get j) := by
       isLtNat_pos_iff, Bool.decide_or, Bool.decide_and, PFun.coe_val, eq_some_iff, mem_rfind,
       mem_some_iff, F]
     constructor
-    · symm; simp
+    · symm; simp only [Bool.or_eq_true, decide_eq_true_eq, Bool.and_eq_true]
       have : v.get i < v.get j ∨ v.get j ≤ v.get i := Nat.lt_or_ge _ _
       rcases this with (hv | hv)
       · right; exact ⟨hv, Nat.sub_eq_zero_of_le (Nat.le_of_lt hv)⟩
@@ -345,7 +359,7 @@ lemma unpair₁ {n} (i : Fin n) : Arithmetic₁ (fun v => (v.get i).unpair.1) :=
   have hh : Arithmetic₁ (fun v => sqrt (v.get i)) := Arithmetic₁.sqrt i
   have := if_pos hf hg hh
   exact this.of_eq <| by
-    intro v; simp [unpair]
+    intro v; simp only [isLtNat_pos_iff, unpair]
     by_cases v.get i - (v.get i).sqrt * (v.get i).sqrt < sqrt (v.get i) <;> simp [*]
 
 lemma unpair₂ {n} (i : Fin n) : Arithmetic₁ (fun v => (v.get i).unpair.2) := by
@@ -358,7 +372,7 @@ lemma unpair₂ {n} (i : Fin n) : Arithmetic₁ (fun v => (v.get i).unpair.2) :=
     (sub 0 1).comp₂ _ ((sub 0 1).comp₂ _ (proj i) ((mul 0 1).comp₂ _ (Arithmetic₁.sqrt i) (Arithmetic₁.sqrt i))) (Arithmetic₁.sqrt i)
   have := if_pos hf hg hh
   exact this.of_eq <| by
-    intro v; simp [unpair]
+    intro v; simp only [isLtNat_pos_iff, unpair]
     by_cases v.get i - (v.get i).sqrt * (v.get i).sqrt < sqrt (v.get i) <;> simp [*]
 
 lemma dvd (i j : Fin n) : Arithmetic₁ (fun v => isDvdNat (v.get i) (v.get j)) := by
@@ -385,12 +399,12 @@ lemma dvd (i j : Fin n) : Arithmetic₁ (fun v => isDvdNat (v.get i) (v.get j)) 
             have : v.get j ≠ 0 := hkm 0 (Nat.pos_of_ne_zero hkz)
             contradiction)
       refine ⟨k,
-        ⟨by symm; simp; left; simp [hk, mul_comm],
+        ⟨by symm; simp only [Bool.or_eq_true, decide_eq_true_eq]; left; simp [hk, mul_comm],
          by intro m hm; symm; simp [mul_comm m, Ne.symm (hkm m hm), le_of_lt (lt_of_lt_of_le hm hkvj)]⟩,
         by simp [isLeNat, hkvj]⟩
     · simp only [hv, ↓reduceIte]
       exact ⟨v.get j + 1, ⟨by symm; simp, by
-        intro m hm; symm; simp [lt_succ.mp hm]; intro A
+        intro m hm; symm; simp only [Bool.or_eq_false_iff, decide_eq_false_iff_not, not_lt, Nat.lt_succ_iff.mp hm, and_true]; intro A
         have : v.get i ∣ v.get j := by rw [←A]; exact Nat.dvd_mul_left (List.Vector.get v i) m
         contradiction⟩, by simp [isLeNat]⟩
 
@@ -399,7 +413,9 @@ lemma rem (i j : Fin n) : Arithmetic₁ (fun v => v.get i % v.get j) := by
   have : Arithmetic₁ F :=
     (dvd 0 1).comp₂ _ (proj j.succ) ((sub 0 1).comp₂ _ (proj i.succ) head)
   exact (ArithPart₁.rfindPos this).of_eq <| by
-    intro v; simp [F, Part.eq_some_iff, Nat.dvd_sub_mod]
+    intro v
+    simp only [get_cons_succ, head_cons, isDvdNat_pos_iff, PFun.coe_val, eq_some_iff, mem_rfind, dvd_sub_mod,
+      decide_true, mem_some_iff, false_eq_decide_iff, true_and, F]
     intro m hm A
     have hmvi : m < v.get i := lt_of_lt_of_le hm <| Nat.mod_le (v.get i) (v.get j)
     have hsub : v.get j ∣ v.get i % v.get j - m := by
@@ -435,17 +451,23 @@ lemma ball {φ : List.Vector ℕ n → ℕ → ℕ} (hp : @Arithmetic₁ (n + 1)
       mem_rfind, mem_some_iff, F]
     by_cases H : ∀ m < v.get i, 0 < φ v m
     · exact ⟨v.get i,
-        ⟨by symm; simp, by intro m hm; symm; simp [hm]; exact Nat.ne_zero_of_lt (H m hm)⟩,
-        by { simp [isEqNat]; symm; exact ball_pos_iff_eq_one.mpr (by simpa) }⟩
+        ⟨by symm; simp, by
+          intro m hm; symm
+          simp only [Bool.or_eq_false_iff, decide_eq_false_iff_not, not_le, hm, and_true]
+          exact Nat.ne_zero_of_lt (H m hm)⟩,
+        by { simp only [isEqNat, ↓reduceIte]; symm; exact ball_pos_iff_eq_one.mpr (by simpa) }⟩
     · have : ∃ x < List.Vector.get v i, φ v x = 0 ∧ ∀ y < x, φ v y ≠ 0 := by
-        simp at H; rcases least_number _ H with ⟨x, hx, hxl⟩
+        simp only [not_forall, not_lt, nonpos_iff_eq_zero] at H
+        rcases least_number _ H with ⟨x, hx, hxl⟩
         exact ⟨x, hx.1, hx.2, by
           intro y hy; have : y < v.get i → φ v y ≠ 0 := by simpa using hxl y hy
           exact this (lt_trans hy hx.1)⟩
       rcases this with ⟨x, hx, hpx, hlx⟩
       exact ⟨x, ⟨by symm; simp [hpx], by intro m hm; symm; simp [hlx m hm, lt_trans hm hx]⟩, by
-        have : isEqNat x (v.get i) = 0 := by simp [isEqNat, imp_false]; exact ne_of_lt hx
-        simp [this]; symm; simp; exact ⟨x, hx, hpx⟩⟩
+        have : isEqNat x (v.get i) = 0 := by
+          simp only [isEqNat, ite_eq_right_iff, one_ne_zero, imp_false]
+          exact ne_of_lt hx
+        simp only [this]; symm; simp only [ball_eq_zero_iff]; exact ⟨x, hx, hpx⟩⟩
 
 def recSequence (f : List.Vector ℕ n → ℕ) (g : List.Vector ℕ (n + 2) → ℕ) (z : ℕ) (v : List.Vector ℕ n) : List ℕ :=
   List.ofFn fun i : Fin (z + 1) => Nat.recOn i (f v) (fun y IH => g (y ::ᵥ IH ::ᵥ v))
@@ -470,8 +492,8 @@ lemma beta_unbeta_recSequence_succ (f : List.Vector ℕ n → ℕ) (g : List.Vec
 lemma beta_eq_rec (f : List.Vector ℕ n → ℕ) (g : List.Vector ℕ (n + 2) → ℕ) {z : ℕ} {v}
   (h0 : z.beta 0 = f v) (hs : ∀ i < m, z.beta (i + 1) = g (i ::ᵥ z.beta i ::ᵥ v)) :
     z.beta m = m.rec (f v) (fun y IH => g (y ::ᵥ IH ::ᵥ v)) := by
-  induction' m with m ih <;> simp [h0]
-  · rw [hs m (lt.base m), ←ih (fun i hi => hs i (lt.step hi))]
+  induction' m with m ih <;> simp only [h0, rec_zero]
+  · rw [hs m (Nat.lt_add_one m), ←ih (fun i hi => hs i (Nat.lt_succ_of_lt hi))]
 
 lemma prec {n f g} (hf : @Arithmetic₁ n f) (hg : @Arithmetic₁ (n + 2) g) :
     @Arithmetic₁ (n + 1) (fun v => v.head.rec (f v.tail) fun y IH => g (y ::ᵥ IH ::ᵥ v.tail)) := by
@@ -483,7 +505,8 @@ lemma prec {n f g} (hf : @Arithmetic₁ n f) (hg : @Arithmetic₁ (n + 2) g) :
     (g (v.head ::ᵥ Nat.beta v.tail.head v.head ::ᵥ v.tail.tail.tail))) :=
     (equal 0 1).comp₂ _
       ((beta 0 1).comp₂ _ head.tail ((succ 0).comp₁ _ head))
-      (hg.comp' $ head.cons $ ((beta 0 1).comp₂ _ head.tail head).cons $ by intro i; simp; exact proj _)
+      (hg.comp' $ head.cons $ ((beta 0 1).comp₂ _ head.tail head).cons $ by
+        intro i; simp only [succ_eq_add_one, Nat.add_one_sub_one, get_tail_succ]; exact proj _)
   have hF : Arithmetic₁ F := (and 0 1).comp₂ _
     ((equal 0 1).comp₂ _ ((beta 0 1).comp₂ _ head zero) hf.tail.tail)
     ((@ball (n + 2) (fun v i =>
@@ -498,7 +521,7 @@ lemma prec {n f g} (hf : @Arithmetic₁ n f) (hg : @Arithmetic₁ (n + 2) g) :
       mem_some_iff, F]
     suffices ∃ z : ℕ, z.beta 0 = f v.tail ∧ ∀ i < v.head, z.beta (i + 1) = g (i ::ᵥ z.beta i ::ᵥ v.tail) by
       rcases least_number _ this with ⟨z, ⟨hz0, hzs⟩, hzm⟩
-      exact ⟨z, ⟨by symm; simp [hz0]; exact hzs,
+      exact ⟨z, ⟨by symm; simp only [hz0, succ_eq_add_one, decide_true, Bool.true_and, decide_eq_true_eq]; exact hzs,
         by intro m hm; symm; simpa [imp_iff_not_or, not_or] using hzm m hm⟩,
         beta_eq_rec f g hz0 hzs⟩
     let l : List ℕ := recSequence f g v.head v.tail

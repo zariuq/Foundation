@@ -111,14 +111,17 @@ lemma next_consistent (H_consis : H.Consistent L) : (next L ψ H).Consistent L :
   . dsimp [next, h];
     grind;
 
+omit [Entailment.VF L] in
 lemma next_monotone₁ : H.1 ⊆ (next L ψ H).1 := by
   simp [next, insert₁, insert₂];
   split <;> grind;
 
+omit [Entailment.VF L] in
 lemma next_monotone₂ : H.2 ⊆ (next L ψ H).2 := by
   simp [next, insert₁, insert₂];
   split <;> grind;
 
+omit [Entailment.VF L] in
 lemma next_either_mem (ψ) : ψ ∈ (next L ψ H).1 ∨ ψ ∈ (next L ψ H).2 := by
   simp [next, insert₁, insert₂];
   split <;> grind;
@@ -132,6 +135,7 @@ lemma enum_consistent (H_consis : H.Consistent L) (Γ : List (SubformulaOf φ)) 
   | nil => assumption;
   | cons ψ Γ ih => apply next_consistent; exact ih;
 
+omit [Entailment.VF L] in
 lemma enum_monotone₁ {Γ : List (SubformulaOf φ)} : H.1 ⊆ (enum L H Γ).1 := by
   induction Γ with
   | nil => simp [enum];
@@ -140,6 +144,7 @@ lemma enum_monotone₁ {Γ : List (SubformulaOf φ)} : H.1 ⊆ (enum L H Γ).1 :
     . exact ih;
     . apply next_monotone₁
 
+omit [Entailment.VF L] in
 lemma enum_monotone₂ {Γ : List (SubformulaOf φ)} : H.2 ⊆ (enum L H Γ).2 := by
   induction Γ with
   | nil => simp [enum];
@@ -148,6 +153,7 @@ lemma enum_monotone₂ {Γ : List (SubformulaOf φ)} : H.2 ⊆ (enum L H Γ).2 :
     . exact ih;
     . apply next_monotone₂
 
+omit [Entailment.VF L] in
 lemma enum_of_mem (hψ : ψ ∈ Γ) : ψ ∈ (enum L H Γ).1 ∨ ψ ∈ (enum L H Γ).2 := by
   induction Γ with
   | nil => simp at hψ;
@@ -163,6 +169,7 @@ lemma enum_of_mem (hψ : ψ ∈ Γ) : ψ ∈ (enum L H Γ).1 ∨ ψ ∈ (enum L 
 
 noncomputable def sat (L : Logic ℕ) (H : HintikkaPair φ) : HintikkaPair φ := enum L H Finset.univ.toList
 
+omit [Entailment.VF L] in
 lemma sat_saturated : (sat L H).Saturated := by
   ext ψ;
   simp only [Finset.univ_eq_attach, Finset.mem_union, Finset.mem_attach, iff_true];
@@ -196,7 +203,9 @@ lemma lindenbaum (H : HintikkaPair φ) (H_consis : H.Consistent L) : ∃ H' : Co
   obtain ⟨H', _, _, H'_consis, H'_saturated⟩ := HintikkaPair.lindenbaum H H_consis;
   use ⟨H', ⟨H'_consis, H'_saturated⟩⟩;
 
+omit [Entailment.VF L] in
 @[simp, grind .] lemma consistent (H : ConsistentSaturatedHintikkaPair L φ) : HintikkaPair.Consistent L H.1 := H.2.1
+omit [Entailment.VF L] in
 @[simp, grind .] lemma saturated (H : ConsistentSaturatedHintikkaPair L φ) : HintikkaPair.Saturated H.1 := H.2.2
 
 @[grind .]

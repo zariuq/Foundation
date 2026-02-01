@@ -90,7 +90,7 @@ protected def pMorphism (F : Frame) (r : F) : F.mkTreeUnravelling r →ₚ F whe
     have ⟨_, _, h⟩ := @List.isChain_append _ F.Rel cx.1 [z] |>.mp (by rw [←hz]; exact cy.2.2);
     refine h (cx.1.getLast (by aesop)) ?hx (cy.1.getLast (by aesop)) ?hy;
     . exact List.getLast?_eq_getLast_of_ne_nil (by simp);
-    . simp;
+    . simp only [List.head?_cons, Option.mem_def, Option.some.injEq];
       convert @List.getLast_append_singleton (l := cx.1) (a := z) |>.symm;
   back {cx y} h := by
     use ⟨cx.1 ++ [y], ?_⟩;
@@ -104,7 +104,8 @@ protected def pMorphism (F : Frame) (r : F) : F.mkTreeUnravelling r →ₚ F whe
       . apply List.IsChain.append;
         . exact cx.2.2;
         . simp;
-        . intro z hz; simp;
+        . intro z hz;
+          simp only [List.head?_cons, Option.mem_def, Option.some.injEq, forall_eq'];
           convert h;
           exact List.mem_getLast?_eq_getLast hz |>.2;
 

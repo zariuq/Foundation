@@ -175,8 +175,8 @@ lemma iff_size_2 : m.size = 2 ↔
 @[simp]
 lemma add_size : (m₁ + m₂).size = m₁.size + m₂.size := by
   induction m₁ with
-  | empty => simp [add];
-  | box m₁ ih | dia m₁ ih | neg m₁ ih => simp [add, ih]; omega;
+  | empty => simp;
+  | box m₁ ih | dia m₁ ih | neg m₁ ih => simp [ih]; omega;
 
 lemma split_left₁ (hm : m.size = n₂ + 1) : ∃ m₁ m₂, m₁.size = 1 ∧ m₂.size = n₂ ∧ m = m₁ + m₂ := by
   match m with
@@ -328,7 +328,7 @@ variable {m : Modality} {L : Logic _} [L.IsNormal] {φ ψ : Formula ℕ} {s : Su
 
 lemma modality_congruence (h : L ⊢ φ ⭤ ψ) : L ⊢ (m φ) ⭤ (m ψ) := by
   induction m with
-  | empty => simpa [-iff_provable];
+  | empty => simpa;
   | box m' ih => apply box_congruence! ih;
   | dia m' ih => apply dia_congruence! ih;
   | neg m' ih => apply neg_congruence! ih;
@@ -413,8 +413,7 @@ instance : IsRefl _ (· ≅[L] ·) := ⟨by
 ⟩
 
 instance : IsTrans _ (· ≅[L] ·) := ⟨by
-  intro a b c;
-  intro E₁₂ E₂₃;
+  intro a b c E₁₂ E₂₃;
   have ⟨T₁₂, T₂₁⟩ := iff_equivalence_bi_translate.mp E₁₂;
   have ⟨T₂₃, T₃₂⟩ := iff_equivalence_bi_translate.mp E₂₃;
   apply iff_equivalence_bi_translate.mpr;
@@ -586,16 +585,16 @@ lemma allOfSize.iff_mem_eq_size : m ∈ allOfSize n ↔ m.size = n := by
     . intro;
       match m with
       | -  => contradiction;
-      | ∼m => simp_all [allOfSize];
-      | □m => simp_all [allOfSize];
-      | ◇m => simp_all [allOfSize];
+      | ∼m => simp_all;
+      | □m => simp_all;
+      | ◇m => simp_all;
 
 @[simp]
 lemma allOfSize.mem_of_size : m ∈ allOfSize m.size := by simp only [allOfSize.iff_mem_eq_size];
 
 @[simp]
 lemma allOfSize.iff_mem_zero : m ∈ allOfSize 0 ↔ m = - := by
-  simp [allOfSize.iff_mem_eq_size]
+  simp
 
 instance : DecidablePred (· ∈ allOfSize n) := by
   simp only [allOfSize.iff_mem_eq_size];
@@ -645,7 +644,7 @@ instance : DecidablePred (· ∈ allOfSizeLe n) := by
 
 @[simp]
 lemma allOfSizeLe.iff_mem_zero : m ∈ allOfSizeLe 0 ↔ m = - := by
-  simp [allOfSizeLe.iff_mem_le_size, allOfSize.iff_mem_eq_size]
+  simp [allOfSizeLe.iff_mem_le_size]
 
 @[simp]
 lemma allOfSizeLe.mem_empty : - ∈ allOfSizeLe n := by induction n <;> simp_all [allOfSizeLe];

@@ -35,8 +35,47 @@ end PLoN
 
 namespace NP.PLoN
 
-axiom sound : Sound Modal.NP PLoN.FrameClass.NP
-axiom complete : Complete Modal.NP PLoN.FrameClass.NP
+theorem sound : Sound Modal.NP PLoN.FrameClass.NP := by
+  classical
+  refine Hilbert.PLoN.instFrameClassSound (Ax := NP.axioms) (C := PLoN.FrameClass.NP) ?_
+  refine ⟨?_⟩
+  intro φ hφ
+  rcases hφ with ⟨ψ, hψ, s, rfl⟩
+  have hψ' : ψ = LO.Modal.Axioms.P := by
+    simpa [NP.axioms] using hψ
+  subst hψ'
+  simp only [LO.Modal.Axioms.P, Formula.subst.subst_neg, Formula.subst.subst_box, Formula.subst.subst_falsum]
+  intro F hF V x
+  have instNP : PLoN.Frame.NP F := hF
+  rcases instNP.P_serial x with ⟨y, hxy⟩
+  apply (Formula.PLoN.Forces.def_neg (x := x) (φ := (□(⊥ : Formula ℕ)))).2
+  apply (Formula.PLoN.Forces.not_box_def (x := x) (φ := (⊥ : Formula ℕ))).2
+  refine ⟨y, hxy, ?_⟩
+  simp [Formula.PLoN.Forces]
+
+theorem complete : Complete Modal.NP PLoN.FrameClass.NP := by
+  classical
+  letI : Sound Modal.NP PLoN.FrameClass.NP := sound
+  have hNonempty : Set.Nonempty (PLoN.FrameClass.NP) := by
+    refine ⟨PLoN.terminalFrame, ?_⟩
+    refine (show PLoN.Frame.NP PLoN.terminalFrame from ?_)
+    refine ⟨?_⟩
+    intro x
+    refine ⟨(), by trivial⟩
+  letI : Entailment.Consistent Modal.NP :=
+    Hilbert.PLoN.consistent_of_nonempty_frameClass (Ax := NP.axioms) (C := PLoN.FrameClass.NP) hNonempty
+  refine PLoN.instComplete_of_mem_canonicalFrame (𝓢 := Modal.NP) (C := PLoN.FrameClass.NP) ?_
+  dsimp [PLoN.FrameClass.NP]
+  refine ⟨?_⟩
+  intro Ω
+  refine ⟨Ω, ?_⟩
+  constructor
+  · have hp : Modal.NP ⊢ LO.Modal.Axioms.P := by
+      simp [LO.Modal.Axioms.P, Entailment.axiomP! (𝓢 := Modal.NP)]
+    have hall : ∀ Ω : MaximalConsistentSet Modal.NP, LO.Modal.Axioms.P ∈ Ω :=
+      (MaximalConsistentSet.iff_forall_mem_provable (𝓢 := Modal.NP) (φ := LO.Modal.Axioms.P)).2 hp
+    exact hall Ω
+  · simp
 
 end NP.PLoN
 

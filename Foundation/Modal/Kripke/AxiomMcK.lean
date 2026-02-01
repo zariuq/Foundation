@@ -211,7 +211,7 @@ instance [Modal.K4McK ⪯ (Hilbert.Normal Ax)] : (canonicalFrame (Hilbert.Normal
     . replace hC : (Γ'₁ ∪ Γ'₂).toSet *⊢[(Hilbert.Normal Ax)] ⊥ := by
         convert hC;
         ext φ;
-        simp only [Set.mem_preimage, Function.iterate_one, Finset.mem_union, Finset.mem_filter, Finset.mem_insert, Γ'₁, Γ', Γ'₂];
+        simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_insert, Γ'₁, Γ', Γ'₂];
         constructor;
         . tauto;
         . rintro (rfl | h);

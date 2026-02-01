@@ -208,12 +208,14 @@ instance FFP : Complete Modal.GL Kripke.FrameClass.finite_GL := ⟨by
     use (miniCanonicalModel φ), X;
     constructor;
     . tauto;
-    . apply truthlemma ?_ |>.not.mpr;
-      apply iff_not_mem_compl ?_ |>.not.mpr
-      . push_neg;
-        apply hX₁;
-        tauto;
-      all_goals grind;
+    . apply truthlemma ?_ |>.not.mpr
+      ·
+        apply iff_not_mem_compl ?_ |>.not.mpr
+        · push_neg;
+          apply hX₁;
+          tauto;
+        · grind
+      · grind
 ⟩
 
 end GL.Kripke

@@ -68,7 +68,7 @@ instance isAsymmetric [F.IsAsymmetric] : (F.extendRoot n).IsAsymmetric := ⟨by
   match x, y with
   | .inr x, .inr y =>
     suffices ¬y ≺ x by tauto;
-    exact IsAsymm.asymm _ _ hxy;
+    exact Std.Asymm.asymm _ _ hxy;
   | .inl i, .inl j => simp_all [Frame.extendRoot]; omega;
   | .inl _, .inr _ => simp_all [Frame.extendRoot];
   | .inr _, .inl _ => simp_all [Frame.extendRoot];

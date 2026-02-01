@@ -21,10 +21,10 @@ namespace subformulasGrz
 @[grind ⇒] protected lemma mem_of_mem_subformula (h : ψ ∈ φ.subformulas) : ψ ∈ φ.subformulasGrz := by grind;
 @[grind ⇒] lemma mem_boximpbox (h : ψ ∈ (□⁻¹'φ.subformulas)) : □(ψ ➝ □ψ) ∈ φ.subformulasGrz := by grind;
 
-@[grind ⇒]
-protected lemma mem_imp (h : (ψ ➝ χ) ∈ φ.subformulasGrz) : ψ ∈ φ.subformulasGrz ∧ χ ∈ φ.subformulasGrz := by
+  @[grind ⇒]
+  protected lemma mem_imp (h : (ψ ➝ χ) ∈ φ.subformulasGrz) : ψ ∈ φ.subformulasGrz ∧ χ ∈ φ.subformulasGrz := by
   simp_all only [
-    Finset.mem_union, Finset.mem_image, Finset.mem_preimage, Function.iterate_one,
+    Finset.mem_union, Finset.mem_image,
     reduceCtorEq, and_false, exists_const, or_false
   ];
   grind;
@@ -101,7 +101,7 @@ lemma truthlemma_lemma1
     simp [Finset.LO.preboxItr];
     tauto;
   . right;
-    simp only [Finset.mem_image, Finset.mem_union, Finset.mem_preimage, Function.iterate_one];
+    simp only [Finset.mem_image, Finset.mem_union];
     use ψ;
     grind;
   . have := X.closed.subset hr;

@@ -165,21 +165,21 @@ lemma iff_boxdot_reflexive_closure : (Satisfies ⟨F, V⟩ x (φᵇ)) ↔ (Satis
     . intro h hp;
       apply ihq.mpr;
       exact h $ ihp.mp hp;
-  | hbox φ ih =>
-    simp [Formula.boxdotTranslate, Box.boxdot, Satisfies];
-    constructor;
-    . rintro ⟨h₁, h₂⟩;
-      intro y Rxy;
-      rcases (Relation.reflGen_iff _ _ _ |>.mp Rxy) with (rfl | Rxy);
-      . apply ih.mp h₁;
-      . exact ih.mp $ h₂ y Rxy;
-    . rintro h;
+    | hbox φ ih =>
+      simp only [boxdotTranslate, Box.boxdot, Satisfies, LogicalConnective.Prop.arrow_eq, imp_false, not_forall,
+        not_exists, not_not];
       constructor;
-      . exact ih.mpr $ @h x ReflGen.refl;
-      . intro y Rxy;
+      . rintro ⟨h₁, h₂⟩;
+        intro y Rxy;
+        rcases (Relation.reflGen_iff _ _ _ |>.mp Rxy) with (rfl | Rxy);
+        . apply ih.mp h₁;
+        . exact ih.mp $ h₂ y Rxy;
+      . rintro h;
+        refine ⟨ih.mpr (h x ReflGen.refl), ?_⟩;
+        intro y Rxy;
         apply ih.mpr;
-        exact @h y (ReflGen.single Rxy);
-  | _ => rfl;
+        exact h y (ReflGen.single Rxy);
+    | _ => rfl;
 
 lemma iff_frame_boxdot_reflexive_closure : (F ⊧ (φᵇ)) ↔ ((F^=) ⊧ φ) := by
   constructor;
@@ -204,7 +204,7 @@ lemma iff_reflexivize_irreflexivize [F.IsReflexive] {x : F.World} {V} : (Satisfi
       apply ihp (x := y) |>.mp;
       exact h y $ by
         induction Rxy with
-        | refl => apply IsRefl.refl;
+        | refl => apply Std.Refl.refl;
         | single h => exact h.1;
     . intro h y Rxy;
       by_cases e : x = y;

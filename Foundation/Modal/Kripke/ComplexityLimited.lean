@@ -43,7 +43,8 @@ lemma iff_satisfy_complexityLimitedModel_aux
         constructor;
         . assumption;
         . apply Rel.Iterate.forward.mpr;
-          use x; constructor; assumption; exact Rxy;
+          refine ⟨x, ?_, Rxy⟩;
+          assumption
     . rintro h y Rxy;
       apply ihq (subformulas.mem_box hq) ?_ |>.mpr;
       . exact h _ Rxy;
@@ -55,19 +56,17 @@ lemma iff_satisfy_complexityLimitedModel_aux
   | himp ψ₁ ψ₂ ihq₁ ihq₂ =>
     obtain ⟨n, hn, hx⟩ := hx;
     simp [Formula.complexity] at hn;
+    have hx₁ : ∃ n ≤ φ.complexity - ψ₁.complexity, r ≺^[n] x := ⟨n, by omega, hx⟩
+    have hx₂ : ∃ n ≤ φ.complexity - ψ₂.complexity, r ≺^[n] x := ⟨n, by omega, hx⟩
     constructor;
     . rintro hq₁ hq₂;
-      apply ihq₂ (by grind) ?_ |>.mp;
+      apply (ihq₂ (by grind) hx₂).mp;
       apply hq₁;
-      apply ihq₁ (by grind) ?_ |>.mpr hq₂;
-      use n; constructor; omega; assumption;
-      use n; constructor; omega; assumption;
+      exact (ihq₁ (by grind) hx₁).mpr hq₂;
     . rintro hq₁ hq₂;
-      apply ihq₂ (subformulas.mem_imp (by assumption) |>.2) ?_ |>.mpr;
+      apply (ihq₂ (subformulas.mem_imp (by assumption) |>.2) hx₂).mpr;
       apply hq₁;
-      apply ihq₁ (subformulas.mem_imp (by assumption) |>.1) ?_ |>.mp hq₂;
-      use n; constructor; omega; assumption;
-      use n; constructor; omega; assumption;
+      exact (ihq₁ (subformulas.mem_imp (by assumption) |>.1) hx₁).mp hq₂;
   | _ => simp [Satisfies, complexityLimitedModel];
 
 lemma iff_satisfy_complexityLimitedModel : r ⊧ φ ↔ Satisfies (complexityLimitedModel M r φ) ⟨r, (by use 0; simp)⟩ φ := by
@@ -77,10 +76,12 @@ lemma iff_satisfy_complexityLimitedModel : r ⊧ φ ↔ Satisfies (complexityLim
 lemma complexityLimitedModel_subformula_closedAux {ψ₁ ψ₂ : Formula ℕ} (hq₁ : φ ∈ ψ₁.subformulas) (hq₂ : φ ∈ ψ₂.subformulas)
   : Satisfies (complexityLimitedModel M r ψ₁) ⟨r, (by use 0; simp)⟩ φ → Satisfies (complexityLimitedModel M r ψ₂) ⟨r, (by use 0; simp)⟩ φ := by
   intro h;
-  apply @iff_satisfy_complexityLimitedModel_aux M r r ψ₂ φ hq₂ ?_ |>.mp;
-  apply @iff_satisfy_complexityLimitedModel_aux M r r ψ₁ φ hq₁ ?_ |>.mpr h;
-  . use 0; simp;
-  . use 0; simp;
+  have hx0 : ∃ n ≤ ψ₁.complexity - φ.complexity, r ≺^[n] r := by
+    use 0; simp;
+  have hx0' : ∃ n ≤ ψ₂.complexity - φ.complexity, r ≺^[n] r := by
+    use 0; simp;
+  exact (@iff_satisfy_complexityLimitedModel_aux M r r ψ₂ φ hq₂ hx0').mp
+    <| (@iff_satisfy_complexityLimitedModel_aux M r r ψ₁ φ hq₁ hx0).mpr h
 
 lemma complexityLimitedModel_subformula_closed (hq : φ ∈ ψ.subformulas)
   : Satisfies (complexityLimitedModel M r φ) ⟨r, (by use 0; simp)⟩ φ ↔ Satisfies (complexityLimitedModel M r ψ) ⟨r, (by use 0; simp)⟩ φ := by

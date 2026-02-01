@@ -125,13 +125,13 @@ protected instance : Semantics.Tarski (M.World) where
 
 lemma iff_def : x ⊧ φ ⭤ ψ ↔ (x ⊧ φ ↔ x ⊧ ψ) := by simp;
 
-@[simp] lemma negneg_def : x ⊧ ∼∼φ ↔ x ⊧ φ := by simp [Semantics.NotModels];
+@[simp] lemma negneg_def : x ⊧ ∼∼φ ↔ x ⊧ φ := by simp;
 
 protected lemma not_and_def : ¬(x ⊧ φ ⋏ ψ) ↔ ¬(x ⊧ φ) ∨ ¬(x ⊧ ψ) := by simp [-not_and, not_and_or];
 
 lemma boxItr_dn : x ⊧ □^[n](∼∼φ) ↔ x ⊧ □^[n]φ := by
   induction n generalizing x with
-  | zero => simp [Semantics.NotModels];
+  | zero => simp;
   | succ n ih =>
     suffices x ⊧ (□□^[n](∼∼φ)) ↔ x ⊧ (□□^[n]φ) by simpa;
     constructor;
@@ -144,7 +144,7 @@ lemma box_dn : x ⊧ □(∼∼φ) ↔ x ⊧ □φ := boxItr_dn (n := 1)
 
 lemma diaItr_dn : x ⊧ ◇^[n](∼∼φ) ↔ x ⊧ ◇^[n]φ := by
   induction n generalizing x with
-  | zero => simp [Semantics.NotModels];
+  | zero => simp;
   | succ n ih =>
     suffices x ⊧ (◇◇^[n](∼∼φ)) ↔ x ⊧ (◇◇^[n]φ) by simpa;
     constructor;
@@ -287,11 +287,11 @@ lemma intro_dia_equiv (h : ∀ y, x ≺ y → (y ⊧ φ ↔ y ⊧ ψ)) : x ⊧ �
   apply intro_diaItr_equiv (n := 1);
   simpa;
 
-lemma dia_dual : x ⊧ ◇φ ↔ x ⊧ ∼□(∼φ) := by simp [Semantics.NotModels, Satisfies];
+lemma dia_dual : x ⊧ ◇φ ↔ x ⊧ ∼□(∼φ) := by simp [Satisfies];
 
 lemma diaItr_dual : x ⊧ ◇^[n]φ ↔ x ⊧ ∼□^[n](∼φ) := by
   induction n generalizing x with
-  | zero => simp [Semantics.NotModels];
+  | zero => simp;
   | succ n ih =>
     constructor;
     . intro h;
@@ -319,7 +319,7 @@ lemma diaItr_dual : x ⊧ ◇^[n]φ ↔ x ⊧ ∼□^[n](∼φ) := by
       . apply ih.mpr;
         exact Satisfies.not_def.mpr hy;
 
-lemma box_dual : x ⊧ □φ ↔ x ⊧ ∼◇(∼φ) := by simp [Semantics.NotModels, Satisfies];
+lemma box_dual : x ⊧ □φ ↔ x ⊧ ∼◇(∼φ) := by simp [Satisfies];
 
 lemma boxItr_dual : x ⊧ □^[n]φ ↔ x ⊧ ∼◇^[n](∼φ) := by
   constructor;
@@ -340,7 +340,7 @@ lemma boxItr_dual : x ⊧ □^[n]φ ↔ x ⊧ ∼◇^[n](∼φ) := by
     apply boxItr_dn.not.mpr;
     exact h;
 
-lemma not_imp : ¬(x ⊧ φ ➝ ψ) ↔ x ⊧ φ ⋏ ∼ψ := by simp [Semantics.NotModels];
+lemma not_imp : ¬(x ⊧ φ ➝ ψ) ↔ x ⊧ φ ⋏ ∼ψ := by simp;
 
 lemma iff_subst_self {x : F.World} (s : Substitution ℕ) :
   letI U : Kripke.Valuation F := λ w a => Satisfies ⟨F, V⟩ w ((atom a)⟦s⟧);

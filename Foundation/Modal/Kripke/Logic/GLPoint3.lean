@@ -142,7 +142,7 @@ private instance complete.filteredModel.isFiniteGLPoint3 : Frame.IsFiniteGLPoint
       );
     simp only [
       Function.Surjective, and_imp, Sum.exists, exists_const, Subtype.exists,
-      Subtype.forall, Finset.mem_preimage, Function.iterate_one, Subtype.mk.injEq, forall_eq_or_imp,
+      Subtype.forall, Subtype.mk.injEq, forall_eq_or_imp,
       true_or, forall_exists_index, true_and
     ];
     intro x Rvx ψ hψ hv₁ hv₂ hv₃;
@@ -256,7 +256,7 @@ instance : Modal.GL ⪱ Modal.GLPoint3 := by
           irrefl := by omega
         };
       . suffices (0 : M.World) ≺ 1 ∧ (∀ x, (1 : M.World) ≺ x → x = 1) ∧ (0 : M.World) ≺ 2 ∧ ∀ x, (2 : M.World) ≺ x → x = 2 by
-          simp [Semantics.Models, Satisfies, ValidOnFrame, M];
+          simp [Semantics.Models, Satisfies, M];
           grind;
         refine ⟨?_, ?_, ?_, ?_⟩;
         all_goals omega;

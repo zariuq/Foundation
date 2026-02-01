@@ -8,7 +8,7 @@ public import Mathlib.Data.Finite.Card
 @[expose] public section
 
 def IsEquiv.equivalence [IsEquiv α r] : Equivalence r where
-  refl := IsRefl.refl
+  refl := Std.Refl.refl
   symm {_ _} := by apply Std.Symm.symm
   trans {_ _ _} := by apply IsTrans.trans
 
@@ -107,7 +107,7 @@ instance [F.IsReflexive] : IsRefl (Cluster F) (· ≼ ·)  := ⟨by
   rintro X;
   obtain ⟨x, rfl⟩ := Quotient.exists_rep X;
   simp only [Cluster.rel, Quotient.lift_mk];
-  apply IsRefl.refl;
+  apply Std.Refl.refl;
 ⟩
 
 instance [IsTotal _ F] : IsTotal (Cluster F) (· ≼ ·) := ⟨by
@@ -141,7 +141,7 @@ instance : IsAsymm (Cluster F) (· ≺ ·) := ⟨by
   intro X Y ⟨RXY, _⟩;
   obtain ⟨x, rfl⟩ := Quotient.exists_rep X;
   obtain ⟨y, rfl⟩ := Quotient.exists_rep Y;
-  simp_all [Cluster.strict_rel, Quotient.lift_mk, clusterEquiv];
+  simp_all [Cluster.strict_rel, Quotient.lift_mk];
 ⟩
 
 instance : IsStrictOrder (Cluster F) (· ≺ ·) where

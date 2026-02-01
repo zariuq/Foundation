@@ -50,7 +50,12 @@ lemma unprovable_AxiomD : Modal.EP ⊬ Axioms.D (.atom a) := by
   constructor;
   . constructor;
     intro x;
-    match x with | 0 => simp; | 1 => simp; tauto_set;
+    match x with
+    | 0 =>
+      simp [Fin.isValue];
+    | 1 =>
+      simp only [Fin.isValue, Set.mem_insert_iff, Set.empty_ne_singleton, Set.mem_singleton_iff];
+      tauto_set;
   . apply not_imp_not.mpr isSerial_of_valid_axiomD;
     by_contra! hC;
     have := @hC |>.serial {1} 1;

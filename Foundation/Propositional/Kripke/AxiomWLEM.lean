@@ -87,8 +87,7 @@ instance [Entailment.HasAxiomWLEM 𝓢] : (canonicalFrame 𝓢).IsPiecewiseStron
     use w;
     simpa using hw;
 
-  intro Γ Δ;
-  intro hΓ hΔ h;
+  intro Γ Δ hΓ hΔ h;
   simp only [Set.subset_empty_iff, Finset.coe_eq_empty] at hΓ hΔ;
   subst hΔ;
   simp only [Finset.disj_empty] at h;
@@ -118,13 +117,13 @@ instance [Entailment.HasAxiomWLEM 𝓢] : (canonicalFrame 𝓢).IsPiecewiseStron
     . suffices φ ∈ Θx ∪ Θy by
         apply Finset.mem_union.mpr;
         tauto;
-      simp [Θx, Θy, Θz];
+      simp [Θx, Θy];
       tauto;
     . suffices φ ∈ Θx ∪ Θz by
         rw [(show Θx ∪ Θy ∪ Θz = Θx ∪ Θz ∪ Θy by rw [Finset.union_assoc, Finset.union_comm Θy, ←Finset.union_assoc])]
         apply Finset.mem_union.mpr;
         tauto;
-      simp [Θx, Θy, Θz];
+      simp [Θx, Θz];
       tauto;
   have : 𝓢 ⊢ Θx.conj ➝ Θy.conj ➝ ∼Θz.conj := CK!_iff_CC!.mp $
     (C!_trans (CK!_iff_CC!.mp $ C!_trans (K!_left K!_assoc) this) (K!_right $ neg_equiv!));
@@ -133,11 +132,11 @@ instance [Entailment.HasAxiomWLEM 𝓢] : (canonicalFrame 𝓢).IsPiecewiseStron
 
   have mem_Θx_x : Θx.conj ∈ x.1.1 := iff_mem₁_fconj.mpr $ by
     intro φ;
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Θx, Θy, Θz];
+    simp only [Finset.coe_filter, Set.mem_setOf_eq, Θx];
     tauto;
   have mem_Θz_z : Θz.conj ∈ z.1.1 := iff_mem₁_fconj.mpr $ by
     intro φ;
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Θz, Θy, Θx];
+    simp only [Finset.coe_filter, Set.mem_setOf_eq, Θz];
     tauto;
 
   have nmem_nΘz_z : ∼Θz.conj ∉ z.1.1 := not_mem₁_neg_of_mem₁ mem_Θz_z;

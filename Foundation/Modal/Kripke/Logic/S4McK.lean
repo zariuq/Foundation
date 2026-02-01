@@ -62,7 +62,7 @@ instance : Modal.S4 ⪱ Modal.S4McK := by
           refl := by tauto;
           trans := by tauto;
         }
-      . suffices ∃ x, x ≠ (0 : M.World) by simp [M, Transitive, Reflexive, Semantics.Models, Satisfies];
+      . suffices ∃ x, x ≠ (0 : M.World) by simp [M, Semantics.Models, Satisfies];
         use 1;
         trivial;
 

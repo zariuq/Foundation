@@ -313,7 +313,7 @@ lemma le_log_of_mem {i a : V} (h : i ∈ a) : i ≤ log a := (exp_le_iff_le_log 
 lemma succ_mem_iff_mem_div_two {i a : V} : i + 1 ∈ a ↔ i ∈ a / 2 := by
   simp [mem_iff_bit, Bit, LenBit.iff_rem, exp_succ, Arithmetic.div_mul]
 
-lemma lt_length_of_mem {i a : V} (h : i ∈ a) : i < ‖a‖ := by
+lemma lt_length_of_mem {i a : V} (h : i ∈ a) : i < ‖a‖ₗ := by
   simpa [length_of_pos (pos_of_nonempty h), ←le_iff_lt_succ] using le_log_of_mem h
 
 lemma lt_exp_iff {a i : V} : a < Exp.exp i ↔ ∀ j ∈ a, j < i :=
@@ -499,9 +499,11 @@ lemma finset_comprehension_aux (Γ : Polarity) {P : V → Prop} (hP : Γ-[m]-Pre
     ⟨under a, pred_lt_self_of_pos (by simp), fun i hi _ ↦ by simpa [mem_under_iff] using hi⟩
   rcases this with ⟨s, hsn, hs⟩
   have : Γ.alt-[m]-Predicate (fun s : V ↦ ∀ i < a, P i → i ∈ s) := by
-    apply HierarchySymbol.Definable.ball_blt; simp; apply HierarchySymbol.Definable.imp
-    · simpa using HierarchySymbol.Definable.bcomp₁ (by definability)
-    · simpa using HierarchySymbol.Definable.bcomp₂ (by definability) (by definability)
+    apply HierarchySymbol.Definable.ball_blt
+    · simp
+    · apply HierarchySymbol.Definable.imp
+      · simpa using HierarchySymbol.Definable.bcomp₁ (by definability)
+      · simpa using HierarchySymbol.Definable.bcomp₂ (by definability) (by definability)
   have : ∃ t, (∀ i < a, P i → i ∈ t) ∧ ∀ t' < t, ∃ x < a, P x ∧ x ∉ (t' : V) := by
     simpa using InductionOnHierarchy.least_number Γ.alt m this hs
   rcases this with ⟨t, ht, t_minimal⟩

@@ -68,7 +68,8 @@ lemma symm_𝒩 : F.quasiFiltering.𝒩 = F.supplementation.intersectionClosure.
     refine ⟨?_, ?_, ?_⟩;
     . simpa;
     . simp; rfl;
-    . simp [Frame.supplementation];
+    . simp only [supplementation, Set.mem_setOf_eq, Finset.mem_image, forall_exists_index, and_imp,
+        forall_apply_eq_imp_iff₂];
       intro Yi hYi;
       use Yi;
       constructor;
@@ -91,7 +92,8 @@ lemma symm_𝒩 : F.quasiFiltering.𝒩 = F.supplementation.intersectionClosure.
       refine ⟨?_, ?_, ?_⟩;
       . simpa [Zs];
       . rfl;
-      . simp [Zs];
+      . simp only [Set.mem_setOf_eq, Finset.univ_eq_attach, Finset.mem_image, Finset.mem_attach, true_and,
+          Subtype.exists, forall_exists_index, Zs];
         rintro _ Yi hYi rfl;
         apply hYs₂ Yi hYi |>.choose_spec |>.2;
 

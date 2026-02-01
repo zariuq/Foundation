@@ -189,7 +189,7 @@ instance [Entailment.HasAxiomKrieselPutnam 𝓢] : (canonicalFrame 𝓢).Satisfi
       obtain ⟨Γ, Δ, hΓ, hΔ, hΓΔ⟩ := this;
       simp only [Set.subset_empty_iff, Finset.coe_eq_empty] at hΔ;
       subst hΔ;
-      simp only [Finset.disj_empty, Decidable.not_not] at hΓΔ;
+      simp only [Finset.disj_empty] at hΓΔ;
       use ({ φ ∈ Γ | φ ∈ v.1.1}).conj;
       constructor;
       . apply iff_mem₁_fconj.mpr;
@@ -216,7 +216,7 @@ instance [Entailment.HasAxiomKrieselPutnam 𝓢] : (canonicalFrame 𝓢).Satisfi
       obtain ⟨Γ, Δ, hΓ, hΔ, hΓΔ⟩ := this;
       simp only [Set.subset_empty_iff, Finset.coe_eq_empty] at hΔ;
       subst hΔ;
-      simp only [Finset.disj_empty, Decidable.not_not] at hΓΔ;
+      simp only [Finset.disj_empty] at hΓΔ;
       use ({ φ ∈ Γ | φ ∈ v.1.1}).conj;
       constructor;
       . apply iff_mem₁_fconj.mpr;

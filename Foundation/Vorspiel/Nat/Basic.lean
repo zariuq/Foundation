@@ -31,9 +31,13 @@ infixr:70 " :>ₙ " => cases
 
 lemma rec_eq {α : Sort*} (a : α) (f₁ f₂ : ℕ → α → α) (n : ℕ) (H : ∀ m < n, ∀ a, f₁ m a = f₂ m a) :
     (n.rec a f₁ : α) = n.rec a f₂ := by
-  induction' n with n ih <;> simp
-  · have : (n.rec a f₁ : α) = n.rec a f₂ := ih (fun m hm a =>  H m (Nat.lt.step hm) a)
-    simpa [this] using H n (Nat.lt.base n) (n.rec a f₂)
+  induction' n with n ih
+  · simp
+  · have ih' : (n.rec a f₁ : α) = n.rec a f₂ :=
+      ih (fun m hm a => H m (Nat.lt_succ_of_lt hm) a)
+    have hfn : f₁ n (n.rec a f₂) = f₂ n (n.rec a f₂) :=
+      H n (Nat.lt_succ_self n) (n.rec a f₂)
+    simp [ih', hfn]
 
 lemma least_number (P : ℕ → Prop) (hP : ∃ x, P x) : ∃ x, P x ∧ ∀ z < x, ¬P z := by
   rcases hP with ⟨n, hn⟩

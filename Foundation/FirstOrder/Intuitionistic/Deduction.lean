@@ -103,28 +103,28 @@ def depth {φ} : Λ ⊢! φ → ℕ
   | gen b   => depth b + 1
   | _       => 0
 
-scoped notation "‖" d "‖" => depth d
+scoped notation "⟪" d "⟫" => depth d
 
-@[simp] lemma depth_eaxm (h : φ ∈ Λ) : ‖eaxm h‖ = 0 := rfl
-@[simp] lemma depth_mdp (b : Λ ⊢! φ ➝ ψ) (d : Λ ⊢! φ) : ‖mdp b d‖ = max ‖b‖ ‖d‖ + 1 := rfl
-@[simp] lemma depth_gen (b : Λ ⊢! Rewriting.free φ) : ‖gen b‖ = ‖b‖ + 1 := rfl
-@[simp] lemma depth_verum : ‖(verum : Λ ⊢! ⊤)‖ = 0 := rfl
-@[simp] lemma depth_implyK (φ ψ) : ‖implyK (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_implyS (φ ψ χ) : ‖implyS (Λ := Λ) φ ψ χ‖ = 0 := rfl
-@[simp] lemma depth_and₁ (φ ψ) : ‖and₁ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_and₂ (φ ψ) : ‖and₂ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_and₃ (φ ψ) : ‖and₃ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_or₁ (φ ψ) : ‖or₁ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_or₂ (φ ψ) : ‖or₂ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_or₃ (φ ψ χ) : ‖or₃ (Λ := Λ) φ ψ χ‖ = 0 := rfl
-@[simp] lemma depth_all₁ (φ t) : ‖all₁ (Λ := Λ) φ t‖ = 0 := rfl
-@[simp] lemma depth_all₂ (φ ψ) : ‖all₂ (Λ := Λ) φ ψ‖ = 0 := rfl
-@[simp] lemma depth_ex₁ (t φ) : ‖ex₁ (Λ := Λ) t φ‖ = 0 := rfl
-@[simp] lemma depth_ex₂ (φ ψ) : ‖ex₂ (Λ := Λ) φ ψ‖ = 0 := rfl
+@[simp] lemma depth_eaxm (h : φ ∈ Λ) : ⟪eaxm h⟫ = 0 := rfl
+@[simp] lemma depth_mdp (b : Λ ⊢! φ ➝ ψ) (d : Λ ⊢! φ) : ⟪mdp b d⟫ = max ⟪b⟫ ⟪d⟫ + 1 := rfl
+@[simp] lemma depth_gen (b : Λ ⊢! Rewriting.free φ) : ⟪gen b⟫ = ⟪b⟫ + 1 := rfl
+@[simp] lemma depth_verum : ⟪(verum : Λ ⊢! ⊤)⟫ = 0 := rfl
+@[simp] lemma depth_implyK (φ ψ) : ⟪implyK (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_implyS (φ ψ χ) : ⟪implyS (Λ := Λ) φ ψ χ⟫ = 0 := rfl
+@[simp] lemma depth_and₁ (φ ψ) : ⟪and₁ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_and₂ (φ ψ) : ⟪and₂ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_and₃ (φ ψ) : ⟪and₃ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_or₁ (φ ψ) : ⟪or₁ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_or₂ (φ ψ) : ⟪or₂ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_or₃ (φ ψ χ) : ⟪or₃ (Λ := Λ) φ ψ χ⟫ = 0 := rfl
+@[simp] lemma depth_all₁ (φ t) : ⟪all₁ (Λ := Λ) φ t⟫ = 0 := rfl
+@[simp] lemma depth_all₂ (φ ψ) : ⟪all₂ (Λ := Λ) φ ψ⟫ = 0 := rfl
+@[simp] lemma depth_ex₁ (t φ) : ⟪ex₁ (Λ := Λ) t φ⟫ = 0 := rfl
+@[simp] lemma depth_ex₂ (φ ψ) : ⟪ex₂ (Λ := Λ) φ ψ⟫ = 0 := rfl
 
-@[simp] lemma depth_cast (b : Λ ⊢! φ) (e : φ = ψ) : ‖HilbertProofᵢ.cast b e‖ = ‖b‖ := by rcases e; rfl
+@[simp] lemma depth_cast (b : Λ ⊢! φ) (e : φ = ψ) : ⟪HilbertProofᵢ.cast b e⟫ = ⟪b⟫ := by rcases e; rfl
 
-@[simp] lemma depth_mdp' (b : Λ ⊢! φ ➝ ψ) (d : Λ ⊢! φ) : ‖b ⨀ d‖ = max ‖b‖ ‖d‖ + 1 := rfl
+@[simp] lemma depth_mdp' (b : Λ ⊢! φ ➝ ψ) (d : Λ ⊢! φ) : ⟪b ⨀ d⟫ = max ⟪b⟫ ⟪d⟫ + 1 := rfl
 
 def specialize {φ} (b : Λ ⊢! ∀' φ) (t) : Λ ⊢! φ/[t] := all₁ φ t ⨀ b
 
@@ -233,7 +233,7 @@ def rewrite (f : ℕ → SyntacticTerm L) : Λ ⊢! φ → Λ ⊢! Rew.rewrite f
     (ex₂ (Rew.rewrite (⇑Rew.bShift ∘ f) ▹ φ) (Rew.rewrite f ▹ ψ))
     (by simp [Rew.q_rewrite, rewrite_subst_nil])
 
-@[simp] lemma depth_rewrite (f : ℕ → SyntacticTerm L) (b : Λ ⊢! φ) : ‖rewrite f b‖ = ‖b‖ := by
+@[simp] lemma depth_rewrite (f : ℕ → SyntacticTerm L) (b : Λ ⊢! φ) : ⟪rewrite f b⟫ = ⟪b⟫ := by
   induction b generalizing f <;> simp [rewrite, *]
 
 def ofLE {Λ₁ Λ₂ : Hilbertᵢ L} (h : Λ₁ ≤ Λ₂) : Λ₁ ⊢! φ → Λ₂ ⊢! φ

@@ -147,7 +147,7 @@ def orInst₁ : 𝓢 ⊢! φ ➝ φ ⋎ ψ := by
   exact explode₁₂;
 
 def orInst₂ : 𝓢 ⊢! ψ ➝ φ ⋎ ψ := by
-  simp [ŁukasiewiczAbbrev.or];
+  simp only [ŁukasiewiczAbbrev.or];
   exact implyK;
 
 instance : HasAxiomOrInst 𝓢 := ⟨Łukasiewicz.orInst₁, Łukasiewicz.orInst₂⟩

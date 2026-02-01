@@ -159,13 +159,13 @@ lemma iff_consistent_empty_singleton₂ : Tableau.Consistent 𝓢 (∅, {φ}) �
   . constructor;
     . contrapose!;
       rintro ⟨Γ, Δ, hΓ, hΔ, h⟩;
-      simp_all only [Set.subset_empty_iff, Finset.coe_eq_empty, Finset.conj_empty, Finset.disj_empty, not_not];
+      simp_all only [Set.subset_empty_iff, Finset.coe_eq_empty, Finset.conj_empty, Finset.disj_empty];
       simpa using A!_cases C!_id efq! ((by simpa using h) ⨀ verum!);
     . contrapose!;
       intro h;
       use ∅, ∅;
       refine ⟨by tauto, by tauto, ?_⟩;
-      simp only [Finset.conj_empty, Finset.disj_empty, not_not];
+      simp only [Finset.conj_empty, Finset.disj_empty];
       apply C!_of_conseq!;
       apply A!_intro_left (by simpa using h);
 

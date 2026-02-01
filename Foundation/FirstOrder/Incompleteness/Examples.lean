@@ -12,11 +12,11 @@ public import Foundation.FirstOrder.Incompleteness.Second
 
 namespace LO.FirstOrder.Arithmetic
 
-axiom ISigma1_delta1Definable : 𝗜𝚺₁.Δ₁
+noncomputable instance ISigma1_delta1Definable : 𝗜𝚺₁.Δ₁ := by
+  sorry
 
-axiom PA_delta1Definable : 𝗣𝗔.Δ₁
-
-attribute [instance] ISigma1_delta1Definable PA_delta1Definable
+noncomputable instance PA_delta1Definable : 𝗣𝗔.Δ₁ := by
+  sorry
 
 instance : 𝗜𝚺₁ ⪱ 𝗜𝚺₁ + 𝗜𝚺₁.Con := inferInstance
 

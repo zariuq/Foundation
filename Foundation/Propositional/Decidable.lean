@@ -116,16 +116,21 @@ variable {S S₁ S₂ : Sequents α}
 @[simp] lemma weight_nil : weight ([] : Sequents α) = 0 := rfl
 
 @[simp] lemma weight_eq_zero_iff_eq_nil : weight S = 0 ↔ S = [] := by
-  cases h : (List.map Sequent.weight S).max? <;> simp [weight, h]
-  · simpa using h
-  · rintro rfl; simp at h
+  cases h : (List.map Sequent.weight S).max? with
+  | none =>
+    simp only [weight, Nat.succ_eq_add_one, h, true_iff]
+    simpa using h
+  | some a =>
+    simp only [weight, Nat.succ_eq_add_one, h, Nat.add_eq_zero_iff, one_ne_zero, and_false, false_iff]
+    rintro rfl
+    simp at h
 
 lemma weight_eq_succ_iff {S : Sequents α} :
     S.weight = n + 1 ↔ ∃ Γ ∈ S, Γ.weight = n ∧ ∀ Δ ∈ S, Δ.weight ≤ n := by
   match h : (List.map Sequent.weight S).max? with
   |   .none => simp [show S = [] by simpa using h]
   | .some a =>
-    have : (∃ Γ ∈ S, Γ.weight = a) ∧ ∀ Δ ∈ S, Δ.weight ≤ a := by simpa using List.max?_eq_some_iff'.mp h
+    have : (∃ Γ ∈ S, Γ.weight = a) ∧ ∀ Δ ∈ S, Δ.weight ≤ a := by simpa using List.max?_eq_some_iff.mp h
     rcases this with ⟨⟨Γ, hΓS, rfl⟩, hS⟩
     have : S.weight = Γ.weight + 1 := by simp [Sequents.weight, h]
     constructor
@@ -136,7 +141,8 @@ lemma weight_eq_succ_iff {S : Sequents α} :
     · rintro ⟨Γ', _, rfl, H⟩
       have : Γ.weight ≤ Γ'.weight := H Γ (by assumption)
       have : Γ'.weight ≤ Γ.weight := hS Γ' (by assumption)
-      simp [weight, h]; exact Nat.le_antisymm (by assumption) (by assumption)
+      simp only [weight, Nat.succ_eq_add_one, h, Nat.add_right_cancel_iff]
+      exact Nat.le_antisymm (by assumption) (by assumption)
 
 lemma weight_eq_of_mem_max (hm : m ∈ (S.map Sequent.weight).max?) :
     S.weight = m + 1 := by simp [weight, show (S.map Sequent.weight).max? = .some m from hm]
@@ -177,7 +183,7 @@ def Sequent.IsClosed (Γ : Sequent α) : Prop := ∃ φ ∈ Γ, ∼φ ∈ Γ
 
 lemma Sequent.IsClosed.cons_iff {Γ : Sequent α} :
     IsClosed (φ :: Γ) ↔ ∼φ ∈ Γ ∨ Γ.IsClosed := by
-  simp [IsClosed]
+  simp only [IsClosed, List.mem_cons, exists_eq_or_imp, NNFormula.ne_neg, false_or]
   constructor
   · rintro (h | ⟨ψ, h, (rfl | hn)⟩)
     · simp [*]
@@ -261,7 +267,10 @@ lemma Sequent.weight_lt_weight_of_mem_reduction {h : ¬Γ.IsAtomic} : Δ ∈ Γ.
   | .natom a => have := Γ.chooseNonAtomic_property h; simp_all
   |        ⊤ => simp [Sequent.reduction_verum H]
   |        ⊥ =>
-    suffices weight (List.remove ⊥ Γ) < Γ.weight by simp [Sequent.reduction_falsum H]; rintro rfl; exact this
+    suffices weight (List.remove ⊥ Γ) < Γ.weight by
+      simp only [Sequent.reduction_falsum H, List.mem_cons, List.not_mem_nil, or_false]
+      rintro rfl
+      exact this
     have : ⊥ ∈ Γ := by simpa [*] using Sequent.chooseNonAtomic_mem h
     calc weight (List.remove ⊥ Γ) ≤ Γ.weight - NNFormula.weight ⊥ := Sequent.weight_remove_le_of_mem this
     _                             < Γ.weight                      := Nat.sub_lt_of_pos_le (by simp) (weight_le_weight_of_mem this)
@@ -270,7 +279,10 @@ lemma Sequent.weight_lt_weight_of_mem_reduction {h : ¬Γ.IsAtomic} : Δ ∈ Γ.
     suffices
       weight (List.remove (φ ⋏ ψ) Γ ++ [φ]) < Γ.weight ∧
       weight (List.remove (φ ⋏ ψ) Γ ++ [ψ]) < Γ.weight by
-        simp [Sequent.reduction_and H]; rintro (rfl | rfl); { exact this.1 }; { exact this.2 }
+        simp only [Sequent.reduction_and H, List.concat_eq_append, List.mem_cons, List.not_mem_nil, or_false]
+        rintro (rfl | rfl)
+        · exact this.1
+        · exact this.2
     constructor
     · calc
         weight (List.remove (φ ⋏ ψ) Γ ++ [φ]) = weight (List.remove (φ ⋏ ψ) Γ) + φ.weight := by simp
@@ -290,7 +302,11 @@ lemma Sequent.weight_lt_weight_of_mem_reduction {h : ¬Γ.IsAtomic} : Δ ∈ Γ.
           Nat.sub_lt_left_of_lt_add (Nat.le_add_right_of_le (weight_le_weight_of_mem this)) (by simp; omega)
   |    φ ⋎ ψ =>
     have : φ ⋎ ψ ∈ Γ := by simpa [*] using Sequent.chooseNonAtomic_mem h
-    suffices weight (List.remove (φ ⋎ ψ) Γ ++ [φ, ψ]) < Γ.weight by simp [Sequent.reduction_or H]; rintro rfl; exact this
+    suffices weight (List.remove (φ ⋎ ψ) Γ ++ [φ, ψ]) < Γ.weight by
+      simp only [Sequent.reduction_or H, List.concat_eq_append, List.append_assoc, List.cons_append,
+        List.nil_append, List.mem_cons, List.not_mem_nil, or_false]
+      rintro rfl
+      exact this
     calc weight (List.remove (φ ⋎ ψ) Γ ++ [φ, ψ]) = weight (List.remove (φ ⋎ ψ) Γ) + (φ.weight + ψ.weight) := by simp
     _                                             ≤ Γ.weight - (φ ⋎ ψ).weight + (φ.weight + ψ.weight)      :=
       (add_le_add_iff_right _).mpr (Sequent.weight_remove_le_of_mem this)
@@ -328,21 +344,30 @@ lemma Derivation.toReduction {Γ : Sequent α} (hΓ : ¬Γ.IsAtomic)
     |        ⊥ =>
       suffices T ⟹! List.remove ⊥ Γ by
         simp only [Sequent.reduction_falsum H]
-        intro Γ; simp; rintro rfl; assumption
+        intro Γ
+        simp only [List.mem_cons, List.not_mem_nil, or_false]
+        rintro rfl
+        assumption
       exact ⟨Tait.cutFalsum <| (d.get).wk <| by simp⟩
     | φ ⋏ ψ =>
       suffices T ⟹! φ :: List.remove (φ ⋏ ψ) Γ ∧ T ⟹! ψ :: List.remove (φ ⋏ ψ) Γ by
-        simp [Sequent.reduction_and H]
-        intro Γ; simp
-        rintro (rfl | rfl); { exact Tait.wk! this.1 (by simp) }; { exact Tait.wk! this.2 (by simp) }
+        simp only [Sequent.reduction_and H, List.concat_eq_append]
+        intro Γ
+        simp only [List.mem_cons, List.not_mem_nil, or_false]
+        rintro (rfl | rfl)
+        · exact Tait.wk! this.1 (by simp)
+        · exact Tait.wk! this.2 (by simp)
       have : T ⟹! φ ⋏ ψ :: List.remove (φ ⋏ ψ) Γ := Tait.wk! d
       constructor
       · exact Tait.modusPonens! Entailment.and₁! this
       · exact Tait.modusPonens! Entailment.and₂! this
     | φ ⋎ ψ =>
       suffices T ⟹! φ :: ψ :: List.remove (φ ⋎ ψ) Γ by
-        simp [Sequent.reduction_or H]
-        intro Γ; simp; rintro rfl
+        simp only [Sequent.reduction_or H, List.concat_eq_append, List.append_assoc, List.cons_append,
+          List.nil_append]
+        intro Γ
+        simp only [List.mem_cons, List.not_mem_nil, or_false]
+        rintro rfl
         exact Tait.wk! (by assumption)
       exact ⟨Tait.orReversion <| (d.get).wk <| by simp⟩
 

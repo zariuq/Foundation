@@ -68,7 +68,10 @@ lemma projection {f : ℕ →. ℕ} (hf : Nat.Partrec f) (unif : ∀ {m n₁ n�
     intro a m n₁ n₂ hn h₁
     rcases hF.mp h₁ with ⟨x, hx, H⟩
     apply hF.mpr ⟨x, lt_of_lt_of_le hx hn, Code.evaln_mono hn H⟩
-  have : Partrec (fun m ↦ rfindOpt (F m)) := Partrec.nat_iff.1 <| Partrec.rfindOpt <| this.to_comp
+  have hPartrec : _root_.Partrec (fun m ↦ Nat.rfindOpt (F m)) :=
+    _root_.Partrec.rfindOpt (α := ℕ) (σ := ℕ) this.to_comp
+  have : Nat.Partrec (fun m ↦ Nat.rfindOpt (F m)) :=
+    (_root_.Partrec.nat_iff).1 hPartrec
   exact ⟨_, this, by
     intro a m
     rw [Nat.rfindOpt_mono mono]

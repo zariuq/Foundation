@@ -25,7 +25,7 @@ end Kripke
 
 
 
-namespace Modal.KD45.Kripke
+namespace KD45.Kripke
 
 instance : Sound Modal.KD45 FrameClass.KD45 := instSound_of_validates_axioms $ by
   apply FrameClass.validates_with_AxiomK_of_validates;
@@ -120,7 +120,7 @@ instance : Modal.K45 ⪱ Modal.KD45 := by
         refine { trans := by simp, reucl := by simp [RightEuclidean] }
       . simp [Semantics.Models, Satisfies];
 
-end Modal.KD45.Kripke
+end KD45.Kripke
 
 
 

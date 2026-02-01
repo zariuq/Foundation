@@ -35,8 +35,7 @@ lemma filterEquiv.equivalence (M : Model) (T : FormulaSet ℕ) [T.IsSubformulaCl
   refl := by intro x φ _; rfl;
   symm := by intro x y h φ hp; exact h _ hp |>.symm;
   trans := by
-    intro x y z exy eyz;
-    intro φ hp;
+    intro x y z exy eyz φ hp;
     exact Iff.trans (exy φ hp) (eyz φ hp)
 
 def FilterEqvSetoid (M : Model) (T : FormulaSet ℕ) [T.IsSubformulaClosed] : Setoid (M.World) := ⟨filterEquiv M T, filterEquiv.equivalence M T⟩
@@ -153,7 +152,7 @@ lemma eq_original_truthset_of_eq (hφ : φ ∈ T) (hψ : ψ ∈ T) (h : (【M φ
 lemma eq_univ : (【Set.univ】  : Set (FilterEqvQuotient M T)) = Set.univ := by
   ext X;
   obtain ⟨x, rfl⟩ := Quotient.exists_rep X;
-  suffices ∃ y, (FilterEqvSetoid M T) y x by simpa [toFilterEquivSet];
+  suffices ∃ y, (FilterEqvSetoid M T) y x by simp [toFilterEquivSet];
   use x;
 
 @[simp, grind =]

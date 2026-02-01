@@ -56,7 +56,11 @@ lemma not_mem_of_rel (IR : Irreflexive R) (TR : Transitive R) {a b x : α} {l : 
   |      [] => simp
   | a' :: l =>
     rintro (_ | _)
-    case singleton => simp; intro hR; rintro rfl; exact IR _ hR
+    case singleton =>
+      simp only [mem_cons, not_mem_nil, or_false]
+      intro hR
+      rintro rfl
+      exact IR _ hR
     case cons a' Raa' h =>
     intro Rxa
     have : x ≠ a := by rintro rfl; exact IR _ Rxa
@@ -90,10 +94,7 @@ lemma eq_of {l} (h₁ : ChainI R a₁ b₁ l) (h₂ : ChainI R a₂ b₂ l) : a�
   match l with
   |          [] => simp_all
   |         [i] =>
-    rcases h₁; rcases h₂
-    · simp
-    · simp_all
-    · simp_all
+    rcases h₁ <;> rcases h₂ <;> simp_all
   | j :: i :: l =>
     rcases h₁; rcases h₂
     case cons h₁ _ _ h₂ =>
@@ -134,8 +135,8 @@ lemma append_singleton_append_iff {l₁ l₂ : List α} :
 lemma rel_of_infix (hC : ChainI R a b l) (x y) (h : [x, y] <:+: l) : R x y := by
   rcases h with ⟨l₁, l₂, rfl⟩
   have : ChainI R x b (x :: y :: l₂) := by
-    simp [append_singleton_append_iff (l₂ := y :: l₂)] at hC
-    exact hC.2
+    have hC' : ChainI R a b (l₁ ++ x :: y :: l₂) := by simpa [List.cons_append] using hC
+    exact (append_singleton_append_iff (R := R) (a := a) (b := b) (l₁ := l₁) (l₂ := y :: l₂) (c := x)).1 hC' |>.2
   exact cons_cons_iff.mp this |>.2.1
 
 lemma infix_of_suffix_of (h : ChainI R a b l₁) : x :: l₁ <:+ l₂ → [x, a] <:+: l₂ := by
@@ -146,7 +147,10 @@ lemma infix_of_suffix_of (h : ChainI R a b l₁) : x :: l₁ <:+ l₂ → [x, a]
 lemma prefix_suffix : ChainI R a b l → [a] <+: l ∧ [b] <:+ l := by
   match l with
   |           [] => simp
-  |          [x] => simp; rintro rfl rfl; simp
+  |          [x] =>
+    simp only [singletob_iff, cons_prefix_cons, prefix_rfl, and_true, and_imp]
+    rintro rfl rfl
+    simp
   | x :: y :: l₁ =>
     rintro ⟨⟩
     case cons z hR h =>
