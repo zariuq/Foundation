@@ -43,7 +43,7 @@ instance : Entailment.HasCollectOrAnd 𝓢 where
       . apply C_trans! K_comm! orIntroR!
 
 
-@[simp, grind ., deprecated]
+@[simp, grind ., deprecated efq! (since := "2026-06-01")]
 lemma not_bot [Entailment.Consistent 𝓢] : 𝓢 ⊬ ⊥ := by
   obtain ⟨φ, hφ⟩ : ∃ φ, 𝓢 ⊬ φ := Entailment.Consistent.exists_unprovable inferInstance;
   contrapose! hφ;
@@ -128,8 +128,8 @@ lemma ruleC_fconj' {Γ : Finset ι} (Φ : ι → F) (h : ∀ i ∈ Γ, 𝓢 ⊢ 
 lemma mem_lconj₂ {Γ : List F} (h : φ ∈ Γ) : 𝓢 ⊢ ⋀Γ ➝ φ := by
   induction Γ using List.induction_with_singleton with
   | hcons ψ Δ he ih =>
-    simp [List.conj₂_cons_nonempty he];
-    simp at h;
+    simp only [List.conj₂_cons_nonempty he]
+    simp only [List.mem_cons] at h
     rcases h with rfl | h;
     . simp;
     . apply C_trans ?_ $ ih h;

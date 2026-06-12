@@ -78,7 +78,9 @@ lemma val_def' {ℍ : HeytingSemantics α} {φ : Formula α} : ℍ ⊧ φ ↔ (�
 
 instance : Semantics.Top (HeytingSemantics α) := ⟨fun ℍ ↦ by simp [val_def]⟩
 
-instance : Semantics.Bot (HeytingSemantics α) := ⟨fun ℍ ↦ by simp [Semantics.NotModels, val_def]⟩
+instance : Semantics.Bot (HeytingSemantics α) := ⟨fun ℍ h ↦ by
+  simp [val_def] at h
+⟩
 
 instance : Semantics.And (HeytingSemantics α) := ⟨fun {ℍ φ ψ} ↦ by simp [val_def]⟩
 

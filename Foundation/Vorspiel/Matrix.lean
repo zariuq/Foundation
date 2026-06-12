@@ -146,24 +146,24 @@ lemma vecConsLast_vecEmpty {s : Fin 0 → α} (a : α) : s <: a = ![a] :=
 
 lemma constant_eq_singleton {a : α} : (fun _ => a) = ![a] := by funext x; simp
 
-lemma fun_eq_vec_one {v : Fin 1 → α} : v = ![v 0] := by funext x; simp [Fin.eq_zero]
+lemma fun_eq_vec_one {v : Fin 1 → α} : v = ![v 0] := by funext x; simp
 
 lemma constant_eq_vec₂ {a : α} : (fun _ => a) = ![a, a] := by
-  funext x; cases x using Fin.cases <;> simp [Fin.eq_zero]
+  funext x; cases x using Fin.cases <;> simp
 
 lemma fun_eq_vec_two {v : Fin 2 → α} : v = ![v 0, v 1] := by
-  funext x; cases x using Fin.cases <;> simp [Fin.eq_zero]
+  funext x; cases x using Fin.cases <;> simp
 
 lemma fun_eq_vec_three {v : Fin 3 → α} : v = ![v 0, v 1, v 2] := by
   funext x
   cases' x using Fin.cases with x <;> simp
-  cases' x using Fin.cases with x <;> simp [Fin.eq_zero]
+  cases' x using Fin.cases with x <;> simp
 
 lemma fun_eq_vec_four {v : Fin 4 → α} : v = ![v 0, v 1, v 2, v 3] := by
   funext x
   cases' x using Fin.cases with x <;> simp
   cases' x using Fin.cases with x <;> simp
-  cases' x using Fin.cases with x <;> simp [Fin.eq_zero]
+  cases' x using Fin.cases with x <;> simp
 
 lemma injective_vecCons {f : Fin n → α} (h : Function.Injective f) {a} (ha : ∀ i, a ≠ f i) : Function.Injective (a :> f) := by
   have : ∀ i, f i ≠ a := fun i => (ha i).symm
@@ -229,43 +229,43 @@ def appendr {n m} (v : Fin n → α) (w : Fin m → α) : Fin (m + n) → α := 
 
 @[simp] lemma appendr_cons {m n} (x : α) (v : Fin n → α) (w : Fin m → α) : appendr (x :> v) w = x :> appendr v w := by funext i; simp [appendr]
 
-lemma forall_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
+lemma vecForall_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
     (∀ v, φ v) ↔ (∀ a, ∀ v, φ (a :> v)) :=
   ⟨fun h a v ↦ h (a :> v), fun h v ↦ by simpa [eq_vecCons v] using h (v 0) (v ∘ Fin.succ)⟩
 
-lemma exists_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
+lemma vecExists_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
     (∃ v, φ v) ↔ (∃ a, ∃ v, φ (a :> v)) :=
   ⟨by rintro ⟨v, hv⟩; exact ⟨v 0, v ∘ Fin.succ, by simpa [eq_vecCons] using hv⟩,
    by rintro ⟨a, v, hv⟩; exact ⟨_, hv⟩⟩
 
-def foldr (f : α → β → β) (init : β) : {k : ℕ} → (Fin k → α) → β
+def vecFoldr (f : α → β → β) (init : β) : {k : ℕ} → (Fin k → α) → β
   |     0, _ => init
-  | _ + 1, v => f (vecHead v) (Matrix.foldr f init (vecTail v))
+  | _ + 1, v => f (vecHead v) (Matrix.vecFoldr f init (vecTail v))
 
-def map (f : α → β) : (Fin k → α) → (Fin k → β) := fun v ↦ f ∘ v
+def vecMap (f : α → β) : (Fin k → α) → (Fin k → β) := fun v ↦ f ∘ v
 
 section map
 
-postfix:max "⨟" => map
+postfix:max "⨟" => vecMap
 
 variable (f : α → β)
 
-@[simp] lemma map_nil (v : Fin 0 → α) : f⨟ v = ![] := empty_eq (f⨟ v)
+@[simp] lemma vecMap_nil (v : Fin 0 → α) : f⨟ v = ![] := empty_eq (f⨟ v)
 
-@[simp] lemma map_cons (a : α) (v : Fin k → α) : f⨟ (a :> v) = f a :> f⨟ v := by
+@[simp] lemma vecMap_cons (a : α) (v : Fin k → α) : f⨟ (a :> v) = f a :> f⨟ v := by
   ext i
-  cases i using Fin.cases <;> simp [map]
+  cases i using Fin.cases <;> simp [vecMap]
 
-@[simp] lemma map_cons' (v : Fin (k + 1) → α) : f⨟ v = f (vecHead v) :> f⨟ (vecTail v) := by
+@[simp] lemma vecMap_cons' (v : Fin (k + 1) → α) : f⨟ v = f (vecHead v) :> f⨟ (vecTail v) := by
   ext i
-  cases i using Fin.cases <;> { simp [map]; rfl }
+  cases i using Fin.cases <;> { simp [vecMap]; rfl }
 
-@[simp] lemma map_app (v : Fin k → α) (i : Fin k) : (f⨟ v) i = f (v i) := rfl
+@[simp] lemma vecMap_app (v : Fin k → α) (i : Fin k) : (f⨟ v) i = f (v i) := rfl
 
-lemma map_map_comp (g : β → γ) (f : α → β) (v : Fin k → α) :
+lemma vecMap_map_comp (g : β → γ) (f : α → β) (v : Fin k → α) :
     g⨟ (f⨟ v) = (g ∘ f)⨟ v := by ext x; simp
 
-lemma map_map_comp' (g : β → γ) (f : α → β) (v : Fin k → α) :
+lemma vecMap_map_comp' (g : β → γ) (f : α → β) (v : Fin k → α) :
     g⨟ (f⨟ v) = (fun x ↦ g (f x))⨟ v := by ext x; simp
 
 end map
@@ -273,23 +273,25 @@ section foldr
 
 variable (f : α → β → β) (init : β)
 
-@[simp] lemma foldr_zero (v : Fin 0 → α) : foldr f init v = init := rfl
+@[simp] lemma vecFoldr_zero (v : Fin 0 → α) : vecFoldr f init v = init := rfl
 
-@[simp] lemma foldr_succ (v : Fin (k + 1) → α) : foldr f init v = f (vecHead v) (foldr f init (vecTail v)) := rfl
+@[simp] lemma vecFoldr_succ (v : Fin (k + 1) → α) :
+    vecFoldr f init v = f (vecHead v) (vecFoldr f init (vecTail v)) := rfl
 
 end foldr
 
-def foldl (f : α → β → α) : (init : α) → {k : ℕ} → (Fin k → β) → α
+def vecFoldl (f : α → β → α) : (init : α) → {k : ℕ} → (Fin k → β) → α
   | a,     0, _ => a
-  | a, _ + 1, v => Matrix.foldl f (f a (vecHead v)) (vecTail v)
+  | a, _ + 1, v => Matrix.vecFoldl f (f a (vecHead v)) (vecTail v)
 
 section foldl
 
 variable (f : α → β → α) (init : α)
 
-@[simp] lemma foldl_zero (v : Fin 0 → β) : foldl f init v = init := rfl
+@[simp] lemma vecFoldl_zero (v : Fin 0 → β) : vecFoldl f init v = init := rfl
 
-@[simp] lemma foldl_succ (v : Fin (k + 1) → β) : foldl f init v = foldl f (f init (vecHead v)) (vecTail v) := rfl
+@[simp] lemma vecFoldl_succ (v : Fin (k + 1) → β) :
+    vecFoldl f init v = vecFoldl f (f init (vecHead v)) (vecTail v) := rfl
 
 end foldl
 
@@ -304,7 +306,7 @@ lemma eq_iff_eq_vecHead_of_eq_vecTail {v₁ v₂ : Fin (n + 1) → α} :
 
 section vecToNat
 
-def vecToNat (v : Fin n → ℕ) : ℕ := foldr (fun x ih ↦ Nat.pair x ih + 1) 0 v
+def vecToNat (v : Fin n → ℕ) : ℕ := vecFoldr (fun x ih ↦ Nat.pair x ih + 1) 0 v
 
 @[simp] lemma vecToNat_empty (v : Fin 0 → ℕ) : vecToNat v = 0 := by rfl
 

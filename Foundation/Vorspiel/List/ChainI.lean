@@ -49,32 +49,29 @@ lemma cons_cons_iff :
   · rintro ⟨rfl, hR, hC⟩
     exact hC.cons hR
 
-lemma not_mem_of_rel (IR : Irreflexive R) (TR : Transitive R) {a b x : α} {l : List α} : ChainI R a b l → R x a → x ∉ l := by
-  match l with
-  |      [] => simp
-  | a' :: l =>
-    rintro (_ | _)
-    case singleton => simp; intro hR; rintro rfl; exact IR _ hR
-    case cons a' Raa' h =>
-    intro Rxa
-    have : x ≠ a := by rintro rfl; exact IR _ Rxa
-    have : x ∉ l :=
-      have : R x a' := TR Rxa Raa'
-      not_mem_of_rel IR TR h this
-    simp_all
+lemma not_mem_of_rel (IR : Std.Irrefl R) (TR : Transitive R) {a b x : α} {l : List α} :
+    ChainI R a b l → R x a → x ∉ l := by
+  intro hChain hxa
+  induction hChain generalizing x with
+  | singleton a =>
+      intro hx
+      rcases List.mem_singleton.mp hx with rfl
+      exact IR.irrefl _ hxa
+  | cons hR hTail ih =>
+      intro hx
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact IR.irrefl _ hxa
+      · exact ih (TR hxa hR) hx
 
-lemma nodup (IR : Irreflexive R) (TR : Transitive R) {a b l} : ChainI R a b l → l.Nodup :=
-  match l with
-  |      [] => by simp
-  | a' :: l => by
-    rintro (_ | _)
-    case singleton => simp
-    case cons a' Raa' h =>
-      have ih : l.Nodup := nodup IR TR h
-      have notin :a ∉ l := not_mem_of_rel IR TR h Raa'
-      simp_all
+lemma nodup (IR : Std.Irrefl R) (TR : Transitive R) {a b l} : ChainI R a b l → l.Nodup := by
+  intro hChain
+  induction hChain with
+  | singleton =>
+      simp
+  | cons hR hTail ih =>
+      exact List.nodup_cons.mpr ⟨not_mem_of_rel IR TR hTail hR, ih⟩
 
-lemma finite_of_irreflexive_of_transitive [Finite α] (IR : Irreflexive R) (TR : Transitive R) (a b : α) :
+lemma finite_of_irreflexive_of_transitive [Finite α] (IR : Std.Irrefl R) (TR : Transitive R) (a b : α) :
     Finite {l : List α // l.ChainI R a b} := by
   haveI : Fintype α := Fintype.ofFinite α
   let f : {l : List α // l.ChainI R a b} → {l : List α // l.Nodup} := fun l ↦ ⟨l, l.prop.nodup IR TR⟩
@@ -87,15 +84,22 @@ lemma cons_eq {l} : ChainI R a b (a' :: l) → a = a' := by
 lemma eq_of {l} (h₁ : ChainI R a₁ b₁ l) (h₂ : ChainI R a₂ b₂ l) : a₁ = a₂ ∧ b₁ = b₂ := by
   match l with
   |          [] => simp_all
-  |         [i] =>
-    rcases h₁; rcases h₂
-    · simp
-    · simp_all
-    · simp_all
+  |      _ :: [] =>
+    cases h₁ with
+    | singleton =>
+        cases h₂ with
+        | singleton =>
+            simp
+        | cons _ hTail =>
+            cases hTail
+    | cons _ hTail =>
+        cases hTail
   | j :: i :: l =>
-    rcases h₁; rcases h₂
-    case cons h₁ _ _ h₂ =>
-    simp [(eq_of h₁ h₂).2]
+    rcases cons_cons_iff.mp h₁ with ⟨ha₁, _, h₁'⟩
+    rcases cons_cons_iff.mp h₂ with ⟨ha₂, _, h₂'⟩
+    subst ha₁
+    subst ha₂
+    exact ⟨rfl, (eq_of h₁' h₂').2⟩
 
 lemma prec_exists_of_ne {l} (h : ChainI R a b l) :
     a ≠ b → ∃ l' c, R a c ∧ l = a :: c :: l' ∧ ChainI R c b (c :: l') := by
@@ -131,10 +135,12 @@ lemma append_singleton_append_iff {l₁ l₂ : List α} :
 
 lemma rel_of_infix (hC : ChainI R a b l) (x y) (h : [x, y] <:+: l) : R x y := by
   rcases h with ⟨l₁, l₂, rfl⟩
-  have : ChainI R x b (x :: y :: l₂) := by
-    simp [append_singleton_append_iff (l₂ := y :: l₂)] at hC
-    exact hC.2
-  exact cons_cons_iff.mp this |>.2.1
+  have hC' : ChainI R a b (l₁ ++ x :: y :: l₂) := by
+    simpa using hC
+  have hxyb : ChainI R x b (x :: y :: l₂) :=
+    (append_singleton_append_iff (R := R) (a := a) (b := b)
+      (l₁ := l₁) (l₂ := y :: l₂) (c := x)).mp hC' |>.2
+  exact (cons_cons_iff.mp hxyb).2.1
 
 lemma infix_of_suffix_of (h : ChainI R a b l₁) : x :: l₁ <:+ l₂ → [x, a] <:+: l₂ := by
   intro hx
@@ -144,7 +150,10 @@ lemma infix_of_suffix_of (h : ChainI R a b l₁) : x :: l₁ <:+ l₂ → [x, a]
 lemma prefix_suffix : ChainI R a b l → [a] <+: l ∧ [b] <:+ l := by
   match l with
   |           [] => simp
-  |          [x] => simp; rintro rfl rfl; simp
+  |          [x] =>
+    intro h
+    rcases (singletob_iff (R := R) a b x).mp h with ⟨rfl, rfl⟩
+    simp
   | x :: y :: l₁ =>
     rintro ⟨⟩
     case cons z hR h =>

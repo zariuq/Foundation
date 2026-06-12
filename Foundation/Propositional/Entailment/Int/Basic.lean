@@ -124,6 +124,7 @@ omit [DecidableEq F] in
 lemma left_Udisj!_intro [DecidableEq F] [Fintype ι] (ψ : ι → F) (b : (i : ι) → 𝓢 ⊢ ψ i ➝ φ) : 𝓢 ⊢ (⩖ i, ψ i) ➝ φ :=
   left_Fdisj'!_intro _ _ (by simpa)
 
+set_option linter.flexible false in
 omit [DecidableEq F] in
 lemma EDisj₂AppendADisj₂Disj₂! : 𝓢 ⊢ ⋁(Γ ++ Δ) ⭤ ⋁Γ ⋎ ⋁Δ := by
   induction Γ using List.induction_with_singleton generalizing Δ <;> induction Δ using List.induction_with_singleton;
@@ -172,6 +173,7 @@ lemma Disj₂Append!_iff_ADisj₂Disj₂! : 𝓢 ⊢ ⋁(Γ ++ Δ) ↔ 𝓢 ⊢ 
   . intro h; exact (K!_left EDisj₂AppendADisj₂Disj₂!) ⨀ h;
   . intro h; exact (K!_right EDisj₂AppendADisj₂Disj₂!) ⨀ h;
 
+set_option linter.flexible false in
 omit [DecidableEq F] in
 lemma CDisj₂!_iff_CADisj₂! : 𝓢 ⊢ φ ➝ ⋁(ψ :: Γ) ↔ 𝓢 ⊢ φ ➝ ψ ⋎ ⋁Γ := by
   induction Γ with
@@ -182,6 +184,7 @@ lemma CDisj₂!_iff_CADisj₂! : 𝓢 ⊢ φ ➝ ⋁(ψ :: Γ) ↔ 𝓢 ⊢ φ �
     . intro h; exact C!_trans h $ left_A!_intro C!_id efq!;
   | cons ψ ih => simp;
 
+set_option linter.flexible false in
 @[simp]
 lemma CDisj₂ADisj₂Remove! : 𝓢 ⊢ ⋁Γ ➝ φ ⋎ ⋁(Γ.remove φ) := by
   induction Γ using List.induction_with_singleton with
@@ -194,7 +197,7 @@ lemma CDisj₂ADisj₂Remove! : 𝓢 ⊢ ⋁Γ ➝ φ ⋎ ⋁(Γ.remove φ) := b
   | hcons ψ Γ h ih =>
     simp_all;
     by_cases hpq : ψ = φ;
-    . simp_all only [ne_eq, List.remove_cons_self]; exact left_A!_intro or₁! ih;
+    . simp_all only [List.remove_cons_self]; exact left_A!_intro or₁! ih;
     . simp_all [(List.remove_cons_of_ne Γ hpq)];
       by_cases hqΓ : Γ.remove φ = [];
       . simp_all;
@@ -202,6 +205,7 @@ lemma CDisj₂ADisj₂Remove! : 𝓢 ⊢ ⋁Γ ➝ φ ⋎ ⋁(Γ.remove φ) := b
       . simp_all;
         exact left_A!_intro (C!_trans or₁! or₂!) (C!_trans ih (CAA!_of_C!_right or₂!));
 
+set_option linter.flexible false in
 lemma left_Disj₂!_intro' (hd : ∀ ψ ∈ Γ, ψ = φ) : 𝓢 ⊢ ⋁Γ ➝ φ := by
   induction Γ using List.induction_with_singleton with
   | hcons ψ Δ hΔ ih =>

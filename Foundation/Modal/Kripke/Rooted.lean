@@ -30,8 +30,10 @@ lemma strongly_convergent [F.IsStronglyConvergent] : ∀ x y : F.World, ∃ u, x
 protected abbrev IsStronglyConnected (F : Frame) := _root_.Std.Total F.Rel
 lemma s_connected [F.IsStronglyConnected] : ∀ {x y : F.World}, x ≺ y ∨ y ≺ x := by apply Std.Total.total
 
-protected abbrev IsConnected (F : Frame) := _root_.IsTrichotomous _ F.Rel
-lemma connected [F.IsConnected] : ∀ x y : F.World, x ≺ y ∨ x = y ∨ y ≺ x := by apply IsTrichotomous.trichotomous
+protected abbrev IsConnected (F : Frame) := _root_.Std.Trichotomous F.Rel
+lemma connected [F.IsConnected] : ∀ x y : F.World, x ≺ y ∨ x = y ∨ y ≺ x := by
+  intro x y
+  exact Std.Trichotomous.rel_or_eq_or_rel_swap (r := F.Rel) (a := x) (b := y)
 lemma connected' [F.IsConnected] : ∀ x y : F.World, x ≠ y → x ≺ y ∨ y ≺ x := by
   rintro x y nexy;
   rcases F.connected x y with (Rxy | rfl | Ryx);
@@ -194,8 +196,16 @@ lemma trans_rel_of_origin_trans_rel {hx hy} (Rxy : F.Rel.TransGen x y)
     let b : (F.setGenerate R).World := ⟨c, by
       rcases hx with hx | ⟨r₁, hR₁, Rr₁a⟩ <;>
       rcases hy with hy | ⟨r₂, hR₂, Rr₂b⟩;
-      . right; use a; constructor; assumption; exact TransGen.single ha;
-      . right; use a; constructor; assumption; exact TransGen.single ha;
+      . right
+        use a
+        constructor
+        · exact hx
+        · exact TransGen.single ha
+      . right
+        use a
+        constructor
+        · exact hx
+        · exact TransGen.single ha
       . right;
         use r₁;
         constructor;

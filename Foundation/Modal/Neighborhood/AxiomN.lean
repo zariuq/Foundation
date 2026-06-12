@@ -18,8 +18,9 @@ lemma Frame.contains_unit [Frame.ContainsUnit F] : F.box Set.univ = Set.univ := 
 
 @[simp]
 lemma Frame.univ_mem [Frame.ContainsUnit F] (x) : Set.univ ∈ F.𝒩 x := by
-  haveI := @F.contains_unit.symm.subset;
-  simpa using @this x;
+  have hx : x ∈ F.box Set.univ := by
+    simpa [F.contains_unit]
+  simpa [Frame.box] using hx
 
 instance : Frame.simple_blackhole.ContainsUnit := ⟨by ext x; simp⟩
 

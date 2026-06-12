@@ -36,10 +36,14 @@ instance [Finite α] [IsTrans α R] [Std.Irrefl R] : IsConverseWellFounded _ R :
 ⟩
 
 lemma Finite.converseWellFounded_of_trans_irrefl'
-    (hFinite : Finite α) (hTrans : Transitive R) (hIrrefl : Irreflexive R) : ConverseWellFounded R :=
+    (hFinite : Finite α) (hTrans : Transitive R) (hIrrefl : Std.Irrefl R) : ConverseWellFounded R :=
   @Finite.wellFounded_of_trans_of_irrefl _ _ _
-    ⟨by simp [flip]; intro a b c ba cb; exact hTrans cb ba;⟩
-    ⟨by simp [flip]; exact hIrrefl⟩
+    ⟨by
+      intro a b c ba cb
+      exact hTrans cb ba⟩
+    ⟨by
+      intro a
+      exact hIrrefl.irrefl a⟩
 
 namespace IsConverseWellFounded
 

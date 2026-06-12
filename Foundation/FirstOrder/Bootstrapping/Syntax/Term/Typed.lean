@@ -13,7 +13,7 @@ namespace LO.FirstOrder.Arithmetic
 
 variable {V : Type*} [ORingStructure V] [V ⊧ₘ* 𝗜𝚺₁]
 
-noncomputable def matrixToVec (v : Fin k → V) : V := Matrix.foldr (fun t w ↦ t ∷ w) 0 v
+noncomputable def matrixToVec (v : Fin k → V) : V := Matrix.vecFoldr (fun t w ↦ t ∷ w) 0 v
 
 @[simp] lemma matrixToVec_nil (v : Fin 0 → V) : matrixToVec v = 0 := rfl
 

@@ -21,8 +21,7 @@ lemma filterEquiv.equivalence : Equivalence (filterEquiv M T) where
   refl := by intro x φ _; rfl;
   symm := by intro x y h φ hp; exact h _ hp |>.symm;
   trans := by
-    intro x y z exy eyz;
-    intro φ hp;
+    intro x y z exy eyz φ hp
     exact Iff.trans (exy φ hp) (eyz φ hp)
 
 def FilterEqvSetoid : Setoid (M.World) := ⟨filterEquiv M T, filterEquiv.equivalence M T⟩
@@ -215,8 +214,7 @@ abbrev coarsestFiltrationModel (M : Model) (T : FormulaSet ℕ) [T.SubformulaClo
 instance coarsestFiltrationModel.filterOf {M} {T : FormulaSet ℕ} [T.SubformulaClosed] : FilterOf (coarsestFiltrationModel M T) M T where
   def_valuation := by tauto
   def_rel_forth := by
-    intro x y Rxy;
-    intro φ hφ;
+    intro x y Rxy φ hφ
     apply Formula.Kripke.Satisfies.formula_hereditary Rxy;
   def_rel_back := by tauto;
 

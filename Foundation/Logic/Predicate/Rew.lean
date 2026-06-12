@@ -459,7 +459,9 @@ lemma q_rewrite (f : ξ₁ → Semiterm L ξ₂ n) :
 lemma q_toS :
     (toS : Rew L (Fin n) 0 Empty n).q = bind ![#0] (#·.succ) := by
   ext x
-  · suffices x = 0 by simpa
+  · suffices h : x = 0 by
+      subst h
+      simp
     cases x using Fin.cases
     · simp
     · exact Fin.elim0 (by assumption)
@@ -577,13 +579,13 @@ lemma shift_comp_subst1 (t : SyntacticSemiterm L n₂) :
   · exact IsEmpty.elim e x
 
 lemma rewrite_comp_free_eq_subst (t : SyntacticTerm L) :
-    (rewrite (t :>ₙ Semiterm.fvar)).comp free = subst ![t] := by ext x <;> simp [comp_app, Fin.eq_zero]
+    (rewrite (t :>ₙ Semiterm.fvar)).comp free = subst ![t] := by ext x <;> simp [comp_app]
 
 lemma rewrite_comp_shift_eq_id (t : SyntacticTerm L) :
     (rewrite (t :>ₙ Semiterm.fvar)).comp shift = Rew.id := by ext x <;> simp [comp_app]
 
 @[simp] lemma subst_mbar_zero_comp_shift_eq_free :
-    (subst (L := L) ![&0]).comp shift = free := by ext x <;> simp [comp_app, Fin.eq_zero]
+    (subst (L := L) ![&0]).comp shift = free := by ext x <;> simp [comp_app]
 
 @[simp] lemma subst_comp_bShift_eq_id (v : Fin 1 → Semiterm L ξ 0) :
     (subst (L := L) v).comp bShift = Rew.id := by
@@ -608,7 +610,7 @@ lemma free_comp_subst_eq_subst_comp_shift {n'} (w : Fin n' → SyntacticSemiterm
 
 lemma rewrite_comp_fix_eq_subst (t) :
     ((rewrite (t :>ₙ (&·))).comp free : SyntacticRew L 1 0) = subst ![t] := by
-  ext x <;> simp [comp_app, Fin.eq_zero]
+  ext x <;> simp [comp_app]
 
 lemma bShift_eq_rewrite :
     (Rew.bShift : SyntacticRew L 0 1) = Rew.subst ![] := by
@@ -956,7 +958,7 @@ lemma shift_injective : Function.Injective fun φ : S n ↦ shift φ :=
 lemma free_rewrite_eq (f : ℕ → SyntacticTerm L) (φ : S 1) :
     free ((Rew.rewrite fun x ↦ Rew.bShift (f x)) ▹ φ) =
     Rew.rewrite (&0 :>ₙ fun x ↦ Rew.shift (f x)) ▹ free φ := by
-  simpa [← comp_app] using smul_ext' <| by ext x <;> simp [Rew.comp_app, Fin.eq_zero]
+  simpa [← comp_app] using smul_ext' <| by ext x <;> simp [Rew.comp_app]
 
 lemma shift_rewrite_eq (f : ℕ → SyntacticTerm L) (φ : S 0) :
     shift (Rew.rewrite f ▹ φ) = (Rew.rewrite (&0 :>ₙ fun x ↦ Rew.shift (f x))) ▹ shift φ := by
@@ -987,7 +989,7 @@ lemma rewrite_subst_nil (f : ℕ → SyntacticTerm L) (φ : S 0) :
 
 lemma rewrite_free_eq_subst (t : SyntacticTerm L) (φ : S 1) :
     Rew.rewrite (t :>ₙ fun x ↦ &x) ▹ free φ = φ/[t] := by
-  simpa [←comp_app] using smul_ext' <| by ext x <;> simp [Rew.comp_app, Fin.fin_one_eq_zero]
+  simpa [←comp_app] using smul_ext' <| by ext x <;> simp [Rew.comp_app]
 
 def shiftEmb : S n ↪ S n where
   toFun := shift
@@ -1061,7 +1063,7 @@ variable {S : ℕ → Type*} [LCWQ S] [SyntacticRewriting L S S] [LawfulSyntacti
   suffices φ/[(#0 : Semiterm L ξ 1)] = Rew.id ▹ φ by rwa [ReflectiveRewriting.id_app] at this
   apply smul_ext'
   ext x
-  · simp [Fin.fin_one_eq_zero x]
+  · simp
   · simp
 
 end Rewriting

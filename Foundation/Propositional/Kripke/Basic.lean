@@ -105,7 +105,7 @@ instance : Semantics.Top M.World where
   models_verum := by simp [Satisfies];
 
 instance : Semantics.Bot M.World where
-  models_falsum := by simp [Semantics.NotModels, Satisfies];
+  models_falsum := by simp [Satisfies];
 
 instance : Semantics.And M.World where
   models_and := by simp [Satisfies];
@@ -248,8 +248,9 @@ protected lemma top : F ⊧ ⊤ := by tauto;
 instance : Semantics.Top (Frame) := ⟨λ _ => ValidOnFrame.top⟩
 
 protected lemma bot : ¬F ⊧ ⊥ := by
-  simp [ValidOnFrame.models_iff, ValidOnFrame];
-  exact ⟨(λ _ _ => True), by tauto⟩;
+  intro h
+  let V : Kripke.Valuation F := ⟨(λ _ _ => True), by intro _ _ _ _ _; trivial⟩
+  exact ValidOnModel.bot (M := ⟨F, V⟩) (h V)
 instance : Semantics.Bot (Frame) := ⟨λ _ => ValidOnFrame.bot⟩
 
 lemma iff_not_exists_valuation : (¬F ⊧ φ) ↔ (∃ V : Kripke.Valuation F, ¬(⟨F, V⟩ : Kripke.Model) ⊧ φ) := by

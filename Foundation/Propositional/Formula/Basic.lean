@@ -118,42 +118,7 @@ section Decidable
 
 variable [DecidableEq α]
 
-def hasDecEq : (φ ψ : Formula α) → Decidable (φ = ψ)
-  | ⊥, ψ => by
-    cases ψ using cases' <;>
-    { simp; try { exact isFalse not_false }; try { exact isTrue trivial } }
-  | atom a, ψ => by
-    cases ψ using cases' <;> try { simp; exact isFalse not_false }
-    simp; exact decEq _ _
-  | φ ➝ ψ, χ => by
-    cases χ using cases' <;> try { simp; exact isFalse not_false }
-    case himp φ' ψ' =>
-      exact match hasDecEq φ φ' with
-      | isTrue hp =>
-        match hasDecEq ψ ψ' with
-        | isTrue hq  => isTrue (hp ▸ hq ▸ rfl)
-        | isFalse hq => isFalse (by simp [hp, hq])
-      | isFalse hp => isFalse (by simp [hp])
-  | φ ⋏ ψ, χ => by
-    cases χ using cases' <;> try { simp; exact isFalse not_false }
-    case hand φ' ψ' =>
-      exact match hasDecEq φ φ' with
-      | isTrue hp =>
-        match hasDecEq ψ ψ' with
-        | isTrue hq  => isTrue (hp ▸ hq ▸ rfl)
-        | isFalse hq => isFalse (by simp [hp, hq])
-      | isFalse hp => isFalse (by simp [hp])
-  | φ ⋎ ψ, χ => by
-    cases χ using cases' <;> try { simp; exact isFalse not_false }
-    case hor φ' ψ' =>
-      exact match hasDecEq φ φ' with
-      | isTrue hp =>
-        match hasDecEq ψ ψ' with
-        | isTrue hq  => isTrue (hp ▸ hq ▸ rfl)
-        | isFalse hq => isFalse (by simp [hp, hq])
-      | isFalse hp => isFalse (by simp [hp])
-
-instance : DecidableEq (Formula α) := hasDecEq
+instance : DecidableEq (Formula α) := inferInstance
 
 end Decidable
 
@@ -375,7 +340,7 @@ variable {φ ψ χ : Formula α} {T : FormulaSet α} [T.SubformulaClosed]
 @[grind ⇒] protected lemma mem_imp₂ (h : φ ➝ ψ ∈ T) : ψ ∈ T := by apply closed _ h; simp [Formula.subformulas];
 
 
-instance [DecidableEq α] {φ : Formula α} : SubformulaClosed φ.subformulas.toSet := ⟨by
+instance [DecidableEq α] {φ : Formula α} : SubformulaClosed (φ.subformulas : Set (Formula α)) := ⟨by
   simpa using FormulaFinset.SubformulaClosed.subformulaClosed_subformulas (φ := φ) |>.closed;
 ⟩
 
