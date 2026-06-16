@@ -1,4 +1,6 @@
 name = "Foundation"
+releaseRepo = "https://github.com/zariuq/Foundation"
+preferReleaseBuild = true
 defaultTargets = ["Foundation"]
 
 [leanOptions]
