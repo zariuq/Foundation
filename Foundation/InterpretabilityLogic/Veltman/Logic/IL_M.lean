@@ -81,9 +81,11 @@ instance : InterpretabilityLogic.IL_R_W ⪱ InterpretabilityLogic.IL_M := by
             . rintro x y z ⟨a, Rxa, Sway⟩ ⟨b, Ryb, Rwbz⟩;
               use a;
               grind;
-            . dsimp [Irreflexive, Frame.RS, Relation.Comp];
-              push_neg;
-              grind;
+            . exact ⟨by
+                intro x
+                dsimp [Frame.RS, Relation.Comp]
+                grind
+              ⟩
         }
       . by_contra hC;
         have := Veltman.Frame.HasAxiomM.of_validate_axiomM hC |>.S_M (w := 0) (x := 1) (y := 2) (z := 3) (by tauto) (by tauto);

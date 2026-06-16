@@ -19,7 +19,10 @@ instance : trivialFrame.HasAxiomW where
     apply Finite.converseWellFounded_of_trans_irrefl';
     . infer_instance;
     . tauto;
-    . intro x; simp [Frame.RS, Relation.Comp];
+    . exact ⟨by
+        intro x
+        simp [Frame.RS, Relation.Comp]
+      ⟩
 instance : trivialFrame.IsIL_F where
 
 instance {F : Veltman.Frame} [F.IsIL] : F.IsILMinus_J1_J2_J5 where

@@ -80,9 +80,11 @@ instance : InterpretabilityLogic.IL_M₀_W ⪱ InterpretabilityLogic.IL_R_W := b
             . assumption;
             . dsimp [Frame.SRel', F] at *;
               omega;
-          . dsimp [Irreflexive, Frame.RS, Relation.Comp];
-            push_neg;
-            grind;
+          . exact ⟨by
+              intro x
+              dsimp [Frame.RS, Relation.Comp]
+              grind
+            ⟩
       }
       use F;
       constructor;

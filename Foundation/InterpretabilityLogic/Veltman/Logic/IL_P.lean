@@ -78,9 +78,11 @@ instance : InterpretabilityLogic.IL_R_W ⪱ InterpretabilityLogic.IL_P := by
             . rintro x y z ⟨a, Rxa, Sway⟩ ⟨b, Ryb, Rwbz⟩;
               use a;
               grind;
-            . dsimp [Irreflexive, Frame.RS, Relation.Comp];
-              push_neg;
-              grind;
+            . exact ⟨by
+                intro x
+                dsimp [Frame.RS, Relation.Comp]
+                grind
+              ⟩
           S_R := by grind;
         }
       . by_contra hC;

@@ -21,6 +21,9 @@ instance : SetLike (Hilbertᵢ L) (SyntacticFormulaᵢ L) where
   coe := Hilbertᵢ.axiomSet
   coe_injective' := by rintro ⟨T, _⟩ ⟨U, _⟩; simp
 
+instance : LE (Hilbertᵢ L) where
+  le Λ₁ Λ₂ := ∀ ⦃φ⦄, φ ∈ Λ₁ → φ ∈ Λ₂
+
 @[simp] lemma mem_mk (s : Set (SyntacticFormulaᵢ L)) (h) : φ ∈ Hilbertᵢ.mk s h ↔ φ ∈ s := by rfl
 
 def Minimal : Hilbertᵢ L := ⟨∅, by simp⟩

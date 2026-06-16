@@ -156,7 +156,7 @@ instance {F : Frame} {r : F} [F.IsFiniteTree r] : F.IsConverseWellFounded := ⟨
   apply Finite.converseWellFounded_of_trans_irrefl';
   . infer_instance;
   . intro x y z; apply F.trans;
-  . intro x; apply F.irrefl;
+  . exact ⟨F.irrefl⟩;
 ⟩
 
 variable {M : Kripke.Model} {r} [M.IsRootedBy r]

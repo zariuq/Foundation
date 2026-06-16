@@ -40,8 +40,12 @@ instance [F.IsPiecewiseStronglyConnected] : (F^≠).IsPiecewiseConnected := ⟨b
 ⟩
 
 instance [F.IsStronglyConnected] : (F^≠).IsConnected := ⟨by
-  rintro x y;
-  rcases F.s_connected (x := x) (y := y) with (Rxy | Ryx) <;> tauto;
+  intro x y hnotxy hnotyx
+  by_cases hEq : x = y
+  · exact hEq
+  · rcases F.s_connected (x := x) (y := y) with (Rxy | Ryx)
+    · exact False.elim <| hnotxy ⟨Rxy, hEq⟩
+    · exact False.elim <| hnotyx ⟨Ryx, fun hyx' => hEq hyx'.symm⟩
 ⟩
 
 end IrreflGen

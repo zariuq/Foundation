@@ -177,9 +177,13 @@ abbrev WChain (i j : F) := {l : List F // l.ChainI (· ≻ ·) j i}
 
 instance (i j : F) : Finite (WChain j i) :=
   List.ChainI.finite_of_irreflexive_of_transitive
-    (by exact Std.Irrefl.irrefl (r := (· ≺ ·)))
-    (by intro x y z hxy hyz
-        exact IsTrans.trans (r := (· ≺ ·)) z y x hyz hxy)
+    (show Std.Irrefl ((· ≻ ·) : F → F → Prop) from ⟨by
+      intro x hxx
+      exact F.irrefl x hxx
+    ⟩)
+    (show Transitive ((· ≻ ·) : F → F → Prop) from by
+      intro x y z hxy hyz
+      exact F.trans hyz hxy)
     i j
 
 def twoPointAux (t : F → FirstOrder.Semiterm ℒₒᵣ Empty N) (i j : F) : Semisentence ℒₒᵣ N :=
@@ -207,31 +211,31 @@ lemma rew_θChainAux (w : Fin N → FirstOrder.Semiterm ℒₒᵣ Empty N') (t :
   | j :: i :: ε => simp [θChainAux, rew_θChainAux w _ (i :: ε), rew_twoPointAux]
 
 lemma rew_θAux (w : Fin N → FirstOrder.Semiterm ℒₒᵣ Empty N') (t : F → FirstOrder.Semiterm ℒₒᵣ Empty N) (i : F) :
-    Rew.subst w ▹ θAux T t i = θAux T (fun i ↦ Rew.subst w (t i)) i := by
+    Rew.subst w ▹ θAux (r := r) T t i = θAux (r := r) T (fun i ↦ Rew.subst w (t i)) i := by
   simp [Finset.map_udisj, θAux, rew_θChainAux]
 
 def _root_.LO.FirstOrder.Theory.solovay (i : F) : Sentence ℒₒᵣ := exclusiveMultifixedpoint
   (fun j ↦
     let jj := (Fintype.equivFin F).symm j
-    θAux T (fun i ↦ #(Fintype.equivFin F i)) jj ⋏ ⩕ k ∈ { k : F | jj ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)])
+    θAux (r := r) T (fun i ↦ #(Fintype.equivFin F i)) jj ⋏ ⩕ k ∈ { k : F | jj ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)])
   (Fintype.equivFin F i)
 
 def twoPoint (i j : F) : Sentence ℒₒᵣ := twoPointAux T (fun i ↦ ⌜T.solovay i⌝) i j
 
 def θChain (ε : List F) : Sentence ℒₒᵣ := θChainAux T (fun i ↦ ⌜T.solovay i⌝) ε
 
-def θ (i : F) : Sentence ℒₒᵣ := θAux T (fun i ↦ ⌜T.solovay i⌝) i
+def θ (i : F) : Sentence ℒₒᵣ := θAux (r := r) T (fun i ↦ ⌜T.solovay i⌝) i
 
 lemma solovay_diag (i : F) :
     𝗜𝚺₁ ⊢ T.solovay i ⭤ θ T i ⋏ ⩕ j ∈ { j : F | i ≺ j }, T.consistentWith/[⌜T.solovay j⌝] := by
   have : 𝗜𝚺₁ ⊢ T.solovay i ⭤
       (Rew.subst fun j ↦ ⌜T.solovay ((Fintype.equivFin F).symm j)⌝) ▹
-        (θAux T (fun i ↦ #(Fintype.equivFin F i)) i ⋏ ⩕ k ∈ { k : F | i ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)]) := by
+        (θAux (r := r) T (fun i ↦ #(Fintype.equivFin F i)) i ⋏ ⩕ k ∈ { k : F | i ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)]) := by
     simpa [Theory.solovay, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using
       exclusiveMultidiagonal (T := 𝗜𝚺₁) (i := Fintype.equivFin F i)
         (fun j ↦
           let jj := (Fintype.equivFin F).symm j
-          θAux T (fun i ↦ #(Fintype.equivFin F i)) jj ⋏ ⩕ k ∈ { k : F | jj ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)])
+          θAux (r := r) T (fun i ↦ #(Fintype.equivFin F i)) jj ⋏ ⩕ k ∈ { k : F | jj ≺ k }, T.consistentWith/[#(Fintype.equivFin F k)])
   simpa [θ, Finset.map_conj', Function.comp_def, rew_θAux, ←TransitiveRewriting.comp_app,
     Rew.subst_comp_subst, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using this
 
