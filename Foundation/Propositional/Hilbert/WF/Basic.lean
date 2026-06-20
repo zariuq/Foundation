@@ -15,21 +15,21 @@ open Entailment.Corsi
 variable {α : Type*} {Ax Ax₁ Ax₂ : Axiom α} {φ ψ χ : Formula _}
 
 protected inductive Hilbert.WF (Ax : Axiom α) : Logic α
-| protected axm {φ}                 : φ ∈ Ax → Hilbert.WF Ax φ
-| protected andElimL {φ ψ}          : Hilbert.WF Ax $ Axioms.AndElim₁ φ ψ
-| protected andElimR {φ ψ}          : Hilbert.WF Ax $ Axioms.AndElim₂ φ ψ
-| protected orIntroL {φ ψ}          : Hilbert.WF Ax $ Axioms.OrInst₁ φ ψ
-| protected orIntroR {φ ψ}          : Hilbert.WF Ax $ Axioms.OrInst₂ φ ψ
-| protected distributeAndOr {φ ψ χ} : Hilbert.WF Ax $ Axioms.DistributeAndOr φ ψ χ
-| protected impId {φ}               : Hilbert.WF Ax $ Axioms.ImpId φ
-| protected efq {φ}                 : Hilbert.WF Ax $ Axioms.EFQ φ
-| protected mdp {φ ψ}               : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax φ → Hilbert.WF Ax ψ
-| protected af {φ ψ}                : Hilbert.WF Ax φ → Hilbert.WF Ax (ψ ➝ φ)
-| protected andIR {φ ψ}             : Hilbert.WF Ax φ → Hilbert.WF Ax ψ → Hilbert.WF Ax (φ ⋏ ψ)
-| protected ruleC {φ ψ χ}           : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax (φ ➝ χ) → Hilbert.WF Ax (φ ➝ (ψ ⋏ χ))
-| protected ruleD {φ ψ χ}           : Hilbert.WF Ax (φ ➝ χ) → Hilbert.WF Ax (ψ ➝ χ) → Hilbert.WF Ax (φ ⋎ ψ ➝ χ)
-| protected ruleI {φ ψ χ}           : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax (ψ ➝ χ) → Hilbert.WF Ax (φ ➝ χ)
-| protected ruleE {φ ψ χ ξ}         : Hilbert.WF Ax (φ ⭤ ψ) → Hilbert.WF Ax (χ ⭤ ξ) → Hilbert.WF Ax ((φ ➝ χ) ⭤ (ψ ➝ ξ))
+| protected axm {φ : Formula α}                 : φ ∈ Ax → Hilbert.WF Ax φ
+| protected andElimL {φ ψ : Formula α}          : Hilbert.WF Ax $ Axioms.AndElim₁ φ ψ
+| protected andElimR {φ ψ : Formula α}          : Hilbert.WF Ax $ Axioms.AndElim₂ φ ψ
+| protected orIntroL {φ ψ : Formula α}          : Hilbert.WF Ax $ Axioms.OrInst₁ φ ψ
+| protected orIntroR {φ ψ : Formula α}          : Hilbert.WF Ax $ Axioms.OrInst₂ φ ψ
+| protected distributeAndOr {φ ψ χ : Formula α} : Hilbert.WF Ax $ Axioms.DistributeAndOr φ ψ χ
+| protected impId {φ : Formula α}               : Hilbert.WF Ax $ Axioms.ImpId φ
+| protected efq {φ : Formula α}                 : Hilbert.WF Ax $ Axioms.EFQ φ
+| protected mdp {φ ψ : Formula α}               : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax φ → Hilbert.WF Ax ψ
+| protected af {φ ψ : Formula α}                : Hilbert.WF Ax φ → Hilbert.WF Ax (ψ ➝ φ)
+| protected andIR {φ ψ : Formula α}             : Hilbert.WF Ax φ → Hilbert.WF Ax ψ → Hilbert.WF Ax (φ ⋏ ψ)
+| protected ruleC {φ ψ χ : Formula α}           : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax (φ ➝ χ) → Hilbert.WF Ax (φ ➝ (ψ ⋏ χ))
+| protected ruleD {φ ψ χ : Formula α}           : Hilbert.WF Ax (φ ➝ χ) → Hilbert.WF Ax (ψ ➝ χ) → Hilbert.WF Ax (φ ⋎ ψ ➝ χ)
+| protected ruleI {φ ψ χ : Formula α}           : Hilbert.WF Ax (φ ➝ ψ) → Hilbert.WF Ax (ψ ➝ χ) → Hilbert.WF Ax (φ ➝ χ)
+| protected ruleE {φ ψ χ ξ : Formula α}         : Hilbert.WF Ax (φ ⭤ ψ) → Hilbert.WF Ax (χ ⭤ ξ) → Hilbert.WF Ax ((φ ➝ χ) ⭤ (ψ ➝ ξ))
 
 namespace Hilbert.WF
 

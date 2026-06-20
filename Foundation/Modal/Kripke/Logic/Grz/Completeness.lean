@@ -145,7 +145,7 @@ lemma truthlemma_lemma2
       have : ξ ∈ □'□⁻¹'X.1 := hΓ₁ hξ;
       obtain ⟨χ, hχ, rfl⟩ := Finset.LO.exists_of_mem_box this;
       use □χ;
-      grind;
+      grind [Finset.LO.mem_box_of_mem_prebox, Finset.LO.mem_boxItr_of_mem_preboxItr, Finset.mem_coe, Finset.coe_union, Set.LO.iff_mem_preboxItr];
     case h₃ =>
       intro ξ hξ;
       obtain ⟨ξ, hξ, rfl⟩ := hξ;

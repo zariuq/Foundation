@@ -72,8 +72,7 @@ lemma IsSymmetric.of_dual {F : Frame} (h : ∀ X : Set F, F.dia (F.box X) ⊆ X)
 lemma IsSymmetric.of_alt {F : Frame} (h : ∀ X a, { b | Xᶜ ∉ F.𝒩 b } ∉ F.𝒩 a → a ∉ X) : F.IsSymmetric := by
   constructor;
   intro X a ha;
-  have := h X a;
-  grind;
+  simp only [Frame.box, Frame.dia, Set.mem_setOf_eq]; by_contra hC; exact h X a hC ha;
 
 lemma iff_IsSymmetric_dual : F.IsSymmetric ↔ ∀ X : Set F, F.dia (F.box X) ⊆ X := by
   constructor;
@@ -105,9 +104,7 @@ lemma IsEuclidean.of_dual {F : Frame} (h : ∀ X, F.dia (F.box X) ⊆ F.box X) :
 lemma IsEuclidean.of_alt {F : Frame} (h : ∀ X a, X ∉ F.𝒩 a → { b | X ∉ F.𝒩 b } ∈ F.𝒩 a) : F.IsEuclidean := by
   constructor;
   intro X a ha;
-  have := h X a;
-  simp_all [Frame.dia, Frame.box];
-  grind;
+  simp only [Frame.box, Frame.dia, Set.mem_setOf_eq, Set.mem_compl_iff]; exact h Xᶜ a ha;
 
 instance [F.IsEuclidean] : F.IsGeachConvergent ⟨1, 1, 0, 1⟩ := ⟨by simp⟩
 instance [F.IsGeachConvergent ⟨1, 1, 0, 1⟩] : F.IsEuclidean := ⟨λ _ => F.gconv (g := ⟨1, 1, 0, 1⟩)⟩

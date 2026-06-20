@@ -12,8 +12,8 @@ variable {α : Type*} {Ax Ax₁ Ax₂ : Axiom α} {φ ψ χ : Formula α}
 
 
 inductive Hilbert.Standard (Ax : Axiom α) : Logic α
-| axm {φ} (s : Substitution _) : φ ∈ Ax → Hilbert.Standard Ax (φ⟦s⟧)
-| mdp {φ ψ}                    : Hilbert.Standard Ax (φ ➝ ψ) → Hilbert.Standard Ax φ → Hilbert.Standard Ax ψ
+| axm {φ : Formula α} (s : Substitution _) : φ ∈ Ax → Hilbert.Standard Ax (φ⟦s⟧)
+| mdp {φ ψ : Formula α}                    : Hilbert.Standard Ax (φ ➝ ψ) → Hilbert.Standard Ax φ → Hilbert.Standard Ax ψ
 | verum                        : Hilbert.Standard Ax $ ⊤
 | implyS φ ψ                   : Hilbert.Standard Ax $ φ ➝ ψ ➝ φ
 | implyK φ ψ χ                 : Hilbert.Standard Ax $ (φ ➝ ψ ➝ χ) ➝ (φ ➝ ψ) ➝ φ ➝ χ

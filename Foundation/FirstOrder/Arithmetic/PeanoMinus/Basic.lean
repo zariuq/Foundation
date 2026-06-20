@@ -450,7 +450,7 @@ lemma two_pow_two_eq_four : 2 ^ 2 = (4 : M) := by
 lemma two_pos : (0 : M) < 2 := by exact _root_.two_pos
 
 @[simp] lemma le_mul_self (a : M) : a ≤ a * a := by
-  have : 0 ≤ a := by exact zero_le a
+  have : 0 ≤ a := by exact zero_le (a := a)
   rcases this with (rfl | pos) <;> simp [*, ←pos_iff_one_le]
 
 @[simp] lemma le_sq (a : M) : a ≤ a ^ 2 := by simp [sq]
@@ -507,7 +507,7 @@ lemma lt_square_of_lt {a : M} (pos : 1 < a) : a < a^2 := by
 lemma two_mul_le_sq {i : M} (h : 2 ≤ i) : 2 * i ≤ i ^ 2 := by simpa [sq] using mul_le_mul_right h
 
 lemma two_mul_le_sq_add_one (i : M) : 2 * i ≤ i ^ 2 + 1 := by
-  rcases zero_le i with (rfl | pos)
+  rcases (zero_le (a := i)) with (rfl | pos)
   · simp
   · rcases pos_iff_one_le.mp pos with (rfl | lt)
     · simp [one_add_one_eq_two]

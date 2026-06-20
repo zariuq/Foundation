@@ -89,7 +89,7 @@ lemma truthlemma_lemma2
     . replace : ↑(□'□⁻¹'X.1) *⊢[Modal.GL] ((□^[2]'□⁻¹'X.1).conj) ➝ □ψ := FConj_DT'.mpr this;
       replace : ↑(□'□⁻¹'X.1) *⊢[Modal.GL] (□'□⁻¹'X.1).conj ➝ □ψ := C!_trans ?_ this;
       . replace : ↑(□'□⁻¹'X.1 ∪ □'□⁻¹'↑X) *⊢[Modal.GL] □ψ := FConj_DT'.mp this;
-        have : X *⊢[Modal.GL] □ψ := Context.weakening! (by grind) this;
+        have : X *⊢[Modal.GL] □ψ := Context.weakening! (by grind [Finset.LO.mem_of_mem_box_prebox, Finset.coe_union, Finset.mem_coe]) this;
         exact membership_iff hψ₁ |>.mpr this;
       . apply CFconjFconj!_of_provable;
         intro ξ hξ;
@@ -103,11 +103,11 @@ lemma truthlemma_lemma2
         Finset.coe_preimage, Set.mem_union, Set.mem_preimage] at ⊢ hξ;
       rcases hξ with ⟨ξ, ⟨hξ, rfl⟩⟩;
       rcases (Finset.mem_union.mp $ hΓ₁ hξ) with hξ | hξ;
-      . grind;
+      . grind [Finset.LO.mem_of_mem_box_prebox, Finset.LO.mem_boxItr_of_mem_preboxItr, Finset.coe_union, Finset.mem_coe, Set.LO.iff_mem_preboxItr];
       . right;
         obtain ⟨ζ, hζ, rfl⟩ := Finset.LO.exists_of_mem_boxItr hξ;
         use ζ;
-        grind;
+        grind [Finset.LO.mem_of_mem_box_prebox, Finset.LO.mem_boxItr_of_mem_preboxItr, Finset.coe_union, Finset.mem_coe, Set.LO.iff_mem_preboxItr];
   . intro ξ;
     simp only [Set.mem_union, Finset.mem_coe, Set.mem_insert_iff];
     rintro (hξ₁ | hξ₂);

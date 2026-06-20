@@ -412,7 +412,7 @@ lemma subset_of_mem (hψ : ψ ∈ φ.subformulas) : (ψ.subformulas ⊆ φ.subfo
 end Formula.subformulas
 
 
-def FormulaSet.SubformulaClosed [DecidableEq α] (Γ : FormulaSet α) : Prop := ∀ φ ∈ Γ, φ.subformulas.toSet ⊆ Γ
+def FormulaSet.SubformulaClosed [DecidableEq α] (Γ : FormulaSet α) : Prop := ∀ φ ∈ Γ, (φ.subformulas : FormulaSet α) ⊆ Γ
 
 namespace FormulaSet.SubformulaClosed
 
@@ -450,7 +450,7 @@ lemma of_mem_box : □φ ∈ Γ → φ ∈ Γ := SubformulaClosed.of_mem_box IsS
 end FormulaSet.IsSubformulaClosed
 
 
-instance {φ : Formula α} [DecidableEq α] : FormulaSet.IsSubformulaClosed (φ.subformulas.toSet) where
+instance {φ : Formula α} [DecidableEq α] : FormulaSet.IsSubformulaClosed (φ.subformulas : FormulaSet α) where
   closed := fun _ hψ ↦ Formula.subformulas.subset_of_mem hψ
 
 

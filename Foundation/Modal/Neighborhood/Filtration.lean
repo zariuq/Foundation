@@ -539,7 +539,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
             apply h <;> tauto;
         have e3 : (⋂ Vi ∈ Vs, Vi) ∩ (⋂ Ui ∈ Us, Ui) = ⋂ Xi ∈ Ys, Xi := by
           rw [eYVU]; exact (Finset.set_biInter_inter Vs Us id).symm
-        have e4 : (⋂ Xi ∈ Ys, Xi : Set (FilterEqvQuotient M T)) = Y := by grind;
+        have e4 : (⋂ Xi ∈ Ys, Xi : Set (FilterEqvQuotient M T)) = Y := hYs₂.symm;
         exact e1.trans (e2.trans (e3.trans e4));
       have H : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ ξ : Ξ, 【M (□ξ)】) ⊆ (【M φ】 : Set (FilterEqvQuotient M T)) := heqH ▸ hY;
       obtain ⟨w, rfl⟩ := Quotient.exists_rep W;
@@ -574,7 +574,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
             Satisfies.def_box', = Finset.mem_filter, Model.truthset.eq_box,
             FilterEqvQuotient.iff_eq, toFilterEquivSet.mem_of_mem, Satisfies.def_box,
             usr Set.mem_setOf_eq, = Set.setOf_false, !Frame.trans,
-            !toFilterEquivSet.iff_mem_truthset]
+            !toFilterEquivSet.iff_mem_truthset, = Model.truthset.eq_boxItr, Satisfies.def_boxItr']
       . suffices ∀ ψ : Ψ, w ∈ M (□ψ) by
           apply toFilterEquivSet.mem_of_mem;
           replace H : M.box (⋂ ψ : Ψ, M ψ) ⊆ M.box (M φ) := M.mono' $ by
@@ -622,7 +622,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
         grind only [= Set.subset_def, = Finset.mem_union, = Set.setOf_true, of_mem_box,
           Satisfies.def_box', = Finset.mem_filter, Model.truthset.eq_box, FilterEqvQuotient.iff_eq,
           toFilterEquivSet.mem_of_mem, usr Set.mem_setOf_eq, = Set.setOf_false, !Frame.trans,
-          !toFilterEquivSet.iff_mem_truthset]
+          !toFilterEquivSet.iff_mem_truthset, = Model.truthset.eq_boxItr, Satisfies.def_boxItr']
       . exfalso;
         apply hYs₁;
         suffices (Vs = ∅ ∧ Us = ∅) by simp [eYVU, this.1, this.2]; rfl;

@@ -12,20 +12,20 @@ open Entailment.Corsi
 variable {α : Type*} {Ax Ax₁ Ax₂ : Axiom α} {φ ψ χ : Formula _}
 
 protected inductive Hilbert.VF (Ax : Axiom α) : Logic α
-| protected axm {φ}                 : φ ∈ Ax → Hilbert.VF Ax φ
-| protected andElimL {φ ψ}          : Hilbert.VF Ax $ Axioms.AndElim₁ φ ψ
-| protected andElimR {φ ψ}          : Hilbert.VF Ax $ Axioms.AndElim₂ φ ψ
-| protected orIntroL {φ ψ}          : Hilbert.VF Ax $ Axioms.OrInst₁ φ ψ
-| protected orIntroR {φ ψ}          : Hilbert.VF Ax $ Axioms.OrInst₂ φ ψ
-| protected distributeAndOr {φ ψ χ} : Hilbert.VF Ax $ Axioms.DistributeAndOr φ ψ χ
-| protected impId {φ}               : Hilbert.VF Ax $ Axioms.ImpId φ
-| protected efq {φ}                 : Hilbert.VF Ax $ Axioms.EFQ φ
-| protected mdp {φ ψ}               : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax φ → Hilbert.VF Ax ψ
-| protected af {φ ψ}                : Hilbert.VF Ax φ → Hilbert.VF Ax (ψ ➝ φ)
-| protected andIR {φ ψ}             : Hilbert.VF Ax φ → Hilbert.VF Ax ψ → Hilbert.VF Ax (φ ⋏ ψ)
-| protected ruleC {φ ψ χ}           : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax (φ ➝ χ) → Hilbert.VF Ax (φ ➝ (ψ ⋏ χ))
-| protected ruleD {φ ψ χ}           : Hilbert.VF Ax (φ ➝ χ) → Hilbert.VF Ax (ψ ➝ χ) → Hilbert.VF Ax (φ ⋎ ψ ➝ χ)
-| protected ruleI {φ ψ χ}           : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax (ψ ➝ χ) → Hilbert.VF Ax (φ ➝ χ)
+| protected axm {φ : Formula α}                 : φ ∈ Ax → Hilbert.VF Ax φ
+| protected andElimL {φ ψ : Formula α}          : Hilbert.VF Ax $ Axioms.AndElim₁ φ ψ
+| protected andElimR {φ ψ : Formula α}          : Hilbert.VF Ax $ Axioms.AndElim₂ φ ψ
+| protected orIntroL {φ ψ : Formula α}          : Hilbert.VF Ax $ Axioms.OrInst₁ φ ψ
+| protected orIntroR {φ ψ : Formula α}          : Hilbert.VF Ax $ Axioms.OrInst₂ φ ψ
+| protected distributeAndOr {φ ψ χ : Formula α} : Hilbert.VF Ax $ Axioms.DistributeAndOr φ ψ χ
+| protected impId {φ : Formula α}               : Hilbert.VF Ax $ Axioms.ImpId φ
+| protected efq {φ : Formula α}                 : Hilbert.VF Ax $ Axioms.EFQ φ
+| protected mdp {φ ψ : Formula α}               : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax φ → Hilbert.VF Ax ψ
+| protected af {φ ψ : Formula α}                : Hilbert.VF Ax φ → Hilbert.VF Ax (ψ ➝ φ)
+| protected andIR {φ ψ : Formula α}             : Hilbert.VF Ax φ → Hilbert.VF Ax ψ → Hilbert.VF Ax (φ ⋏ ψ)
+| protected ruleC {φ ψ χ : Formula α}           : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax (φ ➝ χ) → Hilbert.VF Ax (φ ➝ (ψ ⋏ χ))
+| protected ruleD {φ ψ χ : Formula α}           : Hilbert.VF Ax (φ ➝ χ) → Hilbert.VF Ax (ψ ➝ χ) → Hilbert.VF Ax (φ ⋎ ψ ➝ χ)
+| protected ruleI {φ ψ χ : Formula α}           : Hilbert.VF Ax (φ ➝ ψ) → Hilbert.VF Ax (ψ ➝ χ) → Hilbert.VF Ax (φ ➝ χ)
 
 namespace Hilbert.VF
 

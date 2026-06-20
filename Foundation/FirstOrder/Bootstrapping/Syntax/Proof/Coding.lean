@@ -151,10 +151,10 @@ lemma isFormulaSet_sound {s : ℕ} : IsFormulaSet L s → ∃ S : Finset (Syntac
     · intro h
       rcases Derivation2.Sequent.mem_quote h with ⟨p, hp, rfl⟩
       rcases by simpa using hp with ⟨x, hx, rfl⟩
-      simpa [hps x (mem_iff_mem_bitIndices.mpr hx)] using mem_iff_mem_bitIndices.mpr hx
+      simpa [hps x (mem_iff_mem_bitIndices.mpr (Nat.mem_bitIndices.mpr hx))] using mem_iff_mem_bitIndices.mpr (Nat.mem_bitIndices.mpr hx)
     · intro h
       rw [←hps x h]
-      simpa [Derivation2.Sequent.mem_quote_iff, ←mem_iff_mem_bitIndices] using ⟨x, h, rfl⟩⟩
+      simpa [Derivation2.Sequent.mem_quote_iff, ←mem_iff_mem_bitIndices] using ⟨x, Nat.mem_bitIndices.mp (mem_iff_mem_bitIndices.mp h), rfl⟩⟩
 
 variable (V)
 

@@ -49,7 +49,7 @@ instance Neighborhood.finite_complete : Complete Modal.EMNT4 FrameClass.finite_E
   replace F_trans := Set.mem_setOf_eq.mp F_trans;
 
   let M : Model := ⟨F, V⟩;
-  apply supplementedTransitiveFiltration M (Finset.toSet $ φ.subformulas ∪ (□⊤ : Formula ℕ).subformulas) |>.filtration_satisfies _ (by grind) |>.mp;
+  apply supplementedTransitiveFiltration M (↑(φ.subformulas ∪ (□⊤ : Formula ℕ).subformulas) : Set _) |>.filtration_satisfies _ (by grind) |>.mp;
   apply hφ;
   apply Set.mem_setOf_eq.mpr;
   exact {

@@ -699,7 +699,7 @@ lemma GL.iff_provable_closed_sumQuasiNormal_subset_letterlessSpectrum (hSR : X.S
         use Y;
         constructor;
         . rw [Formula.letterlessSpectrum.def_fconj];
-          . grind;
+          . exact hY₂;
           . grind;
         . assumption;
     _ ↔ (⋂ ψ ∈ X, ψ.letterlessSpectrum) ⊆ φ.letterlessSpectrum := by

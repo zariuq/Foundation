@@ -13,20 +13,20 @@ open Entailment.Corsi
 variable {α : Type*} {Ax Ax₁ Ax₂ : Axiom α} {φ ψ χ : Formula _}
 
 protected inductive Hilbert.F (Ax : Axiom α) : Logic α
-| protected axm {φ}                 : φ ∈ Ax → Hilbert.F Ax φ
-| protected andElimL {φ ψ}          : Hilbert.F Ax $ Axioms.AndElim₁ φ ψ
-| protected andElimR {φ ψ}          : Hilbert.F Ax $ Axioms.AndElim₂ φ ψ
-| protected orIntroL {φ ψ}          : Hilbert.F Ax $ Axioms.OrInst₁ φ ψ
-| protected orIntroR {φ ψ}          : Hilbert.F Ax $ Axioms.OrInst₂ φ ψ
-| protected distributeAndOr {φ ψ χ} : Hilbert.F Ax $ Axioms.DistributeAndOr φ ψ χ
-| protected axiomC {φ ψ χ}          : Hilbert.F Ax $ Axioms.C φ ψ χ
-| protected axiomD {φ ψ χ}          : Hilbert.F Ax $ Axioms.D φ ψ χ
-| protected axiomI {φ ψ χ}          : Hilbert.F Ax $ Axioms.I φ ψ χ
-| protected impId {φ}               : Hilbert.F Ax $ Axioms.ImpId φ
-| protected efq {φ}                 : Hilbert.F Ax $ Axioms.EFQ φ
-| protected mdp {φ ψ}               : Hilbert.F Ax (φ ➝ ψ) → Hilbert.F Ax φ → Hilbert.F Ax ψ
-| protected af {φ ψ}                : Hilbert.F Ax φ → Hilbert.F Ax (ψ ➝ φ)
-| protected andIR {φ ψ}             : Hilbert.F Ax φ → Hilbert.F Ax ψ → Hilbert.F Ax (φ ⋏ ψ)
+| protected axm {φ : Formula α}                 : φ ∈ Ax → Hilbert.F Ax φ
+| protected andElimL {φ ψ : Formula α}          : Hilbert.F Ax $ Axioms.AndElim₁ φ ψ
+| protected andElimR {φ ψ : Formula α}          : Hilbert.F Ax $ Axioms.AndElim₂ φ ψ
+| protected orIntroL {φ ψ : Formula α}          : Hilbert.F Ax $ Axioms.OrInst₁ φ ψ
+| protected orIntroR {φ ψ : Formula α}          : Hilbert.F Ax $ Axioms.OrInst₂ φ ψ
+| protected distributeAndOr {φ ψ χ : Formula α} : Hilbert.F Ax $ Axioms.DistributeAndOr φ ψ χ
+| protected axiomC {φ ψ χ : Formula α}          : Hilbert.F Ax $ Axioms.C φ ψ χ
+| protected axiomD {φ ψ χ : Formula α}          : Hilbert.F Ax $ Axioms.D φ ψ χ
+| protected axiomI {φ ψ χ : Formula α}          : Hilbert.F Ax $ Axioms.I φ ψ χ
+| protected impId {φ : Formula α}               : Hilbert.F Ax $ Axioms.ImpId φ
+| protected efq {φ : Formula α}                 : Hilbert.F Ax $ Axioms.EFQ φ
+| protected mdp {φ ψ : Formula α}               : Hilbert.F Ax (φ ➝ ψ) → Hilbert.F Ax φ → Hilbert.F Ax ψ
+| protected af {φ ψ : Formula α}                : Hilbert.F Ax φ → Hilbert.F Ax (ψ ➝ φ)
+| protected andIR {φ ψ : Formula α}             : Hilbert.F Ax φ → Hilbert.F Ax ψ → Hilbert.F Ax (φ ⋏ ψ)
 
 namespace Hilbert.F
 

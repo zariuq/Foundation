@@ -228,15 +228,15 @@ theorem jerabek_SBDP
   let X := X₀ ∪ X₁;
   let XB := X.image (·ᵇ);
 
-  have Claim1 : ∀ ψ ∈ (□⁻¹'φ.subformulas), (L, XB.toSet) ⊢ □ψᵇ ➝ ψᵇ := by
+  have Claim1 : ∀ ψ ∈ (□⁻¹'φ.subformulas), (L, (XB : Set (Formula ℕ))) ⊢ □ψᵇ ➝ ψᵇ := by
     intro ψ hψ;
-    have H₁ : ∀ b, (L, XB.toSet) ⊢ (flag (.atom q) b) ⋏ □ψᵇ ➝ ⊡((flag (.atom q) !b) ➝ ψᵇ) := by
+    have H₁ : ∀ b, (L, (XB : Set (Formula ℕ))) ⊢ (flag (.atom q) b) ⋏ □ψᵇ ➝ ⊡((flag (.atom q) !b) ➝ ψᵇ) := by
       intro b;
       apply GlobalConsequence.thm!;
       apply jerabek_SBDP.lemma₂;
-    have H₂ : ∀ b, (L, XB.toSet) ⊢ ⊡((flag (.atom q) b) ➝ ψᵇ) ➝ ψᵇ := by
+    have H₂ : ∀ b, (L, (XB : Set (Formula ℕ))) ⊢ ⊡((flag (.atom q) b) ➝ ψᵇ) ➝ ψᵇ := by
       intro b;
-      suffices (L, XB.toSet) ⊢ (□((flag (.atom q) b) ➝ ψ) ➝ ψ)ᵇ by
+      suffices (L, (XB : Set (Formula ℕ))) ⊢ (□((flag (.atom q) b) ➝ ψ) ➝ ψ)ᵇ by
         simpa only [Formula.boxdotTranslate, Formula.atom_flag_boxdotTranslated] using this;
       apply GlobalConsequence.ctx!;
       simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe, XB];
@@ -246,15 +246,15 @@ theorem jerabek_SBDP
         | true
         | false =>
           simp [X, X₀, X₁, flag, Finset.LO.preboxItr];
-          grind;
+          grind [Set.LO.iff_mem_preboxItr, Finset.LO.mem_boxItr_of_mem_preboxItr, Finset.LO.mem_of_mem_box_prebox, Finset.mem_image, Finset.mem_coe, Finset.coe_union];
       . rfl;
-    have H₃ : ∀ b, (L, XB.toSet) ⊢ (flag (.atom q) b) ➝ (□ψᵇ ➝ ψᵇ) := by
+    have H₃ : ∀ b, (L, (XB : Set (Formula ℕ))) ⊢ (flag (.atom q) b) ➝ (□ψᵇ ➝ ψᵇ) := by
       intro b;
       cl_prover [(H₁ b), (H₂ !b)];
-    have H₄ : (L, XB.toSet) ⊢  atom q ➝ □ψᵇ ➝ ψᵇ := H₃ true;
-    have H₅ : (L, XB.toSet) ⊢ ∼atom q ➝ □ψᵇ ➝ ψᵇ := H₃ false;
+    have H₄ : (L, (XB : Set (Formula ℕ))) ⊢  atom q ➝ □ψᵇ ➝ ψᵇ := H₃ true;
+    have H₅ : (L, (XB : Set (Formula ℕ))) ⊢ ∼atom q ➝ □ψᵇ ➝ ψᵇ := H₃ false;
     cl_prover [H₄, H₅];
-  have Claim2 : ∀ ψ ∈ φ.subformulas, (L, XB.toSet) ⊢ ψ ⭤ ψᵇ := by
+  have Claim2 : ∀ ψ ∈ φ.subformulas, (L, (XB : Set (Formula ℕ))) ⊢ ψ ⭤ ψᵇ := by
     intro ψ hψ;
     induction ψ with
     | hfalsum => simp [Formula.boxdotTranslate];
@@ -265,17 +265,17 @@ theorem jerabek_SBDP
       dsimp [Formula.boxdotTranslate];
       cl_prover [ihψ₁, ihψ₂];
     | hbox ψ ihψ =>
-      replace ihψ : (L, XB.toSet) ⊢ ψ ⭤ ψᵇ := ihψ (by grind);
-      have H₁ : (L, XB.toSet) ⊢ □ψ ⭤ □ψᵇ := box_congruence! ihψ;
-      have H₂ : (L, XB.toSet) ⊢ □ψᵇ ⭤ ⊡ψᵇ := by
+      replace ihψ : (L, (XB : Set (Formula ℕ))) ⊢ ψ ⭤ ψᵇ := ihψ (by grind);
+      have H₁ : (L, (XB : Set (Formula ℕ))) ⊢ □ψ ⭤ □ψᵇ := box_congruence! ihψ;
+      have H₂ : (L, (XB : Set (Formula ℕ))) ⊢ □ψᵇ ⭤ ⊡ψᵇ := by
         apply Entailment.E!_intro;
-        . have : (L, XB.toSet) ⊢ □ψᵇ ➝ ψᵇ := Claim1 ψ (by simpa [Finset.LO.preboxItr]);
+        . have : (L, (XB : Set (Formula ℕ))) ⊢ □ψᵇ ➝ ψᵇ := Claim1 ψ (by simpa [Finset.LO.preboxItr]);
           cl_prover [this];
         . cl_prover;
       cl_prover [H₁, H₂];
-  have : (L, XB.toSet) ⊢ φᵇ := by
-    have h₁ : (L, XB.toSet) ⊢ φ ➝ φᵇ := C_of_E_mp! $ Claim2 φ (by grind);
-    have h₂ : (L, XB.toSet) ⊢ φ := by
+  have : (L, (XB : Set (Formula ℕ))) ⊢ φᵇ := by
+    have h₁ : (L, (XB : Set (Formula ℕ))) ⊢ φ ➝ φᵇ := C_of_E_mp! $ Claim2 φ (by grind);
+    have h₂ : (L, (XB : Set (Formula ℕ))) ⊢ φ := by
       apply GlobalConsequence.thm!;
       grind;
     exact h₁ ⨀ h₂;
@@ -342,22 +342,22 @@ theorem jerabek_SBDP
           intro x;
           apply Satisfies.fconj_def.mpr;
           rintro ψ hψ;
-          rcases (by simpa [X, X₀, X₁] using hψ) with (⟨ψ, _, rfl⟩ | ⟨ψ, _, rfl⟩);
+          rcases (by simpa [X, X₀, X₁] using hψ) with (⟨ψ, hmem, rfl⟩ | ⟨ψ, hmem, rfl⟩);
           . intro hψ₁;
             by_cases hψ : Satisfies M x.1 ψ;
-            . exact H2 _ (by grind) _ _ |>.mpr hψ;
+            . exact H2 _ (by grind [Finset.LO.mem_box_of_mem_prebox, Formula.subformulas.mem_box]) _ _ |>.mpr hψ;
             . exfalso;
               apply hψ;
-              apply H2 _ (by grind) _ true |>.mp;
+              apply H2 _ (by grind [Finset.LO.mem_box_of_mem_prebox, Formula.subformulas.mem_box]) _ true |>.mp;
               apply hψ₁ (x.1, true);
               . simp [Frame.Rel', M₂, Frame.twice];
               . simp [Satisfies, M₂];
           . intro hψ₁;
             by_cases hψ : Satisfies M x.1 ψ;
-            . exact H2 _ (by grind) _ _ |>.mpr hψ;
+            . exact H2 _ (by grind [Finset.LO.mem_box_of_mem_prebox, Formula.subformulas.mem_box]) _ _ |>.mpr hψ;
             . exfalso;
               apply hψ;
-              apply H2 _ (by grind) _ false |>.mp;
+              apply H2 _ (by grind [Finset.LO.mem_box_of_mem_prebox, Formula.subformulas.mem_box]) _ false |>.mp;
               apply hψ₁ (x.1, false);
               . simp [Frame.Rel', M₂, Frame.twice];
               . simp [Satisfies, M₂];

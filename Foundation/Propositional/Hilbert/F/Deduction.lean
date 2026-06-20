@@ -13,10 +13,10 @@ attribute [grind <=] Entailment.mdp!
 variable {α : Type*} {Ax : Axiom α} {Γ : Set (Formula α)} {φ ψ : Formula α}
 
 inductive Deduction (Ax : Axiom α) (Γ : Set (Formula α)) : Formula α → Prop
-| protected ctx {φ}     : φ ∈ Γ → Deduction Ax Γ φ
-| protected thm {φ}     : Hilbert.F Ax ⊢ φ → Deduction Ax Γ φ
-| protected mp {φ ψ}    : Hilbert.F Ax ⊢ (φ ➝ ψ) → Deduction Ax Γ φ → Deduction Ax Γ ψ
-| protected andIR {φ ψ} : Deduction Ax Γ φ → Deduction Ax Γ ψ → Deduction Ax Γ (φ ⋏ ψ)
+| protected ctx {φ : Formula α}     : φ ∈ Γ → Deduction Ax Γ φ
+| protected thm {φ : Formula α}     : Hilbert.F Ax ⊢ φ → Deduction Ax Γ φ
+| protected mp {φ ψ : Formula α}    : Hilbert.F Ax ⊢ (φ ➝ ψ) → Deduction Ax Γ φ → Deduction Ax Γ ψ
+| protected andIR {φ ψ : Formula α} : Deduction Ax Γ φ → Deduction Ax Γ ψ → Deduction Ax Γ (φ ⋏ ψ)
 
 @[grind ⇒] lemma deducible_of_provable (hφ : (Hilbert.F Ax) ⊢ φ) : Deduction Ax Γ φ := by apply Deduction.thm hφ;
 

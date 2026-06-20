@@ -25,7 +25,7 @@ abbrev Consistent (𝓢 : S) (T : FormulaSet α) := T *⊬[𝓢] ⊥
 
 abbrev Inconsistent (𝓢 : S) (T : FormulaSet α) := ¬(Consistent 𝓢 T)
 
-lemma def_consistent [Entailment.Minimal 𝓢] : Consistent 𝓢 T ↔ ∀ Γ : FormulaFinset _, (Γ.toSet ⊆ T) → Γ *⊬[𝓢] ⊥ := by
+lemma def_consistent [Entailment.Minimal 𝓢] : Consistent 𝓢 T ↔ ∀ Γ : FormulaFinset α, ((Γ : FormulaSet _) ⊆ T) → Γ *⊬[𝓢] ⊥ := by
   constructor;
   . intro h Γ hΓ;
     have := Context.provable_iff_finset.not.mp h;
@@ -36,7 +36,7 @@ lemma def_consistent [Entailment.Minimal 𝓢] : Consistent 𝓢 T ↔ ∀ Γ : 
     push_neg;
     simpa using h;
 
-lemma def_inconsistent [Entailment.Minimal 𝓢] : Inconsistent 𝓢 T ↔ ∃ (Γ : FormulaFinset _), (Γ.toSet ⊆ T) ∧ Γ *⊢[𝓢] ⊥ := by
+lemma def_inconsistent [Entailment.Minimal 𝓢] : Inconsistent 𝓢 T ↔ ∃ (Γ : FormulaFinset α), ((Γ : FormulaSet _) ⊆ T) ∧ Γ *⊢[𝓢] ⊥ := by
   unfold Inconsistent;
   apply not_iff_not.mp;
   push_neg;
@@ -104,7 +104,7 @@ lemma iff_insert_consistent : Consistent 𝓢 (insert φ T) ↔ ∀ {Γ : Formul
       simp;
     . simp_all;
 
-lemma iff_insert_inconsistent : Inconsistent 𝓢 (insert φ T) ↔ ∃ Γ : FormulaFinset _, (Γ.toSet ⊆ T) ∧ Γ *⊢[𝓢] φ ➝ ⊥ := by
+lemma iff_insert_inconsistent : Inconsistent 𝓢 (insert φ T) ↔ ∃ Γ : FormulaFinset α, ((Γ : FormulaSet _) ⊆ T) ∧ Γ *⊢[𝓢] φ ➝ ⊥ := by
   unfold Inconsistent;
   apply not_iff_not.mp;
   push_neg;
@@ -217,7 +217,7 @@ lemma either_consistent (T_consis : Consistent 𝓢 T) (φ) : Consistent 𝓢 (i
   . simp_all;
 
 open Classical in
-lemma intro_union_consistent(h : ∀ {Γ₁ Γ₂ : FormulaFinset _}, (Γ₁.toSet ⊆ T₁) → (Γ₂.toSet ⊆ T₂) → (Γ₁ ∪ Γ₂) *⊬[𝓢] ⊥)
+lemma intro_union_consistent(h : ∀ {Γ₁ Γ₂ : FormulaFinset α}, ((Γ₁ : FormulaSet _) ⊆ T₁) → ((Γ₂ : FormulaSet _) ⊆ T₂) → (Γ₁ ∪ Γ₂) *⊬[𝓢] ⊥)
   : Consistent 𝓢 (T₁ ∪ T₂) := by
   apply def_consistent.mpr;
   intro Δ hΔ;
@@ -242,7 +242,7 @@ lemma exists_consistent_maximal_of_consistent (T_consis : Consistent 𝓢 T)
     . apply def_consistent.mpr;
       intro Γ hΓ;
       by_contra hC;
-      obtain ⟨U, hUc, hUs⟩ := Set.subset_mem_chain_of_finite c hnc chain (s := ↑Γ.toSet) (by simp) $ by
+      obtain ⟨U, hUc, hUs⟩ := Set.subset_mem_chain_of_finite c hnc chain (s := (Γ : FormulaSet _)) (by simp) $ by
         intro φ hφ;
         apply hΓ hφ;
       have : Consistent 𝓢 U := hc hUc;

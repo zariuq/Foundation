@@ -201,7 +201,7 @@ lemma def_multirel_boxItr_satisfies : x ≺^[n] y ↔ (∀ {φ}, x ⊧ □^[n]φ
         obtain ⟨ψ, hψ₁, hψ₂⟩ := fdisj_def.mp this;
         have : y ⊭ ψ := Set.LO.mem_of_mem_boxItr $ @hΔ (□^[n]ψ) $ by
           show □^[n]ψ ∈ ↑Δ;
-          grind;
+          grind [Finset.LO.mem_boxItr_of_mem_preboxItr];
         contradiction;
       use t;
       constructor;

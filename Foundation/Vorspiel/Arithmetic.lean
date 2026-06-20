@@ -2,6 +2,7 @@ module
 
 public import Foundation.Vorspiel.List.Basic
 public import Mathlib.Computability.Halting
+public import Mathlib.Computability.PartrecBasis
 public import Mathlib.Logic.Godel.GodelBetaFunction
 
 @[expose] public section

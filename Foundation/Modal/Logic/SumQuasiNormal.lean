@@ -11,10 +11,10 @@ namespace Logic
 variable {L L₁ L₂ : Logic α} {φ ψ : Formula α} {s : Substitution α}
 
 inductive sumQuasiNormal (L₁ L₂ : Logic α) : Logic α
-  | mem₁ {φ}    : L₁ ⊢ φ → sumQuasiNormal L₁ L₂ φ
-  | mem₂ {φ}    : L₂ ⊢ φ → sumQuasiNormal L₁ L₂ φ
-  | mdp  {φ ψ}  : sumQuasiNormal L₁ L₂ (φ ➝ ψ) → sumQuasiNormal L₁ L₂ φ → sumQuasiNormal L₁ L₂ ψ
-  | subst {φ s} : sumQuasiNormal L₁ L₂ φ → sumQuasiNormal L₁ L₂ (φ⟦s⟧)
+  | mem₁ {φ : Formula α}    : L₁ ⊢ φ → sumQuasiNormal L₁ L₂ φ
+  | mem₂ {φ : Formula α}    : L₂ ⊢ φ → sumQuasiNormal L₁ L₂ φ
+  | mdp  {φ ψ : Formula α}  : sumQuasiNormal L₁ L₂ (φ ➝ ψ) → sumQuasiNormal L₁ L₂ φ → sumQuasiNormal L₁ L₂ ψ
+  | subst {φ : Formula α} {s : Substitution α} : sumQuasiNormal L₁ L₂ φ → sumQuasiNormal L₁ L₂ (φ⟦s⟧)
 
 namespace sumQuasiNormal
 
@@ -131,7 +131,7 @@ variable [L₁.IsQuasiNormal]
 
 open LO.Entailment
 
-lemma provable_of_finite_provable : (∃ X : Finset _, (X.toSet ⊆ L₂) ∧ L₁ ⊢ X.conj ➝ φ) → sumQuasiNormal L₁ L₂ ⊢ φ := by
+lemma provable_of_finite_provable : (∃ X : Finset (Formula α), ((X : Logic α) ⊆ L₂) ∧ L₁ ⊢ X.conj ➝ φ) → sumQuasiNormal L₁ L₂ ⊢ φ := by
   rintro ⟨X, hX₂, hφ⟩;
   apply (WeakerThan.pbl (𝓣 := sumQuasiNormal L₁ L₂) hφ) ⨀ ?_;
   apply FConj!_iff_forall_provable.mpr;
@@ -204,8 +204,8 @@ end sumQuasiNormal
 
 
 inductive sumQuasiNormal' (L₁ L₂ : Logic α) : Logic α
-| mem₁ {φ} (s : Substitution _) : L₁ ⊢ φ → sumQuasiNormal' L₁ L₂ (φ⟦s⟧)
-| mem₂ {φ} (s : Substitution _) : L₂ ⊢ φ → sumQuasiNormal' L₁ L₂ (φ⟦s⟧)
+| mem₁ {φ : Formula α} (s : Substitution _) : L₁ ⊢ φ → sumQuasiNormal' L₁ L₂ (φ⟦s⟧)
+| mem₂ {φ : Formula α} (s : Substitution _) : L₂ ⊢ φ → sumQuasiNormal' L₁ L₂ (φ⟦s⟧)
 | mdp {φ ψ : Formula α} : sumQuasiNormal' L₁ L₂ (φ ➝ ψ) → sumQuasiNormal' L₁ L₂ φ → sumQuasiNormal' L₁ L₂ ψ
 
 namespace sumQuasiNormal'
