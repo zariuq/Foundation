@@ -176,7 +176,7 @@ lemma iff_provable_fconj {s : Finset (Formula _)} : U ⊢ f (s.conj) ↔ ∀ A �
   simp [Finset.conj]
 
 @[simp, grind =]
-lemma iff_provable_fconj' {s : Finset (Formula _)} : U ⊢ f (s.conj' ι) ↔ (∀ A ∈ s, U ⊢ f (ι A)) := by
+lemma iff_provable_fconj' {s : Finset (Formula ℕ)} : U ⊢ f (s.conj' ι) ↔ (∀ A ∈ s, U ⊢ f (ι A)) := by
   simp [Finset.conj']
 
 @[grind .]

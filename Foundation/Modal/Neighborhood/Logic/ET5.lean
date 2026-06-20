@@ -36,8 +36,10 @@ instance : (basicCanonicity 𝓢).toModel.IsEuclidean := by
   apply Canonicity.isEuclidean';
   intro X X_np A;
   suffices X ∉ (basicCanonicity 𝓢).𝒩 A → {w | X ∉ (basicCanonicity 𝓢).𝒩 w} ∈ (basicCanonicity 𝓢).𝒩 A by
-    contrapose!;
-    simpa [Frame.dia, Frame.box, Canonicity.toModel];
+    contrapose!
+    intro h
+    simp only [Frame.dia, Frame.box, Set.mem_compl_iff, Set.mem_setOf_eq, not_not] at h ⊢
+    exact this h
   intro h;
   have : {B | X ∉ (basicCanonicity 𝓢).𝒩 B} = proofset 𝓢 ⊤ := by
     suffices ∀ B, X ∉ (basicCanonicity 𝓢).𝒩 B by simpa [Set.eq_univ_iff_forall];

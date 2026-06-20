@@ -902,7 +902,7 @@ lemma FormulaSet.comp_letterlessTrace_finite_of_singular (X_singular : X.Singula
 
 lemma GL.eq_closed_singular_sumQuasiNormal_GLβMinus (X_singular : X.Singular T) : Modal.GL.sumQuasiNormal X = Modal.GLβMinus (X.letterlessTrace) := by
   apply GL.iff_eq_closed_sumQuasiNormal_eq_letterlessSpectrum (T := T) ?_ ?_ ?_ |>.mpr;
-  . simp [TBBMinus_letterlessSpectrum, FormulaSet.letterlessTrace];
+  . rw [TBBMinus_letterlessSpectrum]; simp [FormulaSet.letterlessTrace];
   . assumption;
   . grind;
   . right;

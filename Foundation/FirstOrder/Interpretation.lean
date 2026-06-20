@@ -190,7 +190,7 @@ lemma rel_iff {k} (r : L₂.Rel k) (v : Fin k → π.Model M) :
     M ⊧/![a, b] (π.rel Language.Eq.eq) ↔ a = b := by
   have : ∀ x y, π.Dom x → π.Dom y → (M ⊧/![x, y] (π.rel Language.Eq.eq) ↔ x = y) := by
     simpa [models_iff, Matrix.comp_vecCons', Matrix.constant_eq_singleton, ←dom_iff]
-      using models_of_provable (inferInstanceAs (M ⊧ₘ* T)) π.preserve_eq
+      using models_of_provable ‹M ⊧ₘ* T› π.preserve_eq
   simpa using this a b
 
 @[simp] lemma eq_iff (v : Fin 2 → π.Model M) :
@@ -410,7 +410,7 @@ def ofWeakerThan {L : Language} [L.Eq] (T U : Theory L) [𝗘𝗤 ⪯ T] [U ⪯ 
   interpret_theory φ hφ := complete <| EQ.provOf.{_,0} _ fun M _ _ _ hT ↦
     Model.translate_iff.mpr <| by
       suffices M ⊧/ ![] φ by simpa [models_iff, Empty.eq_elim, Matrix.empty_eq]
-      have : T ⊢ φ := Entailment.weakerThan_iff.mp (inferInstanceAs (U ⪯ T)) (Entailment.by_axm _ (by simp [hφ]))
+      have : T ⊢ φ := Entailment.weakerThan_iff.mp ‹U ⪯ T› (Entailment.by_axm _ (by simp [hφ]))
       exact models_of_provable hT this
 
 protected instance refl {L : Language} [L.Eq] (T : Theory L) [𝗘𝗤 ⪯ T] : T ⊳ T := ofWeakerThan T T

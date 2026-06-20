@@ -16,8 +16,8 @@ def Language.skolemFunction₁ (L : Language) : Language where
 abbrev Semisentence.skolem₁ {L : Language} (φ : Semisentence L (k + 1)) : L.skolemFunction₁.Func k := φ
 
 instance (L : Language) [L.Encodable] : L.skolemFunction₁.Encodable where
-  func k := inferInstanceAs (Encodable (Semisentence L (k + 1)))
-  rel _ := inferInstanceAs (Encodable PEmpty)
+  func k := (inferInstance : Encodable (Semisentence L (k + 1)))
+  rel _ := (inferInstance : Encodable PEmpty)
 
 namespace Structure
 

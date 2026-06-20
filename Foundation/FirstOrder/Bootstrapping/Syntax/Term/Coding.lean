@@ -199,9 +199,18 @@ lemma mem_iff_mem_bitIndices {x s : ℕ} : x ∈ s ↔ x ∈ s.bitIndices := by
   induction s using Nat.binaryRec generalizing x
   case zero => simp
   case bit b s ih =>
-    cases b <;> simp
-    · cases' x with x <;> simp [ih]
-    · cases' x with x <;> simp [ih]
+    cases b <;> cases' x with x <;>
+      simp only [Nat.bit_false_apply, Nat.bit_true_apply]
+    · have h : (0 ∈ (2 * s).bitIndices) ↔ False := by simp [Nat.bitIndices_two_mul]
+      exact iff_of_false (LO.FirstOrder.Arithmetic.zero_not_mem s) h.mp
+    · have h : (x + 1 ∈ (2 * s).bitIndices) ↔ x ∈ s.bitIndices := by
+        simp [Nat.bitIndices_two_mul]
+      exact ((LO.FirstOrder.Arithmetic.succ_mem_two_mul_iff).trans ih).trans h.symm
+    · have h : (0 ∈ (2 * s + 1).bitIndices) ↔ True := by simp [Nat.bitIndices_two_mul_add_one]
+      exact iff_of_true (LO.FirstOrder.Arithmetic.zero_mem_double_add_one s) (h.mpr trivial)
+    · have h : (x + 1 ∈ (2 * s + 1).bitIndices) ↔ x ∈ s.bitIndices := by
+        simp [Nat.bitIndices_two_mul_add_one]
+      exact ((LO.FirstOrder.Arithmetic.succ_mem_two_mul_succ_iff).trans ih).trans h.symm
 
 variable {L : Language} [L.Encodable] [L.LORDefinable]
 

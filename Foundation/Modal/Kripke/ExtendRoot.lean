@@ -359,8 +359,8 @@ lemma inr_satisfies_axiomT_set
     (Γ := Γ)
     (Frame.extendRoot.chain_length)
     (Frame.extendRoot.chain_IsChain)
-  simp only [List.mem_map, M', n] at hx₁;
-  obtain ⟨i, _, rfl⟩ := hx₁;
+  simp only [Frame.extendRoot.chain] at hx₁;
+  obtain ⟨i, _, rfl⟩ := List.mem_map.mp hx₁;
   use i;
 
 end Model.extendRoot

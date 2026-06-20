@@ -137,7 +137,9 @@ lemma compl_truthset (hφ : φ ∈ T) : (【(M φ)ᶜ】 : Set (FilterEqvQuotien
 lemma subset_original_truthset_of_subset (hψ : ψ ∈ T) (h : (【M φ】 : Set (FilterEqvQuotient M T)) ⊆ 【M ψ】) : M φ ⊆ M ψ := by
   intro x hx;
   replace h : ∀ y ∈ M φ, ∃ z ∈ M ψ, (filterEquiv M T) z y := by
-    simpa [toFilterEquivSet, FilterEqvSetoid, Quotient.eq] using h;
+    intro y hy;
+    obtain ⟨z, hz₁, hz₂⟩ := h ⟨y, hy, rfl⟩;
+    exact ⟨z, hz₁, Quotient.eq''.mp hz₂⟩;
   obtain ⟨y, hy₁, hy₂⟩ := h x hx;
   apply hy₂ ψ hψ |>.mp hy₁;
 
@@ -209,16 +211,17 @@ def toModel {M : Model} {T : FormulaSet ℕ} [T.IsSubformulaClosed] (Fi : Filtra
   Val := Fi.V
 
 @[simp, grind =_]
-lemma toModel_def : Fi.toModel.box X = Fi.B X := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]
+lemma toModel_def : Fi.toModel.box X = Fi.B X := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]; rfl
 
 theorem filtration (Fi : Filtration M T) (φ) (hφ : φ ∈ T) : (Fi.toModel φ) = 【M φ】 := by
   induction φ with
   | hatom a => apply Fi.V_def;
-  | hfalsum => simp;
+  | hfalsum => simp only [Model.truthset.eq_bot, toFilterEquivSet.empty]; rfl;
   | himp φ ψ ihφ ihψ =>
     replace ihφ := ihφ (by grind);
     replace ihψ := ihψ (by grind);
     simp_all [toFilterEquivSet.union, toFilterEquivSet.compl_truthset (show φ ∈ T by grind)];
+    rfl;
   | hbox φ ihφ =>
     replace ihφ := ihφ (by grind);
     apply ihφ ▸ Fi.B_def φ (by grind);
@@ -234,14 +237,16 @@ lemma filtration_satisfies (Fi : Filtration M T) (φ) (hφ : φ ∈ T) {x : M} :
 lemma truthlemma (Fi : Filtration M T) {φ ψ} (hφ : φ ∈ T) (hψ : ψ ∈ T) :
   (Fi.toModel φ) = (Fi.toModel ψ) ↔ (【M φ】 : Set (FilterEqvQuotient M T)) = (【M ψ】) := by
   rw [filtration Fi φ hφ, filtration Fi ψ hψ];
+  rfl;
 
 @[grind .]
 lemma iff_mem_toModel_box_mem_B {Fi : Filtration M T} : W ∈ Fi.toModel.box Y ↔ W ∈ Fi.B Y := by
   simp [Filtration.toModel, Frame.mk_ℬ, Frame.box];
+  rfl;
 
 @[grind =>]
 lemma box_in_out {Fi : Filtration M T} (hφ : □φ ∈ T) : Fi.B 【M φ】 = 【M (□φ)】 := calc
-  _ = Fi.toModel.box 【M.truthset φ】 := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box];
+  _ = Fi.toModel.box 【M.truthset φ】 := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]; rfl;
   _ = Fi.toModel.box (Fi.toModel φ) := by rw [filtration Fi φ (by grind)];
   _ = (Fi.toModel (□φ)) := by simp;
   _ = 【M (□φ)】 := filtration Fi _ hφ
@@ -360,18 +365,27 @@ protected instance isTransitive : (transitiveFiltration M T).toModel.IsTransitiv
   constructor;
   intro X;
   by_cases h : (minimalFiltration M T).B X = ∅;
-  . simp_all [transitiveFiltration, Filtration.toModel, Frame.mk_ℬ, Frame.box];
-  . suffices (minimalFiltration M T).B X = (transitiveFiltration M T).B X by calc
-      _ = (transitiveFiltration M T).B X := by simp;
-      _ ⊆ (minimalFiltration M T).B X ∪ (minimalFiltration M T).B^[2] X := by tauto_set
-      _ ⊆ (transitiveFiltration M T).B ((minimalFiltration M T).B X) := by
+  . show (transitiveFiltration M T).B X ⊆ (transitiveFiltration M T).B ((transitiveFiltration M T).B X);
+    simp only [transitiveFiltration, h, Set.empty_union];
+    split_ifs with hX;
+    · obtain ⟨Y, rfl⟩ := hX;
+      have e1 : (∃ Y_2, (minimalFiltration M T).B Y = (minimalFiltration M T).B Y_2) := ⟨Y, rfl⟩;
+      rw [if_pos e1];
+      have e2 : (∃ Y_1, (minimalFiltration M T).B Y = (minimalFiltration M T).B Y_1) := ⟨Y, rfl⟩;
+      rw [if_pos e2, h, Set.empty_union]
+    · simp
+  . suffices (minimalFiltration M T).B X = (transitiveFiltration M T).B X by
+      have s1 : (transitiveFiltration M T).B X ⊆ (minimalFiltration M T).B X ∪ (minimalFiltration M T).B^[2] X := by tauto_set;
+      have s2 : (minimalFiltration M T).B X ∪ (minimalFiltration M T).B^[2] X ⊆ (transitiveFiltration M T).B ((minimalFiltration M T).B X) := by
         rintro W (hW | hW);
         . right;
           split_ifs;
           . assumption;
           . grind;
         . left; assumption;
-      _ = (transitiveFiltration M T).toModel.box^[2] X := by simp [this]
+      have key2 : (transitiveFiltration M T).B ((minimalFiltration M T).B X) = (transitiveFiltration M T).B ((transitiveFiltration M T).B X) := by rw [this];
+      show (transitiveFiltration M T).B X ⊆ (transitiveFiltration M T).B ((transitiveFiltration M T).B X);
+      exact key2 ▸ (Set.Subset.trans s1 s2);
     ext W;
     constructor;
     . tauto;
@@ -458,7 +472,10 @@ protected instance containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (suppleme
   ext X;
   suffices X ∈ (supplementedTransitiveFiltration M T).B Set.univ by simpa;
   have : (transitiveFiltration M T).toModel.ContainsUnit := transitiveFiltration.containsUnit hT;
-  simp [supplementedTransitiveFiltration, (transitiveFiltration M T).toModel.supplementation.contains_unit]
+  have h := (transitiveFiltration M T).toModel.supplementation.contains_unit;
+  show X ∈ (transitiveFiltration M T).toModel.supplementation.box Set.univ;
+  rw [h];
+  trivial
 
 end supplementedTransitiveFiltration
 
@@ -477,13 +494,13 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
       let Us := { Ui ∈ Ys | ∃ ψ, □ψ ∈ T ∧ Ui = 【M (□ψ)】 ∧ W ∈ 【M (□ψ)】 };
       have eYVU : Ys = Vs ∪ Us := by
         ext Yi;
-        simp only [Finset.mem_union, Finset.mem_filter, Vs, Us];
+        simp only [Vs, Us];
         constructor;
         . intro hYi;
           rcases transitiveFiltration.iff_mem_B.mp $ hYs₃ Yi hYi with (hV | hU);
-          . left; tauto;
-          . right; tauto;
-        . tauto_set;
+          . exact Finset.mem_union_left _ (Finset.mem_filter.mpr ⟨hYi, by tauto⟩);
+          . exact Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hYi, by tauto⟩);
+        . intro h; rcases Finset.mem_union.mp h with h | h <;> exact (Finset.mem_filter.mp h).1;
 
       let Ψ := {ψ // □ψ ∈ T ∧ (∃ Vi ∈ Ys, Vi = 【M ψ】) ∧ W ∈ 【M (□ψ)】};
       have : Fintype Ψ := by
@@ -493,8 +510,8 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
       have : Fintype Ξ := by
         apply Fintype.subtype (s := { ξ ∈ □⁻¹'hT.toFinset | (∃ Ui ∈ Ys, Ui = 【M (□ξ)】) ∧ W ∈ 【M (□ξ)】 });
         simp [Finset.LO.preboxItr];
-      have H : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ ξ : Ξ, 【M (□ξ)】) ⊆ (【M φ】 : Set (FilterEqvQuotient M T)) := by calc
-        _ = (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ Ui ∈ Us, Ui) := by
+      have heqH : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ ξ : Ξ, 【M (□ξ)】) = Y := by
+        have e1 : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ ξ : Ξ, 【M (□ξ)】) = (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ Ui ∈ Us, Ui) := by
           suffices (⋂ ψ : Ξ, 【M (□ψ)】) = (⋂ Ui ∈ Us, Ui) by congr;
           ext A;
           suffices
@@ -507,7 +524,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
             apply h <;> assumption;
           . rintro h _ _ _ _;
             apply h <;> tauto;
-        _ = (⋂ Vi ∈ Vs, Vi) ∩ (⋂ Ui ∈ Us, Ui) := by
+        have e2 : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ Ui ∈ Us, Ui) = (⋂ Vi ∈ Vs, Vi) ∩ (⋂ Ui ∈ Us, Ui) := by
           suffices (⋂ ψ : Ψ, 【M ψ】) = (⋂ Vi ∈ Vs, Vi) by congr;
           ext A;
           suffices
@@ -520,25 +537,11 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
             apply h <;> assumption;
           . rintro h _ _ _ _;
             apply h <;> tauto;
-        _ = ⋂ Xi ∈ Ys, Xi := by
-          ext A;
-          simp only [Set.mem_inter_iff, Set.mem_iInter, eYVU, Finset.mem_union];
-          constructor;
-          . rintro ⟨hV, hU⟩ i (hi | hi);
-            . exact hV i hi;
-            . exact hU i hi;
-          . rintro h;
-            constructor;
-            . intro i hi;
-              apply h;
-              left;
-              assumption;
-            . intro i hi;
-              apply h;
-              right;
-              assumption;
-        _ = Y             := by grind;
-        _ ⊆ 【M φ】         := by assumption;
+        have e3 : (⋂ Vi ∈ Vs, Vi) ∩ (⋂ Ui ∈ Us, Ui) = ⋂ Xi ∈ Ys, Xi := by
+          rw [eYVU]; exact (Finset.set_biInter_inter Vs Us id).symm
+        have e4 : (⋂ Xi ∈ Ys, Xi : Set (FilterEqvQuotient M T)) = Y := by grind;
+        exact e1.trans (e2.trans (e3.trans e4));
+      have H : (⋂ ψ : Ψ, 【M ψ】) ∩ (⋂ ξ : Ξ, 【M (□ξ)】) ⊆ (【M φ】 : Set (FilterEqvQuotient M T)) := heqH ▸ hY;
       obtain ⟨w, rfl⟩ := Quotient.exists_rep W;
       by_cases hΨ : Nonempty Ψ <;> by_cases hΞ : Nonempty Ξ;
       . suffices w ∈ M.box ((⋂ ψ : Ψ, M ψ) ∩ (⋂ ξ : Ξ, M (□ξ))) by
@@ -622,7 +625,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
           !toFilterEquivSet.iff_mem_truthset]
       . exfalso;
         apply hYs₁;
-        suffices (Vs = ∅ ∧ Us = ∅) by simp [eYVU, this.1, this.2];
+        suffices (Vs = ∅ ∧ Us = ∅) by simp [eYVU, this.1, this.2]; rfl;
         constructor;
         . suffices ∀ Yi ∈ Ys, ∀ ψ, □ψ ∈ T → Yi = 【M ψ】 → ⟦w⟧ ∉ 【M (□ψ)】 by simpa [Vs];
           rintro _ _ ψ hψ rfl;
@@ -658,7 +661,10 @@ protected instance containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (quasiFil
   ext X;
   suffices X ∈ (quasiFilteringTransitiveFiltration M T T_finite).B Set.univ by simpa;
   have : (transitiveFiltration M T).toModel.ContainsUnit := transitiveFiltration.containsUnit hT;
-  simp [quasiFilteringTransitiveFiltration, (transitiveFiltration M T).toModel.quasiFiltering.contains_unit];
+  have h := (transitiveFiltration M T).toModel.quasiFiltering.contains_unit;
+  show X ∈ (transitiveFiltration M T).toModel.quasiFiltering.box Set.univ;
+  rw [h];
+  trivial
 
 end quasiFilteringTransitiveFiltration
 

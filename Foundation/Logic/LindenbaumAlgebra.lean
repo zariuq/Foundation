@@ -138,7 +138,7 @@ variable {𝓢}
 
 lemma provable_iff_eq_top {φ : F} : 𝓢 ⊢ φ ↔ (⟦φ⟧ : LindenbaumAlgebra 𝓢) = ⊤ := by
   simp [top_def, provable_iff_provablyEquivalent_verum, Quotient.eq];
-  simp [ProvablyEquivalent, ProvablyEquivalent.setoid]
+  rfl
 
 lemma inconsistent_iff_trivial : Inconsistent 𝓢 ↔ (∀ φ : LindenbaumAlgebra 𝓢, φ = ⊤) := by
   simp only [Inconsistent, provable_iff_eq_top]

@@ -51,22 +51,28 @@ variable {Γ Δ : Sequent L}
 
 @[simp] lemma isCutFree_rewrite_iff_isCutFree {f : ℕ → SyntacticTerm L} {d : ⊢ᵀ Γ} :
     IsCutFree (rewrite d f) ↔ IsCutFree d := by
-  induction d generalizing f
-  case axm => contradiction
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
-  case _ => simp [rewrite, *]
+  induction d generalizing f with
+  | axm => contradiction
+  | axL => simp [rewrite]
+  | verum => simp [rewrite]
+  | or d ih =>
+    simp only [rewrite, IsCutFree.cast, isCutFree_or_iff]; exact ih
+  | and dp dq ihp ihq =>
+    simp only [rewrite, IsCutFree.cast, isCutFree_and_iff]; exact and_congr ihp ihq
+  | all d ih =>
+    simp only [rewrite, IsCutFree.cast, isCutFree_all_iff]; exact ih
+  | ex t d ih =>
+    simp only [rewrite, IsCutFree.cast, isCutFree_ex_iff]; exact ih
+  | wk d ss ih =>
+    simp only [rewrite, isCutFree_wk_iff]; exact ih
+  | cut dp dn => simp [rewrite]
 
 @[simp] lemma isCutFree_map_iff_isCutFree {f : ℕ → ℕ} {d : ⊢ᵀ Γ} :
     IsCutFree (Derivation.map d f) ↔ IsCutFree d := isCutFree_rewrite_iff_isCutFree
 
 @[simp] lemma IsCutFree.genelalizeByNewver_isCutFree {φ : SyntacticSemiformula L 1} (hp : ¬φ.FVar? m) (hΔ : ∀ ψ ∈ Δ, ¬ψ.FVar? m)
-    (d : ⊢ᵀ φ/[&m] :: Δ) : IsCutFree (genelalizeByNewver hp hΔ d) ↔ IsCutFree d := by simp [genelalizeByNewver]
+    (d : ⊢ᵀ φ/[&m] :: Δ) : IsCutFree (genelalizeByNewver hp hΔ d) ↔ IsCutFree d := by
+  simp only [genelalizeByNewver, isCutFree_all_iff, IsCutFree.cast, isCutFree_map_iff_isCutFree]
 
 end Derivation
 
@@ -354,7 +360,8 @@ protected def refl.ex (d : ∀ x, [φ/[&x]] ⊩ (φ/[&x])ᴺ) : [∃' φ] ⊩ (�
             simpa using this)
         (fun ψ hψ ↦ not_fvar?_newVar (List.mem_cons_of_mem (∀' ∼φ) hψ))
         (Derivation.cast b (by simp [inf_def]))
-    falsumEquiv.symm ⟨ba, by simp [ba, hb]⟩
+    falsumEquiv.symm ⟨ba,
+      (Derivation.IsCutFree.genelalizeByNewver_isCutFree _ _ _).mpr (Derivation.IsCutFree.cast.mpr hb)⟩
 
 protected def refl : (φ : SyntacticFormula L) → [φ] ⊩ φᴺ
   |         ⊤ => implyEquiv.symm fun q sqp dφ ↦ dφ

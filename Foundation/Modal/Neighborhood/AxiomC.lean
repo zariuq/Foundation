@@ -71,7 +71,10 @@ instance [Entailment.HasAxiomC 𝓢] : (basicCanonicity 𝓢).toModel.IsRegular 
   obtain ⟨φ, rfl, hφ⟩ := basicCanonicity.iff_mem_box_exists_fml.mp hX;
   obtain ⟨ψ, rfl, hψ⟩ := basicCanonicity.iff_mem_box_exists_fml.mp hY;
   suffices A ∈ proofset 𝓢 (□(φ ⋏ ψ)) by
-    rwa [(show proofset 𝓢 φ ∩ proofset 𝓢 ψ = proofset 𝓢 (φ ⋏ ψ) by grind), Canonicity.box_proofset];
+    have e : proofset 𝓢 φ ∩ proofset 𝓢 ψ = proofset 𝓢 (φ ⋏ ψ) := by grind
+    show proofset 𝓢 φ ∩ proofset 𝓢 ψ ∈ (basicCanonicity 𝓢).toModel.𝒩 A
+    rw [e]
+    exact (Canonicity.iff_box (φ := φ ⋏ ψ)).mp this
   apply proofset.imp_subset |>.mp (show 𝓢 ⊢ □φ ⋏ □ψ ➝ □(φ ⋏ ψ) by simp);
   rw [proofset.eq_and]
   tauto;

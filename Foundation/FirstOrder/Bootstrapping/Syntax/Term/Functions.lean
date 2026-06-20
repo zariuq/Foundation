@@ -669,7 +669,7 @@ end
 @[simp] lemma lt_qqMul_right (x y : V) : y < x ^* y := by
   simpa using nth_lt_qqFunc_of_lt (i := 1) (k := 2) (f := (mulIndex : V)) (v := ?[x, y]) (by simp)
 
-lemma qqFunc_absolute (k f v : ℕ) : ((^func k f v : ℕ) : V) = ^func (k : V) (f : V) (v : V) := by simp [qqFunc, nat_cast_pair]
+lemma qqFunc_absolute (k f v : ℕ) : ((^func k f v : ℕ) : V) = ^func (k : V) (f : V) (v : V) := by simp [qqFunc, nat_cast_pair]; norm_cast
 
 @[simp] lemma zero_semiterm : IsSemiterm ℒₒᵣ n (𝟎 : V) := by
   simp [Arithmetic.zero, qqFunc_absolute, qqFuncN_eq_qqFunc]
@@ -678,10 +678,10 @@ lemma qqFunc_absolute (k f v : ℕ) : ((^func k f v : ℕ) : V) = ^func (k : V) 
   simp [Arithmetic.one, qqFunc_absolute, qqFuncN_eq_qqFunc]
 
 lemma coe_zero_eq : (𝟎 : V) = (^func 0 ⌜(Language.Zero.zero : (ℒₒᵣ).Func 0)⌝ 0) := by
-  simp [Arithmetic.zero, qqFuncN_eq_qqFunc, qqFunc, nat_cast_pair]; rfl
+  simp [Arithmetic.zero, qqFuncN_eq_qqFunc, qqFunc, nat_cast_pair]; constructor <;> norm_cast
 
 lemma coe_one_eq : (𝟏 : V) = (^func 0 ⌜(Language.One.one : (ℒₒᵣ).Func 0)⌝ 0) := by
-  simp [Arithmetic.one, qqFuncN_eq_qqFunc, qqFunc, nat_cast_pair]; rfl
+  simp [Arithmetic.one, qqFuncN_eq_qqFunc, qqFunc, nat_cast_pair]; constructor <;> norm_cast
 
 namespace Numeral
 

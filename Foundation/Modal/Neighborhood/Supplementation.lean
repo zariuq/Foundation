@@ -29,8 +29,8 @@ lemma box_aux {X : Set (F.World)} : F.supplementation.box X = ⋃₀ {x | ∃ Y 
   ext w;
   simp only [supplementation, Set.mem_setOf_eq, Set.mem_sUnion, exists_exists_and_eq_and]
   constructor;
-  . rintro ⟨Y, hY₁, hY₂⟩; use Y;
-  . rintro ⟨Y, hY₁, hY₂⟩; use Y;
+  . rintro ⟨Y, hY₁, hY₂⟩; exact ⟨F.box Y, ⟨Y, hY₁, rfl⟩, hY₂⟩;
+  . rintro ⟨Y, ⟨Z, hZ₁, rfl⟩, hY₂⟩; exact ⟨Z, hZ₁, hY₂⟩;
 
 lemma subset (X : Set (F.World)) : F.box X ⊆ F.supplementation.box X := by
   intro x _;
@@ -71,7 +71,7 @@ instance isMonotonic : F.supplementation.IsMonotonic := by
   . apply iff_exists_subset.mpr;
     use W;
     constructor;
-    . tauto_set;
+    . first | exact hW₁.trans Set.inter_subset_left | exact hW₁.trans Set.inter_subset_right;
     . assumption;
 
 instance isReflexive [F.IsReflexive] : F.supplementation.IsReflexive := by
@@ -86,8 +86,7 @@ instance containsUnit [F.ContainsUnit] : F.supplementation.ContainsUnit := by
   constructor;
   ext x;
   suffices ∃ Y ⊆ Set.univ, Y ∈ F.𝒩 x by
-    simp only [supplementation, Set.mem_setOf_eq, Set.mem_univ, iff_true];
-    exact this;
+    simpa only [iff_exists_subset, Set.mem_univ, iff_true, Frame.box] using this;
   use Set.univ;
   constructor;
   . rfl;

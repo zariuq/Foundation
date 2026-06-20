@@ -46,17 +46,15 @@ open proofset
 instance [Entailment.HasAxiomN 𝓢] : (basicCanonicity 𝓢).toModel.ContainsUnit := by
   constructor;
   ext x;
-  simp only [basicCanonicity, Canonicity.toModel, Frame.box, Set.mem_setOf_eq, Set.mem_univ, iff_true];
-  use ⊤;
-  simp [MaximalConsistentSet.mem_of_prove]
+  simp only [Frame.box, Set.mem_setOf_eq, Set.mem_univ, iff_true];
+  exact ⟨⊤, MaximalConsistentSet.mem_of_prove (by simp), proofset.eq_top.symm⟩
 
 instance [Entailment.HasAxiomN 𝓢] : (relativeBasicCanonicity 𝓢 P).toModel.ContainsUnit := by
   constructor;
   ext x;
-  suffices Set.univ ∈ (relativeBasicCanonicity 𝓢 P).toModel.𝒩 x by simpa;
+  suffices Set.univ ∈ (relativeBasicCanonicity 𝓢 P).toModel.𝒩 x by simpa [Frame.box];
   left;
-  use ⊤;
-  simp [MaximalConsistentSet.mem_of_prove]
+  exact ⟨⊤, MaximalConsistentSet.mem_of_prove (by simp), proofset.eq_top.symm⟩
 
 end
 

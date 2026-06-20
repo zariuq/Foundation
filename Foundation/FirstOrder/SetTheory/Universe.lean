@@ -79,8 +79,8 @@ def Universe : Type (u + 1) := QPF.Fix UniverseFunctor
 namespace Universe
 
 /-- constructor of name -/
-noncomputable def mk (s : Set Universe.{u}) [Small s] : Universe.{u} :=
-  QPF.Fix.mk ⟨s, inferInstance⟩
+noncomputable def mk (s : Set Universe.{u}) [Small.{u} s] : Universe.{u} :=
+  QPF.Fix.mk ⟨s, ‹Small.{u} s›⟩
 
 /-- destructor of name -/
 noncomputable def dest (x : Universe) : UniverseFunctor Universe := QPF.Fix.dest x
@@ -105,7 +105,7 @@ instance coe_small' (x : Universe.{u}) : Small.{u} (x : Type _) := x.dest.small
 @[simp] lemma mk_coe (x : Universe.{u}) : mk (↑x : Set Universe.{u}) = x := QPF.Fix.mk_dest _
 
 @[simp] lemma coe_mk (s : Set Universe.{u}) [Small.{u} s] : ↑(mk s) = s :=
-  UniverseFunctor.ext_iff.mp <| QPF.Fix.dest_mk (F := UniverseFunctor) ⟨s, inferInstance⟩
+  UniverseFunctor.ext_iff.mp <| QPF.Fix.dest_mk (F := UniverseFunctor) ⟨s, ‹Small.{u} s›⟩
 
 @[simp] lemma mem_mk {x} {s : Set Universe.{u}} [Small s] :
     x ∈ mk s ↔ x ∈ s := by simp [mem_def']
@@ -128,7 +128,7 @@ noncomputable def rec (g : (s : Set α) → [Small.{u} s] → α) : Universe →
 
 lemma rec_mk (g : (s : Set α) → [Small.{u} s] → α) (s : Set Universe.{u}) [Small.{u} s] :
     rec g (mk s) = g (rec g '' s) := by
-  simpa using QPF.Fix.rec_eq (F := UniverseFunctor) (fun p ↦ g p.set) ⟨s, inferInstance⟩
+  simpa using QPF.Fix.rec_eq (F := UniverseFunctor) (fun p ↦ g p.set) ⟨s, ‹Small.{u} s›⟩
 
 @[elab_as_elim]
 theorem ind
@@ -141,7 +141,7 @@ lemma wellFounded : WellFounded (α := Universe.{u}) (· ∈ ·) := ⟨ind fun x
 
 lemma minimal_exists_of_isNonempty {x : Universe.{u}} (hx : IsNonempty x) : ∃ y ∈ x, ∀ z ∈ x, z ∉ y := by
   let z := WellFounded.min wellFounded x (by simp [hx])
-  exact ⟨z, WellFounded.min_mem wellFounded x _, fun w hw ↦ WellFounded.not_lt_min wellFounded x _ hw⟩
+  exact ⟨z, WellFounded.min_mem wellFounded x _, fun w hw ↦ WellFounded.not_lt_min wellFounded x hw⟩
 
 noncomputable def empty : Universe := .mk {}
 

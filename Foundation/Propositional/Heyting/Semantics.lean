@@ -133,13 +133,14 @@ def lindenbaum (Ax : Axiom α) [Ax.HasEFQ] [Entailment.Consistent (Hilbert.Stand
 
 lemma lindenbaum_val_eq : (lindenbaum Ax ⊧ₕ φ) = ⟦φ⟧ := by
   induction φ with
-  | hand φ ψ ihp ihq => simp only [hVal_and, ihp, ihq]; rw [inf_def];
-  | hor _ _ ihp ihq => simp only [hVal_or, ihp, ihq]; rw [sup_def];
-  | himp _ _ ihp ihq => simp only [hVal_imply, ihp, ihq]; rw [himp_def];
+  | hand φ ψ ihp ihq => simp only [hVal_and, ihp, ihq]; rfl;
+  | hor _ _ ihp ihq => simp only [hVal_or, ihp, ihq]; rfl;
+  | himp _ _ ihp ihq => simp only [hVal_imply, ihp, ihq]; rfl;
   | _ => rfl
 
 lemma lindenbaum_complete_iff {φ : Formula α} : lindenbaum Ax ⊧ φ ↔ (Hilbert.Standard Ax) ⊢ φ := by
-  simp [val_def', lindenbaum_val_eq, provable_iff_eq_top]
+  rw [val_def', lindenbaum_val_eq, provable_iff_eq_top]
+  rfl
 
 instance : Sound (Hilbert.Standard Ax) (lindenbaum Ax) := ⟨lindenbaum_complete_iff.mpr⟩
 

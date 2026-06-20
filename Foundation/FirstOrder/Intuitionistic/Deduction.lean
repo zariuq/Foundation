@@ -235,7 +235,20 @@ def rewrite (f : ℕ → SyntacticTerm L) : Λ ⊢! φ → Λ ⊢! Rew.rewrite f
     (by simp [Rew.q_rewrite, rewrite_subst_nil])
 
 @[simp] lemma depth_rewrite (f : ℕ → SyntacticTerm L) (b : Λ ⊢! φ) : ‖rewrite f b‖ = ‖b‖ := by
-  induction b generalizing f <;> simp [rewrite, *]
+  induction b generalizing f with
+  | mdp b d ihb ihd =>
+    show ‖rewrite f b ⨀ rewrite f d‖ = ‖b ⨀ d‖
+    show max ‖rewrite f b‖ ‖rewrite f d‖ + 1 = max ‖b‖ ‖d‖ + 1
+    rw [ihb, ihd]
+  | gen b ih =>
+    show ‖HilbertProofᵢ.gen _‖ = ‖HilbertProofᵢ.gen b‖
+    show ‖HilbertProofᵢ.cast _ _‖ + 1 = ‖b‖ + 1
+    rw [depth_cast, ih]
+  | all₁ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
+  | all₂ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
+  | ex₁ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
+  | ex₂ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
+  | _ => rfl
 
 def ofLE {Λ₁ Λ₂ : Hilbertᵢ L} (h : Λ₁ ≤ Λ₂) : Λ₁ ⊢! φ → Λ₂ ⊢! φ
   | mdp b d => (ofLE h b).mdp (ofLE h d)

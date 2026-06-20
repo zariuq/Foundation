@@ -629,7 +629,7 @@ def unprovable_univCl_iff {φ : SyntacticFormula L} :
     (𝓢 : Theory L) ⊬ φ.univCl ↔ 𝓢 ⊬ φ := provable_univCl_iff.not
 
 instance (𝓢 𝓣 : Schema L) [𝓢 ⪯ 𝓣] : 𝓢.toTheory ⪯ 𝓣.toTheory :=
-  ⟨fun _ b ↦ coe_provable_iff_provable_coe.mpr <| (inferInstanceAs (𝓢 ⪯ 𝓣)).pbl (coe_provable_iff_provable_coe.mp b)⟩
+  ⟨fun _ b ↦ coe_provable_iff_provable_coe.mpr <| ‹𝓢 ⪯ 𝓣›.pbl (coe_provable_iff_provable_coe.mp b)⟩
 
 @[simp] lemma coe_consistent_iff :
     Consistent (𝓢 : Theory L) ↔ Consistent 𝓢 := calc

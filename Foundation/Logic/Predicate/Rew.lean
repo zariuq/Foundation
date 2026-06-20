@@ -846,12 +846,10 @@ lemma smul_ext' {ω₁ ω₂ : Rew L ξ n₁ ζ n₂} (h : ω₁ = ω₂) {φ : 
 @[simp] lemma smul_univItr (ω : Rew L ξ n₁ ζ n₂) (φ : F (n₁ + k)) :
     ω ▹ (∀^[k] φ) = ∀^[k] (ω.qpow k ▹ φ : G (n₂ + k)) := by
   induction k <;> simp [univItr_succ, *]
-  rfl
 
 @[simp] lemma smul_exItr (ω : Rew L ξ n₁ ζ n₂) (φ : F (n₁ + k)) :
     ω ▹ (∃^[k] φ) = ∃^[k] (ω.qpow k ▹ φ : G (n₂ + k)) := by
   induction k <;> simp [exItr_succ, *]
-  rfl
 
 abbrev subst [Rewriting L ξ F ξ F] (φ : F n₁) (w : Fin n₁ → Semiterm L ξ n₂) : F n₂ := Rew.subst w ▹ φ
 
@@ -999,7 +997,7 @@ lemma shiftEmb_def (φ : S n) :
   shiftEmb φ = shift φ := rfl
 
 lemma allClosure_fixitr (φ : S 0) : ∀* Rew.fixitr 0 (m + 1) ▹ φ = ∀' Rew.fix ▹ (∀* Rew.fixitr 0 m ▹ φ) := by
-  simp [Rew.fixitr_succ, fix_allClosure, comp_app]; rfl
+  simp [Rew.fixitr_succ, fix_allClosure, comp_app]
 
 @[simp] lemma mem_shifts_iff {φ : S n} {Γ : List (S n)} :
     Rewriting.shift φ ∈ Γ⁺ ↔ φ ∈ Γ :=

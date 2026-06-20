@@ -99,7 +99,7 @@ lemma refl_mainlemma_aux (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
           simp [Formula.rflSubformula, Finset.LO.preboxItr];
           grind;
         rintro (i | i) _;
-        . rw [(show (Sum.inl i) = r₀ by simp [r₀];)]
+        . rw [(show (Sum.inl i) = r₀ from by obtain rfl := Fin.eq_zero i; rfl)]
           suffices 𝗜𝚺₁ ⊢ S r₀ ➝ S.realization B by convert this;
           apply ihB (by grind) |>.1;
           exact hrfl h;
@@ -163,7 +163,7 @@ lemma GL_S_TFAE :
     simp
   tfae_have 2 → 3 := by
     intro h f;
-    have : 𝗥₀ ⪯ T := WeakerThan.trans (inferInstanceAs (𝗥₀ ⪯ 𝗜𝚺₁)) inferInstance
+    have : 𝗥₀ ⪯ T := WeakerThan.trans ((inferInstance : 𝗥₀ ⪯ 𝗜𝚺₁)) inferInstance
     apply S.arithmetical_soundness;
     exact h;
   tfae_have 3 → 1 := by

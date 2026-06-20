@@ -71,7 +71,7 @@ lemma FirstOrder.Arithmetic.dense (T : Theory ℒₒᵣ) [𝗜𝚺₁ ⪯ T] [T.
     φ < ψ → ∃ ξ, φ < ξ ∧ ξ < ψ := fun h ↦ by
   refine LindenbaumAlgebra.dense_of_finite_extend_incomplete T ?_ h
   intro σ con
-  have : 𝗜𝚺₁ ⪯ insert σ T := WeakerThan.trans (inferInstanceAs (𝗜𝚺₁ ⪯ T)) (Axiomatized.le_of_subset (by simp))
+  have : 𝗜𝚺₁ ⪯ insert σ T := WeakerThan.trans ((inferInstance : 𝗜𝚺₁ ⪯ T)) (Axiomatized.le_of_subset (by simp))
   simpa using Arithmetic.incomplete' (insert σ T)
 
 instance (T : Theory ℒₒᵣ) [𝗜𝚺₁ ⪯ T] [T.Δ₁] : DenselyOrdered (LindenbaumAlgebra T) where

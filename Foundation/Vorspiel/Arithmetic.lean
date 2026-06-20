@@ -212,7 +212,7 @@ protected lemma cons {n m f g} (hf : @Arithmetic₁ n f) (hg : @Vec n m g) :
 
 lemma tail {n f} (hf : @Arithmetic₁ n f) : @Arithmetic₁ n.succ fun v => f v.tail :=
   (hf.comp _ fun i => @proj _ i.succ).of_eq fun v => by
-    rw [←ofFn_get v.tail]; congr; funext i; simp
+    rw [←ofFn_get v.tail]; congr; funext i; exact (List.Vector.get_tail_succ v i).symm
 
 lemma comp' {n m f g} (hf : @Arithmetic₁ m f) (hg : @Vec n m g) : Arithmetic₁ fun v => f (g v) :=
   (hf.comp _ hg).of_eq fun v => by simp
@@ -369,7 +369,7 @@ lemma dvd (i j : Fin n) : Arithmetic₁ (fun v => isDvdNat (v.get i) (v.get j)) 
       ((equal 0 1).comp₂ _ ((mul 0 1).comp₂ _ head (proj i.succ)) (proj j.succ))
       ((lt 0 1).comp₂ _ (proj j.succ) head)
   have : @Arithmetic₁ (n + 1) (fun v => isLeNat v.head (v.tail.get j)) :=
-    (le 0 1).comp₂ _ head ((proj j.succ).of_eq <| by simp)
+    (le 0 1).comp₂ _ head ((proj j.succ).of_eq <| fun w => (List.Vector.get_tail_succ w j).symm)
   have := ArithPart₁.map (fun v x => isLeNat x (v.get j)) this (ArithPart₁.rfindPos hr)
   exact this.of_eq <| by
     intro v
@@ -432,7 +432,9 @@ lemma ball {φ : List.Vector ℕ n → ℕ → ℕ} (hp : @Arithmetic₁ (n + 1)
   have hF : Arithmetic₁ F := (or 0 1).comp₂ _ ((inv 0).comp₁ _ hp) ((le 0 1).comp₂ _ (proj i.succ) head)
   have : @Arithmetic₁ (n + 1) (fun v => isEqNat v.head (v.get i.succ)) :=
     (equal 0 1).comp₂ _ head (proj i.succ)
-  have := ArithPart₁.map (fun v x => isEqNat x (v.get i)) (this.of_eq $ by simp) (ArithPart₁.rfindPos hF)
+  have := ArithPart₁.map (fun v x => isEqNat x (v.get i))
+    (this.of_eq <| fun w => by simp only; congr 1; exact (List.Vector.get_tail_succ w i).symm)
+    (ArithPart₁.rfindPos hF)
   exact this.of_eq <| by
     intro v
     simp only [tail_cons, head_cons, get_cons_succ, or_pos_iff, inv_pos_iff, not_lt,
@@ -490,7 +492,11 @@ lemma prec {n f g} (hf : @Arithmetic₁ n f) (hg : @Arithmetic₁ (n + 2) g) :
     (g (v.head ::ᵥ Nat.beta v.tail.head v.head ::ᵥ v.tail.tail.tail))) :=
     (equal 0 1).comp₂ _
       ((beta 0 1).comp₂ _ head.tail ((succ 0).comp₁ _ head))
-      (hg.comp' $ head.cons $ ((beta 0 1).comp₂ _ head.tail head).cons $ by intro i; simpa using proj _)
+      (hg.comp' $ head.cons $ ((beta 0 1).comp₂ _ head.tail head).cons $ fun i =>
+        (proj i.succ.succ.succ).of_eq <| fun w =>
+          ((List.Vector.get_tail_succ w.tail.tail i).trans
+            ((List.Vector.get_tail_succ w.tail i.succ).trans
+              (List.Vector.get_tail_succ w i.succ.succ))).symm)
   have hF : Arithmetic₁ F := (and 0 1).comp₂ _
     ((equal 0 1).comp₂ _ ((beta 0 1).comp₂ _ head zero) hf.tail.tail)
     ((@ball (n + 2) (fun v i =>

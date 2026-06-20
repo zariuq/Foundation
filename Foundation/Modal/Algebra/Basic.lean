@@ -79,21 +79,17 @@ variable {F S : Type*} [BasicModalLogicalConnective F] [Entailment S F]
 instance [DecidableEq F] : Box (LindenbaumAlgebra 𝓢) where
   box := Quotient.lift (fun φ ↦ ⟦□φ⟧) $ by
     intro φ ψ h;
-    simp only [ProvablyEquivalent.setoid, ProvablyEquivalent, Quotient.eq];
-    apply box_congruence!;
-    assumption;
+    exact Quotient.eq''.mpr (box_congruence! h)
 
 instance [DecidableEq F] : Dia (LindenbaumAlgebra 𝓢) where
   dia := Quotient.lift (fun φ ↦ ⟦◇φ⟧) $ by
     intro φ ψ h;
-    simp only [ProvablyEquivalent.setoid, ProvablyEquivalent, Quotient.eq];
-    apply dia_iff!;
-    assumption;
+    exact Quotient.eq''.mpr (dia_iff! h)
 
 @[simp] lemma box_def [DecidableEq F] (φ : F) : □(⟦φ⟧ : LindenbaumAlgebra 𝓢) = ⟦□φ⟧ := rfl
 @[simp] lemma dia_def [DecidableEq F] (φ : F) : ◇(⟦φ⟧ : LindenbaumAlgebra 𝓢) = ⟦◇φ⟧ := rfl
 
-instance [DecidableEq F] : ModalAlgebra (LindenbaumAlgebra 𝓢) where
+instance instModalAlgebra [DecidableEq F] : ModalAlgebra (LindenbaumAlgebra 𝓢) where
   box_top := by
     suffices 𝓢 ⊢ □⊤ ⭤ ⊤ by
       apply Quotient.eq.mpr;
@@ -212,22 +208,24 @@ def lindenbaum (Ax : Axiom α)
   [Entailment.Consistent (Hilbert.Normal Ax)] : AlgebraicSemantics α where
   Carrier := Entailment.LindenbaumAlgebra (Hilbert.Normal Ax)
   Valuation a := ⟦.atom a⟧
+  modalAlgebra := Entailment.LindenbaumAlgebra.instModalAlgebra (Hilbert.Normal Ax)
 
 lemma lindenbaum_val_eq {φ} : (lindenbaum Ax ⊩ φ) = ⟦φ⟧ := by
   induction φ with
   | hatom a => rfl
   | hfalsum =>
     simp only [Formula.eq_value_falsum];
-    rw [Entailment.LindenbaumAlgebra.bot_def];
+    rfl;
   | himp φ ψ ihφ ihψ =>
     simp only [Formula.eq_value_imp, ihφ, ihψ];
-    rw [Entailment.LindenbaumAlgebra.himp_def];
+    rfl;
   | hbox φ ihφ =>
     simp only [Formula.eq_value_box, ihφ];
-    rw [Entailment.LindenbaumAlgebra.box_def];
+    rfl;
 
 lemma lindenbaum_complete_iff {φ : Formula α} : lindenbaum Ax ⊧ φ ↔ (Hilbert.Normal Ax) ⊢ φ := by
-  simp [AlgebraicSemantics.def_val, lindenbaum_val_eq, Entailment.LindenbaumAlgebra.provable_iff_eq_top]
+  rw [AlgebraicSemantics.def_val, lindenbaum_val_eq, Entailment.LindenbaumAlgebra.provable_iff_eq_top]
+  rfl
 
 instance : Sound (Hilbert.Normal Ax) (lindenbaum Ax) := ⟨lindenbaum_complete_iff.mpr⟩
 instance : Complete (Hilbert.Normal Ax) (lindenbaum Ax) := ⟨lindenbaum_complete_iff.mp⟩

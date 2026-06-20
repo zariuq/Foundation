@@ -408,10 +408,18 @@ lemma imp (h₁ : Γ.alt-[m].Definable P) (h₂ : Γ-[m].Definable Q) :
   match Γ with
   | 𝚺 =>
     rcases h₁ with ⟨φ₁, h₁⟩; rcases h₂ with ⟨φ₂, h₂⟩
-    exact ⟨φ₁.negPi ⋎ φ₂, fun _ ↦ by simp [Semiformula.negPi, h₁.iff, h₂.iff, imp_iff_not_or]⟩
+    refine ⟨φ₁.negPi ⋎ φ₂, fun v ↦ ?_⟩
+    have e₁ := h₁.iff (v := v)
+    have e₂ := h₂.iff (v := v)
+    simp [Semiformula.negPi, imp_iff_not_or]
+    grind
   | 𝚷 =>
     rcases h₁ with ⟨p₁, h₁⟩; rcases h₂ with ⟨p₂, h₂⟩
-    exact ⟨p₁.negSigma ⋎ p₂, fun _ ↦ by simp [h₁.iff, h₂.iff, imp_iff_not_or]⟩
+    refine ⟨p₁.negSigma ⋎ p₂, fun v ↦ ?_⟩
+    have e₁ := h₁.iff (v := v)
+    have e₂ := h₂.iff (v := v)
+    simp [Semiformula.negSigma, imp_iff_not_or]
+    grind
   | 𝚫 => exact impDelta h₁ h₂
 
 lemma biconditional (h₁ : 𝚫-[m].Definable P) (h₂ : 𝚫-[m].Definable Q) {Γ} :

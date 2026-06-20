@@ -227,7 +227,8 @@ variable {L M}
 lemma rel_eq (a b : QuotEq L M) : (@Semiformula.Operator.Eq.eq L _).val (M := QuotEq L M) ![a, b] ↔ a = b := by
   induction' a using Quotient.ind with a
   induction' b using Quotient.ind with b
-  rw [of_eq_of]; simp [eqv, Semiformula.Operator.val];
+  apply Iff.trans _ of_eq_of.symm
+  simp [eqv, Semiformula.Operator.val];
   simpa [Evalm, Matrix.fun_eq_vec_two, Empty.eq_elim] using
     eval_mk (H := H) (e := ![a, b]) (ε := Empty.elim) (φ := Semiformula.Operator.Eq.eq.sentence)
 

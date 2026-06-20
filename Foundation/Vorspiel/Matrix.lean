@@ -60,7 +60,7 @@ end delab
 infixl:70 " <: " => vecConsLast
 
 @[simp] lemma rightConcat_last :
-    (s <: a) (last n) = a := by simp [vecConsLast]
+    (s <: a) (Fin.last n) = a := by simp [vecConsLast]
 
 @[simp] lemma rightConcat_castSucc (i : Fin n) :
     (s <: a) (Fin.castSucc i) = s i := by simp [vecConsLast]
@@ -68,7 +68,7 @@ infixl:70 " <: " => vecConsLast
 @[simp] lemma rightConcat_zero (a : α) (s : Fin n.succ → α) :
     (s <: a) 0 = s 0 := rightConcat_castSucc 0
 
-@[simp] lemma zero_succ_eq_id {n} : (0 : Fin (n + 1)) :> succ = id :=
+@[simp] lemma zero_succ_eq_id {n} : (0 : Fin (n + 1)) :> Fin.succ = id :=
   funext $ Fin.cases (by simp) (by simp)
 
 @[simp] lemma zero_cons_succ_eq_self (f : Fin (n + 1) → α) : (f 0 :> (f ·.succ) : Fin (n + 1) → α) = f := by
@@ -106,7 +106,7 @@ def decVec {α : Type _} : {n : ℕ} → (v w : Fin n → α) → (∀ i, Decida
 
 lemma comp_vecCons (f : α → β) (a : α) (s : Fin n → α) :
     (fun x ↦ f <| (a :> s) x) = f a :> f ∘ s :=
-  funext (fun i => cases (by simp) (by simp) i)
+  funext (fun i => Fin.cases (by simp) (by simp) i)
 
 lemma comp_vecCons' (f : α → β) (a : α) (s : Fin n → α) :
     (fun x ↦ f <| (a :> s) x) = f a :> fun i ↦ f (s i) :=
@@ -129,7 +129,7 @@ lemma comp_vecCons₂' (g : β → γ) (f : α → β) (a : α) (s : Fin n → �
 @[simp] lemma comp₃ (a₁ a₂ a₃ : α) : f ∘ ![a₁, a₂, a₃] = ![f a₁, f a₂, f a₃] := by simp [comp_vecCons'']
 
 lemma comp_vecConsLast (f : α → β) (a : α) (s : Fin n → α) : (fun x => f $ (s <: a) x) = f ∘ s <: f a :=
-funext (fun i => lastCases (by simp) (by simp) i)
+funext (fun i => Fin.lastCases (by simp) (by simp) i)
 
 @[simp] lemma vecHead_comp (f : α → β) (v : Fin (n + 1) → α) : vecHead (f ∘ v) = f (vecHead v) :=
   by simp [vecHead]
@@ -175,12 +175,12 @@ lemma injective_vecCons {f : Fin n → α} (h : Function.Injective f) {a} (ha : 
 
 @[simp] lemma vecCons_empty_eq_singleton (v : Fin 0 → α) (x : α) : x :> v = ![x] := by
   ext i
-  rcases fin_one_eq_zero i
+  rcases Fin.fin_one_eq_zero i
   simp
 
 @[simp] lemma vecConsLast_empty_eq_singleton (v : Fin 0 → α) (x : α) : v <: x = ![x] := by
   ext i
-  rcases fin_one_eq_zero i
+  rcases Fin.fin_one_eq_zero i
   simp [vecConsLast]
   rfl
 

@@ -778,7 +778,10 @@ lemma exp_even (a : V) : Exp.exp (2 * a) = (Exp.exp a)^2 :=
 lemma nat_cast_exp (n : ℕ) : (Exp.exp n : ℕ) = Exp.exp (n : V) := by
   induction' n with n ih
   · simp
-  · simp [exp_succ, ih]
+  · rw [exp_succ]
+    push_cast [ih]
+    rw [exp_succ]
+    congr 1
 
 end exponential
 

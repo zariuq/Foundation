@@ -16,7 +16,11 @@ namespace Part
       simpa [List.Vector.mOfFn, @mem_vector_mOfFn _ n]
     constructor
     · rintro ⟨a, ha, v, hv, rfl⟩ i; cases i using Fin.cases <;> simp [ha, hv]
-    · intro h; exact ⟨w.head, by simpa using h 0, w.tail, fun i => by simpa using h i.succ, by simp⟩
+    · intro h; exact ⟨w.head, by simpa using h 0, w.tail,
+        fun i => by
+          have key : w.tail.get i = w.get i.succ := List.Vector.get_tail_succ w i
+          exact key ▸ h i.succ,
+        (List.Vector.cons_head_tail w).symm⟩
 
 lemma unit_dom_iff (x : Part Unit) : x.Dom ↔ () ∈ x := by simp [dom_iff_mem, show ∀ x : Unit, x = () by intro x; rfl]
 

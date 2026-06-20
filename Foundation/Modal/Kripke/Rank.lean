@@ -147,10 +147,14 @@ lemma iff_eq_height_eq_original_root {x : F.extendRoot 1} : Frame.rank x = F.hei
   constructor;
   . rcases x with (a | x);
     . intro h;
-      have := h ▸ height_succ (F := F);
-      simp [Frame.height] at this;
+      exfalso;
+      obtain rfl := Fin.eq_zero a;
+      rw [show (Sum.inl (0 : Fin 1) : (F.extendRoot 1).World) = extendRoot.root from rfl] at h;
+      have hr := height_succ (F := F);
+      simp only [Frame.height] at hr h;
+      omega;
     . intro h;
-      suffices x = r by simp [this];
+      suffices x = r by subst this; rfl;
       apply Frame.eq_height_root.mp;
       exact h ▸ Frame.extendRoot.eq_original_height.symm;
   . rintro rfl;

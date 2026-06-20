@@ -494,15 +494,17 @@ lemma provable_TBB_of_mem_trace {n : ℕ} (h : n ∈ (T.ProvabilityLogic U).trac
       omega;
   have : ∀ i : M₀.World, 𝗜𝚺₁ ⊢ S i ➝ S.realization (A ➝ (Modal.TBB M.height)) := by
     rintro (a | i);
-    . suffices 𝗜𝚺₁ ⊢ S r₀ ➝ S.realization (TBB M.height) by
+    . obtain rfl := Fin.eq_zero a
+      suffices 𝗜𝚺₁ ⊢ S r₀ ➝ S.realization (TBB M.height) by
         dsimp [Realization.interpret];
-        rw [(show Sum.inl a = r₀ by simp [r₀])];
         cl_prover [this]
       have : 𝗜𝚺₁ ⊢ S r₀ ➝ ∼(T.standardProvability) (S.realization (□^[M.height]⊥)) := C!_trans (S.SC2 r₀ r Rr₀) $ contra! $
         prov_distribute_imply' $
         CN!_of_CN!_right $
         S.mainlemma_neg Rr₀ $
-        height_lt_iff_satisfies_boxbot.not.mp $ by simp [Frame.extendRoot.eq_original_height_root]
+        height_lt_iff_satisfies_boxbot.not.mp $ by
+          simp only [Frame.height]
+          exact not_lt.mpr (le_of_eq (Frame.extendRoot.eq_original_height (x := r)).symm)
       apply C!_trans this
       simp [Realization.interpret.def_boxItr]
     . apply S.mainlemma Rr₀;
@@ -581,7 +583,7 @@ lemma provable_TBBMinus_of_mem_trace (h : ¬(T.ProvabilityLogic U) ⊆ Modal.S) 
     apply left_Udisj!_intro _;
     rintro (a | i);
     . suffices 𝗜𝚺₁ ⊢ S r₀ ➝ S.realization B ➝ S.realization (∼⩕ n ∈ (cofinite_of_not_subset_S h).toFinset, TBB n) by
-        rwa [(show Sum.inl a = r₀ by simp [r₀])];
+        rwa [(show Sum.inl a = r₀ from by obtain rfl := Fin.eq_zero a; rfl)];
       have H₁ : 𝗜𝚺₁ ⊢ S r₀ ➝ ∼S.realization A := by
         convert SolovaySentences.rfl_mainlemma_neg (T := T) hM A (by grind) ?_;
         exact Satisfies.not_imp_def.mp hM |>.2;

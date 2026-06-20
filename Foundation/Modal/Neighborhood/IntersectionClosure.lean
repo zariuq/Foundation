@@ -12,20 +12,21 @@ variable {F : Frame}
 
 def Frame.intersectionClosure (F : Frame) : Frame := {
   World := F.World,
-  𝒩 a X := ∃ Xs : Finset _, Xs ≠ ∅ ∧ X = ⋂ Xi ∈ Xs, Xi ∧ ∀ Xi ∈ Xs, Xi ∈ F.𝒩 a
+  𝒩 a X := ∃ Xs : Finset (Set F.World), Xs ≠ ∅ ∧ (X = ⋂ Xi ∈ Xs, Xi) ∧ (∀ Xi ∈ Xs, Xi ∈ F.𝒩 a)
 }
 
 instance Frame.intersectionClosure.isRegular : F.intersectionClosure.IsRegular := by
   constructor;
   intro X Y a;
-  simp only [intersectionClosure, ne_eq, Set.mem_inter_iff, Set.mem_setOf_eq, and_imp];
-  rintro ⟨Xs, hXs₁, rfl, hX₂⟩ ⟨Ys, hYs₁, rfl, hY₂⟩;
+  intro h
+  rw [Set.mem_inter_iff] at h
+  obtain ⟨hX, hY⟩ := h
+  obtain ⟨Xs, hXs₁, rfl, hX₂⟩ := hX
+  obtain ⟨Ys, hYs₁, rfl, hY₂⟩ := hY
   refine ⟨Xs ∪ Ys, ?_, ?_, ?_⟩;
-  . simp only [Finset.union_eq_empty];
-    grind;
-  . ext b;
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Finset.mem_union];
-    grind;
+  . simp only [ne_eq, Finset.union_eq_empty, not_and];
+    intro _; exact hYs₁;
+  . exact (Finset.set_biInter_inter Xs Ys _).symm;
   . simp only [Finset.mem_union];
     rintro Z (hZ | hZ);
     . apply hX₂; assumption;
@@ -63,13 +64,9 @@ lemma symm_𝒩 : F.quasiFiltering.𝒩 = F.supplementation.intersectionClosure.
     refine ⟨?_, ?_, ?_⟩;
     . simpa;
     . simp; rfl;
-    . simp [Frame.supplementation];
-      intro Yi hYi;
-      use Yi;
-      constructor;
-      . simp;
-      . apply hYs₂;
-        assumption;
+    . intro Zi hZi;
+      obtain ⟨Yi, hYi, rfl⟩ := Finset.mem_image.mp hZi;
+      exact ⟨Yi, Set.subset_union_left, hYs₂ Yi hYi⟩;
   . rintro ⟨Ys, hYs₁, rfl, hYs₂⟩;
     let Zs := Finset.image (α := Ys) (λ ⟨Yi, hYi⟩ => hYs₂ Yi hYi |>.choose) Finset.univ;
     use (⋂ Zi ∈ Zs, Zi);
@@ -112,28 +109,28 @@ instance isTransitive [F.IsTransitive] : F.quasiFiltering.IsTransitive := by
     . tauto;
     . simpa [Frame.box] using ha;
   replace hYs₂ : w ∈ ⋂ Yi ∈ Ys, F.box^[2] Yi := by
-    simp only [Set.mem_iInter];
+    refine Set.mem_biInter ?_;
     intro Yi hYi;
-    apply F.trans $ hYs₂ Yi hYi;
+    exact F.trans $ hYs₂ Yi hYi;
   use (⋂ Yi ∈ Ys, F.box Yi);
   constructor;
   . rfl;
   . use Ys.image F.box
     refine ⟨?_, ?_, ?_⟩;
     . simpa;
-    . simp;
-    . simp [Frame.box] at hYs₂ ⊢;
-      simpa;
+    . rw [Finset.set_biInter_finset_image];
+      rfl;
+    . intro Zi hZi;
+      obtain ⟨Yi, hYi, rfl⟩ := Finset.mem_image.mp hZi;
+      exact Set.mem_iInter₂.mp hYs₂ Yi hYi;
 
 instance containsUnit [F.ContainsUnit] : F.quasiFiltering.ContainsUnit := by
   constructor;
-  ext x;
-  simp only [quasiFiltering, intersectionClosure, ne_eq, supplementation, Set.mem_setOf_eq, Set.mem_univ, iff_true];
-  use Set.univ;
-  constructor;
-  . tauto;
-  . use {Set.univ};
-    simp;
+  apply Set.eq_univ_of_forall;
+  intro x;
+  apply Frame.supplementation.mem_box_of_mem_original_box (F := F.intersectionClosure);
+  apply Frame.intersectionClosure.mem_box_of_mem_original_box;
+  exact F.univ_mem x;
 
 lemma mem_box_of_mem_original_box {x : F} {s : Set F} : x ∈ F.box s → x ∈ F.quasiFiltering.box s := by
   intro hx;

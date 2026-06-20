@@ -188,32 +188,32 @@ lemma quote_def (d : (T : Schema L) ⟹₂ Γ) : (⌜d⌝ : V) = (⌜d⌝ : T.in
 lemma coe_typedQuote_val_eq (d : (T : Schema L) ⟹₂ Γ) : ↑(d.typedQuote ℕ).val = (d.typedQuote V).val :=
   match d with
   |   closed Δ φ h hn => by
-    simp [typedQuote, axL, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote']
+    simp [typedQuote, axL, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote'] <;> norm_cast
   |       axm φ hT _ => by
-    simp [typedQuote, Bootstrapping.axm, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote']
+    simp [typedQuote, Bootstrapping.axm, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote'] <;> norm_cast
   |           verum h => by
-    simp [typedQuote, Bootstrapping.verumIntro, nat_cast_pair, Sequent.coe_eq]
+    simp [typedQuote, Bootstrapping.verumIntro, nat_cast_pair, Sequent.coe_eq] <;> norm_cast
   |       and h b₁ b₂ => by
     simp [typedQuote, Bootstrapping.andIntro, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote',
-      b₁.coe_typedQuote_val_eq, b₂.coe_typedQuote_val_eq]
+      b₁.coe_typedQuote_val_eq, b₂.coe_typedQuote_val_eq] <;> norm_cast
   |            or h b => by
     simp [typedQuote, Bootstrapping.orIntro, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote',
-      b.coe_typedQuote_val_eq]
+      b.coe_typedQuote_val_eq] <;> norm_cast
   |           all h b => by
     simp [typedQuote, Bootstrapping.allIntro, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote',
-      b.coe_typedQuote_val_eq]
+      b.coe_typedQuote_val_eq] <;> norm_cast
   |          ex h t b => by
     simp [typedQuote, Bootstrapping.exIntro, nat_cast_pair, Sequent.coe_eq,
       Semiterm.coe_quote_eq_quote', Semiformula.coe_quote_eq_quote',
-      b.coe_typedQuote_val_eq]
+      b.coe_typedQuote_val_eq] <;> norm_cast
   |           wk b ss => by
-    simp [typedQuote, Bootstrapping.wkRule, nat_cast_pair, Sequent.coe_eq, b.coe_typedQuote_val_eq]
+    simp [typedQuote, Bootstrapping.wkRule, nat_cast_pair, Sequent.coe_eq, b.coe_typedQuote_val_eq] <;> norm_cast
   |           shift b => by
     simp [typedQuote, Bootstrapping.shiftRule, nat_cast_pair, Sequent.coe_eq,
-      b.coe_typedQuote_val_eq, ←setShift_typed_quote]
+      b.coe_typedQuote_val_eq, ←setShift_typed_quote] <;> norm_cast
   |       cut b₁ b₂ => by
     simp [typedQuote, Bootstrapping.cutRule, nat_cast_pair, Sequent.coe_eq, Semiformula.coe_quote_eq_quote',
-      b₁.coe_typedQuote_val_eq, b₂.coe_typedQuote_val_eq]
+      b₁.coe_typedQuote_val_eq, b₂.coe_typedQuote_val_eq] <;> norm_cast
 
 lemma coe_quote_eq (d : (T : Schema L) ⟹₂ Γ) : (↑(⌜d⌝ : ℕ) : V) = ⌜d⌝ := coe_typedQuote_val_eq V d
 

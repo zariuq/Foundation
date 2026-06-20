@@ -241,7 +241,7 @@ instance [LogicalConnective F] [Semantics.Top M] : Semantics.Top (Set M) := ⟨f
 lemma set_meaningful_iff_nonempty [LogicalConnective F] [∀ 𝓜 : M, Meaningful 𝓜] {s : Set M} : Meaningful s ↔ s.Nonempty :=
   ⟨by rintro ⟨φ, hf⟩; by_contra A; rcases Set.not_nonempty_iff_eq_empty.mp A; simp [NotModels] at hf,
    by rintro ⟨𝓜, h𝓜⟩
-      rcases Meaningful.exists_unmodels (self := inferInstanceAs (Meaningful 𝓜)) with ⟨φ, hf⟩
+      rcases Meaningful.exists_unmodels (𝓜 := 𝓜) (self := ‹∀ 𝓜 : M, Meaningful 𝓜› 𝓜) with ⟨φ, hf⟩
       exact ⟨φ, by simpa [NotModels, set_models_iff] using ⟨𝓜, h𝓜, hf⟩⟩⟩
 
 lemma meaningful_iff_satisfiableSet [LogicalConnective F] [∀ 𝓜 : M, Meaningful 𝓜] : Satisfiable M T ↔ Meaningful (models M T) := by
