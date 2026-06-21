@@ -99,8 +99,14 @@ instance : Propositional.VF ⪱ Propositional.WF := by
       }, 0;
       constructor;
       . tauto;
-      . simp;
-        grind;
+      . apply Forces.not_def_iff.mpr;
+        left;
+        refine ⟨1, by tauto, ?_, ?_⟩;
+        · intro y h _;
+          exact (h rfl).elim;
+        · intro h;
+          have := h (y := 2) (show (1 : Fin 3) ≤ 2 by decide) (by simp);
+          simp at this;
 
 
 end LO.Propositional

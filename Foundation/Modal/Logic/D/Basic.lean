@@ -233,12 +233,13 @@ instance cwf [M.IsFiniteTree r] : (tailModel₀ M o).IsConverseWellFounded := �
       match x with
       | .inl _ => simp [tailModel₀];
       | .inr $ .inl _ => simp [tailModel₀];
-      | .inr $ .inr y => simpa using hm₂ y (by tauto);
+      | .inr $ .inr y => simpa [tailModel₀] using hm₂ y (by tauto);
   . by_cases hs₂ : s₂.Nonempty;
     . let m := Set.IsWF.min (s := s₂) (Set.IsWF.of_wellFoundedLT _) (by assumption);
       use embed_nat m;
       constructor;
-      . simpa using Set.IsWF.min_mem (s := s₂) _ _;
+      . show (embed_nat m) ∈ s
+        exact Set.IsWF.min_mem (s := s₂) _ _;
       . intro x hx;
         match x with
         | .inl _ => simp [tailModel₀];

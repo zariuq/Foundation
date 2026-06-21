@@ -79,7 +79,7 @@ noncomputable instance : LCWQIsoGödelQuote (SyntacticSemiformula L) (Bootstrapp
   and _ _ := rfl
   or _ _ := rfl
   neg _ := by simpa [typedQuote] using typedQuote_neg _
-  imply _ _ := by simpa [Bootstrapping.Semiformula.imp_def, imp_eq, typedQuote] using typedQuote_neg _
+  imply _ _ := by simpa [Bootstrapping.Semiformula.imp_def, imp_eq, typedQuote, Semiformula.neg_eq] using typedQuote_neg _
   all _ := rfl
   ex _ := rfl
 

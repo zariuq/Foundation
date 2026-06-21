@@ -12,7 +12,7 @@ variable {Ax : Axiom ℕ} {φ ψ χ : Formula ℕ} {s : Substitution ℕ}
 
 open Entailment.Corsi
 
-instance Hilbert.F.instAczelSlashable (hs : ∀ {φ}, φ ∈ Ax → ∕ₐ[(Hilbert.F Ax)] φ) : (Hilbert.F Ax).AczelSlashable where
+def Hilbert.F.instAczelSlashable (hs : ∀ {φ}, φ ∈ Ax → ∕ₐ[(Hilbert.F Ax)] φ) : (Hilbert.F Ax).AczelSlashable where
   iff_ks_provable {φ} := by
     constructor;
     . intro h;

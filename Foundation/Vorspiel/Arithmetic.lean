@@ -164,7 +164,7 @@ lemma comp₁ (f : ℕ →. ℕ) (hf : @ArithPart₁ 1 fun v => f (v.get 0)) {n 
 
 lemma comp₂ (f : ℕ → ℕ →. ℕ) (hf : @ArithPart₁ 2 fun v => f (v.get 0) (v.get 1)) {n g h} (hg : @Arithmetic₁ n g) (hh : @Arithmetic₁ n h) :
     @ArithPart₁ n fun v => f (g v) (h v) :=
-  (hf.comp ![g, h] (fun i => i.cases hg (fun i => by simpa using hh))).of_eq
+  (hf.comp ![g, h] (fun i => i.cases hg (fun i => by simpa [Arithmetic₁] using hh))).of_eq
     (by intro i
         have : (fun j ↦ (![↑g, h] : Fin 2 → List.Vector ℕ n →. ℕ) j i) = (fun j => pure (![g i, h i] j)) := by
           funext j; cases j using Fin.cases <;> simp
@@ -434,7 +434,7 @@ lemma ball {φ : List.Vector ℕ n → ℕ → ℕ} (hp : @Arithmetic₁ (n + 1)
   have : @Arithmetic₁ (n + 1) (fun v => isEqNat v.head (v.get i.succ)) :=
     (equal 0 1).comp₂ _ head (proj i.succ)
   have := ArithPart₁.map (fun v x => isEqNat x (v.get i))
-    (this.of_eq <| fun w => by simp only; congr 1; exact (List.Vector.get_tail_succ w i).symm)
+    (this.of_eq <| fun w => by congr 1; exact (List.Vector.get_tail_succ w i).symm)
     (ArithPart₁.rfindPos hF)
   exact this.of_eq <| by
     intro v

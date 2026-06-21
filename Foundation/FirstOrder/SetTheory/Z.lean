@@ -50,7 +50,8 @@ lemma SSubset.of_subset_of_not_mem_of_mem {x y z : V} (ss : x ⊆ y) (hzx : z �
 
 /-! ## Axiom of empty set -/
 
-lemma empty_exists : ∃ e : V, IsEmpty e := by simpa [models_iff] using ModelsTheory.models V Zermelo.axiom_of_empty_set
+lemma empty_exists : ∃ e : V, IsEmpty e := by
+  simpa [models_iff, Axiom.empty, IsEmpty] using ModelsTheory.models V Zermelo.axiom_of_empty_set
 
 lemma empty_existsUnique : ∃! e : V, IsEmpty e := by
   rcases empty_exists (V := V) with ⟨e, he⟩
@@ -615,7 +616,7 @@ lemma IsInductive.zero {I : V} (hI : IsInductive I) : ∅ ∈ I := hI.1
 lemma IsInductive.succ {I : V} (hI : IsInductive I) {x : V} (hx : x ∈ I) : succ x ∈ I := hI.2 x hx
 
 lemma isInductive_exists : ∃ I : V, IsInductive I := by
-  simpa [models_iff, Axiom.infinity] using ModelsTheory.models V Zermelo.axiom_of_infinity
+  simpa [models_iff, Axiom.infinity, IsInductive] using ModelsTheory.models V Zermelo.axiom_of_infinity
 
 lemma omega_existsUnique : ∃! ω : V, ∀ x, x ∈ ω ↔ ∀ I : V, IsInductive I → x ∈ I := by
   rcases isInductive_exists (V := V) with ⟨I, hI⟩

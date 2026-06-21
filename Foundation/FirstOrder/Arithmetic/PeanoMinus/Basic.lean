@@ -179,12 +179,14 @@ lemma add_eq_of_lt : ∀ x y : M, x < y → ∃ z, x + z = y := by
   simpa [models_iff] using ModelsTheory.models M PeanoMinus.addEqOfLt
 
 @[simp] protected lemma zero_le : ∀ x : M, 0 ≤ x := by
+  show ∀ x : M, 0 = x ∨ 0 < x
   simpa [models_iff, Structure.le_iff_of_eq_of_lt] using ModelsTheory.models M PeanoMinus.zeroLe
 
 lemma zero_lt_one : (0 : M) < 1 := by
   simpa [models_iff] using ModelsTheory.models M PeanoMinus.zeroLtOne
 
 lemma one_le_of_zero_lt : ∀ x : M, 0 < x → 1 ≤ x := by
+  show ∀ x : M, 0 < x → 1 = x ∨ 1 < x
   simpa [models_iff, Structure.le_iff_of_eq_of_lt] using ModelsTheory.models M PeanoMinus.oneLeOfZeroLt
 
 lemma add_lt_add : ∀ x y z : M, x < y → x + z < y + z := by

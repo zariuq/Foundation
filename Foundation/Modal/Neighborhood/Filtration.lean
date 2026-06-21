@@ -416,7 +416,7 @@ protected instance isReflexive [M.IsReflexive] : (transitiveFiltration M T).toMo
     assumption;
   . assumption;
 
-protected instance containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (transitiveFiltration M T).toModel.ContainsUnit := by
+protected def containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (transitiveFiltration M T).toModel.ContainsUnit := by
   constructor;
   ext X;
   suffices X ∈ (transitiveFiltration M T).B Set.univ by simpa;
@@ -467,7 +467,7 @@ protected instance isReflexive [M.IsReflexive] : (supplementedTransitiveFiltrati
   Frame.supplementation.isReflexive (F := (transitiveFiltration M T).toModel.toFrame).refl
 ⟩
 
-protected instance containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (supplementedTransitiveFiltration M T).toModel.ContainsUnit := by
+protected def containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (supplementedTransitiveFiltration M T).toModel.ContainsUnit := by
   constructor;
   ext X;
   suffices X ∈ (supplementedTransitiveFiltration M T).B Set.univ by simpa;
@@ -629,10 +629,12 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
         constructor;
         . suffices ∀ Yi ∈ Ys, ∀ ψ, □ψ ∈ T → Yi = 【M ψ】 → ⟦w⟧ ∉ 【M (□ψ)】 by simpa [Vs];
           rintro _ _ ψ hψ rfl;
-          apply (show ∀ ψ, □ψ ∈ T → 【M ψ】 ∈ Ys → ⟦w⟧ ∉ 【M (□ψ)】 by simpa [Ψ] using hΨ) <;> assumption;
+          simp [Ψ] at hΨ
+          apply hΨ <;> assumption;
         . suffices ∀ Yi ∈ Ys, ∀ ξ, □ξ ∈ T → Yi = 【M (□ξ)】 → ⟦w⟧ ∉ 【M (□ξ)】 by simpa [Us];
           rintro _ _ ξ hξ rfl;
-          apply (show ∀ ξ, □ξ ∈ T → 【M (□ξ)】 ∈ Ys → ⟦w⟧ ∉ 【M (□ξ)】 by simpa [Ξ] using hΞ) <;> assumption;
+          simp [Ξ] at hΞ
+          apply hΞ <;> assumption;
     . intro h;
       apply Frame.quasiFiltering.mem_box_of_mem_original_box;
       apply transitiveFiltration.iff_mem_B.mpr;
@@ -656,7 +658,7 @@ protected instance isTransitive : (quasiFilteringTransitiveFiltration M T T_fini
   Frame.quasiFiltering.isTransitive (F := (transitiveFiltration M T).toModel.toFrame).trans
 ⟩
 
-protected instance containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (quasiFilteringTransitiveFiltration M T T_finite).toModel.ContainsUnit := by
+protected def containsUnit [M.ContainsUnit] (hT : □⊤ ∈ T) : (quasiFilteringTransitiveFiltration M T T_finite).toModel.ContainsUnit := by
   constructor;
   ext X;
   suffices X ∈ (quasiFilteringTransitiveFiltration M T T_finite).B Set.univ by simpa;

@@ -55,7 +55,7 @@ lemma truthlemma_lemma1
   {X : ComplementClosedConsistentFinset Modal.GL φ.subformulas} (hq : □ψ ∈ φ.subformulas)
   : ((□⁻¹'X.1 ∪ □'□⁻¹'X.1) ∪ {□ψ, -ψ}) ⊆ φ.subformulas⁻ := by
   intro χ hr;
-  replace hr : χ = □ψ ∨ χ = -ψ ∨ □χ ∈ X ∨ ∃ a, □a ∈ X ∧ □a = χ := by
+  replace hr : χ = □ψ ∨ χ = -ψ ∨ □χ ∈ X.1 ∨ ∃ a, □a ∈ X.1 ∧ □a = χ := by
     simpa [Finset.LO.preboxItr, Finset.LO.boxItr] using hr;
   rcases hr with (rfl | rfl | hp | ⟨χ, hr, rfl⟩);
   . apply Finset.mem_union.mpr;

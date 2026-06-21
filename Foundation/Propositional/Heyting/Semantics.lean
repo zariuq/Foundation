@@ -115,8 +115,9 @@ lemma sound {φ : Formula α} (d : (Hilbert.Standard Ax) ⊢ φ) : mod (Hilbert.
     use φ;
     grind;
   | @mdp φ ψ _ _ ihpq ihp =>
-    have : (ℍ ⊧ₕ φ) ≤ (ℍ ⊧ₕ ψ) := by simpa using ihpq
-    simpa [val_def'.mp ihp] using this
+    have hle : (ℍ ⊧ₕ φ) ≤ (ℍ ⊧ₕ ψ) := by simpa using ihpq
+    rw [val_def'] at ihp ⊢
+    exact top_le_iff.mp (ihp ▸ hle)
   | _ => simp [himp_himp_inf_himp_inf_le, himp_inf_himp_inf_sup_le]
 
 instance : Sound (Hilbert.Standard Ax) (mod (Hilbert.Standard Ax)) := ⟨sound⟩

@@ -190,7 +190,8 @@ lemma iff_box {Γ : 𝓒.toModel} : □φ ∈ Γ.1 ↔ Γ ∈ 𝓒.toModel.box (
 lemma iff_dia {Γ : 𝓒.toModel} : ◇φ ∈ Γ.1 ↔ Γ ∈ 𝓒.toModel.dia (proofset 𝓢 φ) := calc
   _ ↔ ∼□(∼φ) ∈ Γ.1 := by rfl;
   _ ↔ □(∼φ) ∉ Γ.1 := by apply MaximalConsistentSet.iff_mem_neg;
-  _ ↔ (proofset 𝓢 (∼φ)) ∉ (𝓒.𝒩 Γ) := by simpa using iff_box (Γ := Γ) (φ := ∼φ) |>.not;
+  _ ↔ (proofset 𝓢 (∼φ)) ∉ (𝓒.𝒩 Γ) := by
+        exact (iff_box (Γ := Γ) (φ := ∼φ)).not;
   _ ↔ _ := by
     show _ ↔ Γ ∈ (𝓒.toModel.box (proofset 𝓢 φ)ᶜ)ᶜ
     rw [proofset.eq_neg (φ := φ)];

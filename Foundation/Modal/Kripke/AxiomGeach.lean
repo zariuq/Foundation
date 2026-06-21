@@ -31,7 +31,7 @@ lemma serial [F.IsSerial] : ∀ x : F, ∃ y, x ≺ y := IsSerial.serial
 
 @[simp]
 instance [F.IsGeachConvergent ⟨0, 0, 1, 1⟩] : F.IsSerial where
-  serial := by simpa using IsGeachConvergent.gconv (F := F) (g := ⟨0, 0, 1, 1⟩);
+  serial := by simpa [Serial] using IsGeachConvergent.gconv (F := F) (g := ⟨0, 0, 1, 1⟩);
 instance [F.IsSerial] : F.IsGeachConvergent ⟨0, 0, 1, 1⟩ where
   gconv x y z Rxy Rxz := by
     simp_all only [Rel.Iterate.iff_zero, Rel.Iterate.iff_succ, exists_eq_right, and_self];
@@ -94,7 +94,7 @@ lemma ps_convergent [F.IsPiecewiseStronglyConvergent] : ∀ {x y z : F.World}, x
 
 @[simp]
 instance [F.IsGeachConvergent ⟨1, 1, 1, 1⟩] : F.IsPiecewiseStronglyConvergent where
-  ps_convergent := by simpa using IsGeachConvergent.gconv (g := ⟨1, 1, 1, 1⟩) (F := F);
+  ps_convergent := by simpa [PiecewiseStronglyConvergent] using IsGeachConvergent.gconv (g := ⟨1, 1, 1, 1⟩) (F := F);
 instance [F.IsPiecewiseStronglyConvergent] : F.IsGeachConvergent ⟨1, 1, 1, 1⟩ where
   gconv x y z Rxy Rxz := by
     simp_all only [Rel.Iterate.iff_succ, Rel.Iterate.iff_zero, exists_eq_right];

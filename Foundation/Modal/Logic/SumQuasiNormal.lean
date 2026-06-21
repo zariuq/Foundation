@@ -254,8 +254,8 @@ instance : (sumQuasiNormal' L₁ L₂).Substitution where
   subst s hφ := by
     rw [iff_provable] at ⊢ hφ;
     induction hφ with
-    | mem₁ s' h => simpa using mem₁ (s := s' ∘ s) h
-    | mem₂ s' h => simpa using mem₂ (s := s' ∘ s) h
+    | mem₁ s' h => show sumQuasiNormal' L₁ L₂ _; simpa using mem₁ (s := s' ∘ s) h
+    | mem₂ s' h => show sumQuasiNormal' L₁ L₂ _; simpa using mem₂ (s := s' ∘ s) h
     | mdp _ _ ihφψ ihφ => exact mdp ihφψ ihφ
 
 end sumQuasiNormal'

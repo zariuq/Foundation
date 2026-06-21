@@ -153,7 +153,7 @@ end Semiformula
 
 namespace Structure
 
-instance subLanguageStructure {pf : ∀ k, L.Func k → Prop} {pr : ∀ k, L.Rel k → Prop}
+def subLanguageStructure {pf : ∀ k, L.Func k → Prop} {pr : ∀ k, L.Rel k → Prop}
   {M : Type w} (s : Structure L M) : Structure (Language.subLanguage L pf pr) M :=
   s.lMap (Language.ofSubLanguage L)
 

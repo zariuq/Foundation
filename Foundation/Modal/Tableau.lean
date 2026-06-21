@@ -780,7 +780,7 @@ private lemma of_mem₂_boxItr : (□^[n]φ ∈ t.1.2) → (∃ t' : MaximalCons
     . rintro ψ hψ;
       obtain ⟨ξ, hξ, rfl⟩ := Finset.LO.exists_of_mem_boxItr hψ;
       simp at hΓ;
-      simpa using hΓ $ by simpa;
+      simpa [Set.LO.iff_mem_preboxItr] using hΓ $ by simpa;
     . simpa;
   use t';
   constructor;

@@ -578,8 +578,8 @@ lemma E_boxLe_succ! : 𝓢 ⊢ (□^≤[n + 1] φ) ⭤ (□^≤[n] φ) ⋏ (□^
   . suffices 𝓢 ⊢ (□^≤[n]φ) ⋏ (Finset.conj {(□^[(n + 1)]φ)}) ➝ (□^≤[n + 1]φ) by simpa using this;
     dsimp only [Box.boxLe];
     convert CKFconjFconjUnion! (𝓢 := 𝓢) (Γ := Finset.range (n + 1) |>.image (λ i => □^[i] φ)) (Δ := {(□^[(n + 1)]φ)});
-    ext ψ;
-    grind;
+    rw [show n + 2 = (n + 1) + 1 from rfl, Finset.range_add_one, Finset.image_insert,
+      Finset.union_comm, Finset.insert_eq];
 
 lemma boxLe_regularity! (h : 𝓢 ⊢ φ ➝ ψ) : 𝓢 ⊢ (□^≤[n] φ) ➝ (□^≤[n] ψ) := by
   induction n with

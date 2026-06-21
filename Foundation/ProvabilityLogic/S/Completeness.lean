@@ -72,7 +72,7 @@ lemma refl_mainlemma_aux (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
       have h₁ := ihB.1 hA;
       have h₂ := ihC.2 hB;
       cl_prover [h₁, h₂];
-  | hatom =>
+  | hatom a =>
     constructor;
     . intro h;
       apply right_Fdisj'!_intro;
@@ -84,7 +84,9 @@ lemma refl_mainlemma_aux (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
       apply S.SC1;
       by_contra hC; subst hC;
       apply h;
-      simpa using hi;
+      have hi2 : r₀ ⊧ Formula.atom a := by simpa using hi
+      rw [Formula.Kripke.Satisfies.atom_def] at hi2 ⊢
+      simpa [M₀, Model.extendRoot, r₀, Model.extendRoot.root, Frame.extendRoot.root] using hi2;
   | hbox B ihB =>
     simp only [Realization.interpret];
     constructor;

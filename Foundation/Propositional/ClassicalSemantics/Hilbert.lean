@@ -27,7 +27,7 @@ theorem soundness (h : Propositional.Cl ⊢ φ) : φ.Tautology := by
 
 lemma not_provable_of_exists_valuation : (∃ v : Valuation _, ¬(v ⊧ φ)) → Propositional.Cl ⊬ φ := by
   contrapose!;
-  simpa using soundness;
+  simpa [Formula.Tautology, Semantics.Valid] using soundness;
 
 section Completeness
 
@@ -114,7 +114,7 @@ theorem iff_provable_tautology : Propositional.Cl ⊢ φ ↔ φ.Tautology := ⟨
 
 lemma exists_valuation_of_not_provable : ¬(Propositional.Cl ⊢ φ) → ∃ v : Valuation _, ¬(v ⊧ φ) := by
   contrapose!;
-  simpa using completeness;
+  simpa [Formula.Tautology, Semantics.Valid] using completeness;
 
 end Completeness
 

@@ -18,7 +18,7 @@ lemma monotone_of_succ_monotone {r : ℕ → ℕ → Prop} (rfx : Reflexive r) (
   induction d
   case zero => simp [rfx n]
   case succ d ih =>
-    simpa using tr ih (succ (n + d))
+    simpa [Nat.add_assoc] using tr ih (succ (n + d))
 
 end Nat
 
@@ -72,7 +72,7 @@ namespace DenseSet
 
 instance : SetLike (DenseSet α) α where
   coe s := s.set
-  coe_injective' s t e := by ext; simp_all
+  coe_injective s t e := by ext; simp_all
 
 noncomputable def choose (d : DenseSet α) (a : α) : α := (d.is_dense a).choose
 

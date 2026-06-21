@@ -107,7 +107,9 @@ instance isTransitive [F.IsTransitive] : F.quasiFiltering.IsTransitive := by
     . assumption;
     . assumption;
     . tauto;
-    . simpa [Frame.box] using ha;
+    . intro Xi hXi
+      have := Set.mem_iInter₂.mp ha Xi hXi
+      exact this;
   replace hYs₂ : w ∈ ⋂ Yi ∈ Ys, F.box^[2] Yi := by
     refine Set.mem_biInter ?_;
     intro Yi hYi;

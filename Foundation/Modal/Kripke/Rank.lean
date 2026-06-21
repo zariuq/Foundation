@@ -93,7 +93,7 @@ namespace extendRoot
   suffices
       l ≤ Frame.rank r + 1 ∧
       Frame.rank r < l by
-    simpa using Nat.eq_iff_le_and_ge.mpr this
+    exact Nat.eq_iff_le_and_ge.mpr this
   constructor
   · suffices l - 1 ≤ rank r from Nat.le_add_of_sub_le this
     apply le_height_iff_relItr.mpr

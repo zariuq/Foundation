@@ -166,7 +166,7 @@ lemma of_not_mem_construction_omega {φ : Formula ℕ} (hφ : φ ∉ constructio
   (χ ➝ φ ∉ T.theory) ∧ (∃ Γ : Finset (Formula _), ↑Γ ⊆ (construction T hT (encode φ)) ∧ Γ.conj ⋏ φ ➝ ξ ∈ T.theory) := by
   simp only [construction_omega, Set.mem_iUnion, not_exists] at hφ;
   constructor;
-  . simpa using hφ 0;
+  . simpa [construction, Set.mem_setOf_eq] using hφ 0;
   . have this := hφ (encode φ + 1);
     simp only [construction, encodek] at this;
     split_ifs at this with h;

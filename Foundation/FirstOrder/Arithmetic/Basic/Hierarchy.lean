@@ -315,7 +315,7 @@ set_option linter.flexible false in
 
 lemma exClosure : {n : ℕ} → {φ : Semiformula L ξ n} → Hierarchy 𝚺 (s + 1) φ → Hierarchy 𝚺 (s + 1) (exClosure φ)
   | 0,     _, hp => hp
-  | n + 1, φ, hp => by simpa using exClosure (hp.ex)
+  | n + 1, φ, hp => by simpa [exClosure_succ] using exClosure (hp.ex)
 
 instance : LogicalConnective.AndOrClosed (Hierarchy Γ s : Semiformula L ξ k → Prop) where
   verum := verum _ _ _

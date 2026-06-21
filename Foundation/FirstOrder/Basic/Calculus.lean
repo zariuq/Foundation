@@ -202,7 +202,7 @@ def specialize {φ : SyntacticSemiformula L 1} (t : SyntacticTerm L) :
   have : 𝓢 ⟹ ∼φ/[t] :: φ/[t] :: Γ := Tait.em (φ := φ/[t]) (by simp) (by simp)
   have dn : 𝓢 ⟹ ∼(∀' φ) :: φ/[t] :: Γ := by
     simp only [neg_all, Nat.reduceAdd]
-    exact Derivation.ex t (by simpa using this)
+    exact Derivation.ex t (by simp only [Rewriting.subst, LogicalConnective.HomClass.map_neg] at this ⊢; exact this)
   have dp : 𝓢 ⟹ (∀' φ) :: φ/[t] :: Γ :=
     Derivation.wk d (List.cons_subset_cons _ <| by simp)
   Derivation.cut dp dn
@@ -232,7 +232,7 @@ def allClosureFixitr {φ : SyntacticFormula L} (dp : 𝓢 ⊢! φ) : (m : ℕ) �
   | 0     => by simpa
   | m + 1 => by
     simp only [allClosure_fixitr, Nat.reduceAdd]
-    apply all; simpa using allClosureFixitr dp m
+    apply all; simp only [LawfulSyntacticRewriting.free_fix]; exact allClosureFixitr dp m
 
 def toClose (b : 𝓢 ⊢! φ) : 𝓢 ⊢! φ.univCl' := allClosureFixitr b φ.fvSup
 
@@ -376,10 +376,10 @@ def lMap (Φ : L₁ →ᵥ L₂) {Γ} : 𝓢₁ ⟹ Γ → 𝓢₁.lMap Φ ⟹ �
   | axL r v =>
     .cast (axL (Φ.rel r) (fun i ↦ .lMap Φ (v i)))
     (by simp [Semiformula.lMap_rel, Semiformula.lMap_nrel])
-  | verum => by simpa using verum
+  | verum => by exact verum
   | or (Γ := Γ) (φ := φ) (ψ := ψ) d => by
     have : 𝓢₁.lMap Φ ⟹ (.lMap Φ φ ⋎ .lMap Φ ψ :: Γ.map (.lMap Φ) : Sequent L₂) :=
-      or (by simpa using lMap Φ d)
+      or (by exact lMap Φ d)
     exact Derivation.cast this (by simp)
   | and (Γ := Γ) (φ := φ) (ψ := ψ) dp dq =>
     have : 𝓢₁.lMap Φ ⟹ (.lMap Φ φ ⋏ .lMap Φ ψ :: (Γ.map (.lMap Φ)) : Sequent L₂) :=
@@ -402,7 +402,7 @@ def lMap (Φ : L₁ →ᵥ L₂) {Γ} : 𝓢₁ ⟹ Γ → 𝓢₁.lMap Φ ⟹ �
   | axm h => axm (Set.mem_image_of_mem _ h)
 
 lemma inconsistent'_lMap (Φ : L₁ →ᵥ L₂) : Entailment.Inconsistent 𝓢₁ → Entailment.Inconsistent (𝓢₁.lMap Φ) := by
-  simp only [Entailment.inconsistent_iff_provable_bot]; intro ⟨b⟩; exact ⟨by simpa using lMap Φ b⟩
+  simp only [Entailment.inconsistent_iff_provable_bot]; intro ⟨b⟩; exact ⟨by exact lMap Φ b⟩
 
 end Hom
 
@@ -442,7 +442,9 @@ end Derivation
 def newVar (Γ : Sequent L) : ℕ := (Γ.map Semiformula.fvSup).foldr max 0
 
 lemma not_fvar?_newVar {φ : SyntacticFormula L} {Γ : Sequent L} (h : φ ∈ Γ) : ¬FVar? φ (newVar Γ) :=
-  not_fvar?_of_lt_fvSup φ (by simpa [newVar] using List.le_max_of_le (List.mem_map_of_mem h) (by simp))
+  not_fvar?_of_lt_fvSup φ (by
+    have := List.le_max_of_le (l := Γ.map Semiformula.fvSup) (List.mem_map_of_mem (f := Semiformula.fvSup) h) (le_refl (Semiformula.fvSup φ));
+    simpa [newVar] using this)
 
 namespace Derivation
 

@@ -232,7 +232,7 @@ instance [M.IsTransitive] : (M.boneLengthening a k).IsTransitive where
       . apply M.irrefl _ $ Frame.trans Ryz Ray;
     . omega;
 
-instance isTree [M.IsTree r] (hra : r ≠ a) : (M.boneLengthening a k).IsTree r where
+def isTree [M.IsTree r] (hra : r ≠ a) : (M.boneLengthening a k).IsTree r where
   asymm := by
     rintro (x | i) (y | j) Rxy;
     . apply M.asymm Rxy;
@@ -421,9 +421,11 @@ lemma subset_GLβMinus_of_trace_cofinite (hL : L.trace.Cofinite) : L ⊆ Modal.G
     . replace hr : ∀ (n : ℕ), ∀ x ∈ L, n ∈ x.trace → ¬M.height = n := by
         rintro n ξ hξ₁ hξ₂ rfl;
         obtain ⟨m, hm₁, hm₂⟩ : ∃ m, m ∈ Tφ ∧ r ⊭ TBB m := Satisfies.not_fconj'_def.mp $ Satisfies.not_def.mp $ by
-          simpa only [Finset.conj_singleton] using hr;
+          have hr' := hr
+          simp only [Finset.conj_singleton] at hr'
+          exact hr';
         replace hm₁ : ∀ i ∈ L, m ∉ i.trace := by simpa [Tφ] using hm₁;
-        replace hm₂ : M.height = m := by simpa using iff_satisfies_TBB_ne_rank.not.mp hm₂;
+        replace hm₂ : M.height = m := by simpa [Frame.height] using iff_satisfies_TBB_ne_rank.not.mp hm₂;
         apply hm₁ ξ;
         . assumption;
         . grind;
@@ -604,7 +606,8 @@ lemma provable_TBBMinus_of_mem_trace (h : ¬(T.ProvabilityLogic U) ⊆ Modal.S) 
             suffices Frame.rank (i : M₀) < M₁.height ∧ Frame.rank (i : M₀) ∈ (T.ProvabilityLogic U).trace by simpa [R];
             constructor;
             . suffices Frame.rank i < M₁.height by calc
-                _ = Frame.rank (i : M₁) := by convert Frame.extendRoot.eq_original_height
+                _ = Frame.rank (i : M₁) := by
+                      convert Frame.extendRoot.eq_original_height (F := M₁.toFrame) (x := i) using 2 <;> rfl
                 _ < _                   := this;
               apply Frame.rank_lt_whole_height;
               apply M₁.root_genaretes'!;

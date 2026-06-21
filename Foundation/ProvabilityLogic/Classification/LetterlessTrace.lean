@@ -279,7 +279,7 @@ def FormulaSet.letterlessTrace (X : Modal.FormulaSet ℕ) (_ : X.Letterless := b
 namespace FormulaSet
 
 lemma exists_singular_of_singular (hX_singular : X.Singular T) : ∃ φ ∈ X, φ.Singular T := by
-  simpa [FormulaSet.Singular, FormulaSet.Regular] using hX_singular;
+  simpa [FormulaSet.Singular, FormulaSet.Regular, Formula.Singular] using hX_singular;
 
 -- variable (Xll : X.Letterless := by grind) (Yll : Y.Letterless := by grind)
 

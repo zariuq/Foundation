@@ -100,7 +100,7 @@ def pMorphism : F →ₚ F.extendRoot n where
   back {x y} h := by
     match y with
     | .inl r => simp [Frame.Rel', Frame.extendRoot] at h;
-    | .inr y => use y; simpa using h;
+    | .inr y => use y; simpa [Frame.Rel', Frame.extendRoot] using h;
 
 lemma not_root_of_from_root [F.IsTree r] {x : F.extendRoot n} (h : extendRoot.root ≺ x) :
     (∃ i > 0, x = extend i) ∨ x = r ∨ embed r ≺ x := by

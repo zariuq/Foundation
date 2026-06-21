@@ -78,7 +78,7 @@ lemma DT_list {Γ : List (Formula α)} : (Deduction Ax Γ.toFinset φ) ↔ (Hilb
     | hcons ψ Γ hΓ ih =>
       sorry;
 
-lemma DT_finset {Γ : Finset (Formula α)} : (Deduction Ax Γ φ) ↔ (Hilbert.F Ax) ⊢ Γ.conj ➝ φ := by simpa using DT_list (Γ := Γ.toList);
+lemma DT_finset {Γ : Finset (Formula α)} : (Deduction Ax Γ φ) ↔ (Hilbert.F Ax) ⊢ Γ.conj ➝ φ := by simpa [Finset.conj] using DT_list (Γ := Γ.toList);
 
 lemma DT_set {Γ : Set (Formula α)} : (Deduction Ax Γ φ) ↔ ∃ Δ : Finset (Formula α), ↑Δ ⊆ Γ ∧ Deduction Ax Δ φ := by
   constructor;

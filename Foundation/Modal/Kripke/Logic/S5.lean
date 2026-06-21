@@ -36,7 +36,7 @@ protected abbrev FrameClass.S5 : FrameClass := { F | F.IsS5 }
 protected abbrev FrameClass.finite_S5: FrameClass := { F | F.IsFiniteS5 }
 protected abbrev FrameClass.universal : FrameClass := { F | F.IsUniversal }
 
-instance Frame.pointGenerate.isUniversal (F : Frame) (r : F.World) (_ : F.IsS5) : (F↾r).IsUniversal where
+def Frame.pointGenerate.isUniversal (F : Frame) (r : F.World) (_ : F.IsS5) : (F↾r).IsUniversal where
   universal := by
     rintro ⟨x, (rfl | hx)⟩ ⟨y, (rfl | hy)⟩;
     . simp;

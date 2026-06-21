@@ -193,7 +193,8 @@ theorem gödel_gentzen {T : Theory L} {φ} : T ⊢ φ → T.ToTheoryᵢ Λ ⊢ �
   have h : (∅ : Schema L) ⊢ ↑s.conj ➝ ↑φ := by simpa using provable_def.mp b
   let ψ : SyntacticFormula L := ↑s.conj ➝ ↑φ
   have h₁ : Λ ⊢ ∼(∼ψ)ᴺ := by
-    simpa using Entailment.FiniteContext.provable_iff.mp ⟨Derivation.gödelGentzen h.get⟩
+    show Λ ⊢ (∼ψ)ᴺ ➝ ⊥
+    exact Entailment.FiniteContext.provable_iff.mp ⟨Derivation.gödelGentzen h.get⟩
   have h₂ : Λ ⊢ ∼(∼ψ)ᴺ ⭤ ψᴺ := by simpa using Derivation.neg_doubleNegation (∼ψ)
   have : Λ ⊢ ψᴺ := K!_left h₂ ⨀ h₁
   have H : Λ ⊢ (↑s.conj : SyntacticFormula L)ᴺ ➝ ↑φᴺ :=

@@ -27,7 +27,8 @@ theorem unprovable_realization_exists
   have hdnA : r₀ ⊧ ◇(∼A) := by
     suffices ∃ i, r₀ ≺ i ∧ i ⊭ A by simpa [Formula.Kripke.Satisfies]
     refine ⟨.inr r₁, ?_, ?_⟩
-    · simpa [r₀] using Frame.extendRoot.rooted_original
+    · show (M₁.extendRoot 1).Rel Frame.extendRoot.root (Sum.inr r₁)
+      exact Frame.extendRoot.rooted_original
     · exact Model.extendRoot.inr_satisfies_iff |>.not.mpr hA
   let S : SolovaySentences T.standardProvability M₀.toFrame r₀ :=
     SolovaySentences.standard T M₀.toFrame
@@ -59,8 +60,7 @@ theorem GLPlusBoxBot.arithmetical_completeness_aux {n : ℕ} (height : n ≤ T.h
   intro hA
   obtain ⟨M₁, r₁, _, hA₁⟩ := GL.Kripke.iff_unprovable_exists_unsatisfies_FiniteTransitiveTree.mp hA
   have : Fintype M₁ := Fintype.ofFinite _
-  have hA₁ : r₁ ⊧ □^[n]⊥ ∧ r₁ ⊭ A := by
-    simpa [Formula.Kripke.Satisfies] using hA₁
+  have hA₁ : r₁ ⊧ □^[n]⊥ ∧ r₁ ⊭ A := Formula.Kripke.Satisfies.not_imp_def.mp hA₁
   have M₁_height : M₁.height < n := height_lt_iff_satisfies_boxbot.mpr hA₁.1
   exact unprovable_realization_exists M₁ hA₁.2 <| lt_of_lt_of_le (by simp [M₁_height]) height
 
@@ -89,10 +89,10 @@ theorem GLPlusBoxBot.arithmetical_completeness
   match n with
   | .none =>
     have : T.height = ⊤ := eq_top_iff.mpr hn
-    simpa using GL.arithmetical_completeness this h
+    simpa [Modal.GLPlusBoxBot] using GL.arithmetical_completeness this h
   | .some n =>
     apply iff_provable_GLPlusBoxBot_provable_GL.mpr
-    exact GLPlusBoxBot.arithmetical_completeness_aux (n := n) (by simpa using hn) h
+    exact GLPlusBoxBot.arithmetical_completeness_aux (n := n) hn h
 
 theorem GLPlusBoxBot.arithmetical_completeness_iff :
     (∀ f : T.StandardRealization, T ⊢ f A) ↔ Modal.GLPlusBoxBot T.height ⊢ A :=

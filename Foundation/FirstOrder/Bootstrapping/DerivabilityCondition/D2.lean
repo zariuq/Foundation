@@ -28,7 +28,7 @@ theorem modus_ponens {φ ψ : SyntacticFormula L} (hφψ : T.Provable (⌜φ ➝
 theorem modus_ponens_sentence {σ τ : Sentence L} (hστ : T.Provable (⌜σ ➝ τ⌝ : V)) (hσ : T.Provable (⌜σ⌝ : V)) :
     T.Provable (⌜τ⌝ : V) := by
   apply (tprovable_tquote_iff_provable_quote (L := L)).mp
-  have hστ : Theory.internalize V T ⊢ ⌜σ⌝ ➝ ⌜τ⌝ := by simpa using (tprovable_tquote_iff_provable_quote (L := L)).mpr hστ
+  have hστ : Theory.internalize V T ⊢ ⌜σ⌝ ➝ ⌜τ⌝ := by simpa [Sentence.typed_quote_def] using (tprovable_tquote_iff_provable_quote (L := L)).mpr hστ
   have hσ : Theory.internalize V T ⊢ ⌜σ⌝ := (tprovable_tquote_iff_provable_quote (L := L)).mpr hσ
   exact hστ ⨀ hσ
 

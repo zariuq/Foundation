@@ -139,6 +139,7 @@ open Axiom
 instance [Ax.HasEFQ] : Entailment.HasAxiomEFQ (Hilbert.Standard Ax) where
   efq {φ} := by
     constructor;
+    show Standard Ax _
     simpa using axm
       (s := λ b => if (HasEFQ.p Ax) = b then φ else (.atom b))
       (φ := Axioms.EFQ (.atom (HasEFQ.p Ax)))
@@ -148,6 +149,7 @@ instance  [Ax.HasEFQ] : Entailment.Int (Hilbert.Standard Ax) where
 instance [Ax.HasLEM] : Entailment.HasAxiomLEM (Hilbert.Standard Ax) where
   lem {φ} := by
     constructor;
+    show Standard Ax _
     simpa using axm
       (s := λ b => if (HasLEM.p Ax) = b then φ else (.atom b))
       (φ := Axioms.LEM (.atom (HasLEM.p Ax)))
@@ -156,6 +158,7 @@ instance [Ax.HasLEM] : Entailment.HasAxiomLEM (Hilbert.Standard Ax) where
 instance [Ax.HasWLEM] : Entailment.HasAxiomWLEM (Hilbert.Standard Ax) where
   wlem {φ} := by
     constructor;
+    show Standard Ax _
     simpa using axm
       (s := λ b => if (HasWLEM.p Ax) = b then φ else (.atom b))
       (φ := Axioms.WLEM (.atom (HasWLEM.p Ax)))
@@ -164,6 +167,7 @@ instance [Ax.HasWLEM] : Entailment.HasAxiomWLEM (Hilbert.Standard Ax) where
 instance [Ax.HasDummett] : Entailment.HasAxiomDummett (Hilbert.Standard Ax) where
   dummett {φ ψ} := by
     constructor;
+    show Standard Ax _
     simpa [HasDummett.ne_pq] using axm
       (φ := Axioms.Dummett (.atom (HasDummett.p Ax)) (.atom (HasDummett.q Ax)))
       (s := λ b =>
@@ -175,6 +179,7 @@ instance [Ax.HasDummett] : Entailment.HasAxiomDummett (Hilbert.Standard Ax) wher
 instance [Ax.HasPeirce] : Entailment.HasAxiomPeirce (Hilbert.Standard Ax) where
   peirce {φ ψ} := by
     constructor;
+    show Standard Ax _
     simpa [HasPeirce.ne_pq] using axm
       (φ := Axioms.Peirce (.atom (HasPeirce.p Ax)) (.atom (HasPeirce.q Ax)))
       (s := λ b =>
@@ -186,6 +191,7 @@ instance [Ax.HasPeirce] : Entailment.HasAxiomPeirce (Hilbert.Standard Ax) where
 instance [Ax.HasKrieselPutnam] : Entailment.HasAxiomKrieselPutnam (Hilbert.Standard Ax) where
   krieselputnam {φ ψ χ} := by
     constructor;
+    show Standard Ax _
     simpa [HasKrieselPutnam.ne_pq, HasKrieselPutnam.ne_qr, HasKrieselPutnam.ne_rp.symm] using axm
       (φ := Axioms.KrieselPutnam (.atom (HasKrieselPutnam.p Ax)) (.atom (HasKrieselPutnam.q Ax)) (.atom (HasKrieselPutnam.r Ax)))
       (s := λ b =>

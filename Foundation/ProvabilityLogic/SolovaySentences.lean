@@ -321,7 +321,7 @@ section
   | j :: i :: ε =>
     suffices
       V ⊧/![] (θChain T (i :: ε)) ∧ V ⊧/![] (twoPoint T i j) ↔
-      ΘChain T V (j :: i :: ε) by simpa [-val_twoPoint] using this
+      ΘChain T V (j :: i :: ε) by simpa [-val_twoPoint, θChain, twoPoint] using this
     simp [ΘChain.cons_cons_iff, val_θChain (i :: ε)]
 
 @[simp] lemma val_θ {i : F} : V ⊧/![] (θ T i) ↔ Θ T V i := by
@@ -330,7 +330,7 @@ section
   simp [Θ]
 
 @[simp] lemma val_solovay {i : F} : V ⊧/![] (T.solovay i) ↔ T.Solovay V i := by
-  simpa [models_iff] using
+  simpa [models_iff, Theory.Solovay] using
     consequence_iff.mp (sound! (solovay_diag T i)) V inferInstance
 
 end
@@ -475,7 +475,7 @@ lemma Solovay.box_disjunction [𝗜𝚺₁ ⪯ T] {i : F} (ne : r ≠ i) :
   have Tθ : T.internalize V ⊢ ⌜θ T i⌝ :=
     Bootstrapping.Arithmetic.sigma_one_provable_of_models T (show Hierarchy 𝚺 1 (θ T i) by simp) (by simpa [models_iff] using hS.1)
   have hP : T.internalize V ⊢ ⌜T.solovay i⌝ ⋎ ⌜⩖ j ∈ {j : F | i ≺ j}, T.solovay j⌝ := (by simpa using TP) ⨀ Tθ
-  have : T.internalize V ⊢ ∼⌜T.solovay i⌝ := by simpa using (tprovable_tquote_iff_provable_quote (T := T)).mpr (Solovay.refute ne hS)
+  have : T.internalize V ⊢ ∼⌜T.solovay i⌝ := by simpa [Sentence.typed_quote_def] using (tprovable_tquote_iff_provable_quote (T := T)).mpr (Solovay.refute ne hS)
   have : T.internalize V ⊢ ⌜⩖ j ∈ {j : F | i ≺ j}, T.solovay j⌝ := Entailment.of_a!_of_n! hP this
   exact (tprovable_tquote_iff_provable_quote (T := T)).mp this
 

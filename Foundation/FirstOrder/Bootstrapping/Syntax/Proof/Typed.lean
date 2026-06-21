@@ -147,9 +147,11 @@ lemma TProvable.iff_provable {σ : Formula V L} :
     T ⊢ σ ↔ T.theory.Provable σ.val := by
   constructor
   · intro b
-    simpa [←singleton_eq_insert] using TDerivation.toDerivable b.get
+    have := TDerivation.toDerivable b.get
+    simpa [Theory.Provable, Theory.Proof, Theory.Derivable, ←singleton_eq_insert] using this
   · intro h
-    exact ⟨Theory.Derivable.toTDerivation _ <| by simpa [←singleton_eq_insert] using h⟩
+    refine ⟨Theory.Derivable.toTDerivation _ ?_⟩
+    simpa [Theory.Provable, Theory.Proof, Theory.Derivable, ←singleton_eq_insert] using h
 
 alias ⟨toProvable, _root_.LO.FirstOrder.Theory.Provable.toTProvable⟩ := TProvable.iff_provable
 
@@ -212,13 +214,13 @@ noncomputable def or' (H : φ ⋎ ψ ∈ Γ) (dpq : T ⊢!ᵈᵉʳ insert φ (in
     (or' H dpq : T ⊢!ᵈᵉʳ Γ).val = orIntro Γ.val φ.val ψ.val dpq.val := rfl
 
 noncomputable def all' {φ : Semiformula V L 1} (H : ∀' φ ∈ Γ) (dp : T ⊢!ᵈᵉʳ insert φ.free Γ.shift) : T ⊢!ᵈᵉʳ Γ :=
-  ⟨allIntro Γ.val φ.val dp.val, by simp, Theory.Derivation.allIntro (by simpa) (by simpa using dp.derivationOf)⟩
+  ⟨allIntro Γ.val φ.val dp.val, by simp, Theory.Derivation.allIntro (by simpa) (by simpa [Sequent.shift] using dp.derivationOf)⟩
 
 @[simp] lemma all'_val {φ : Semiformula V L 1} (H : ∀' φ ∈ Γ) (dp : T ⊢!ᵈᵉʳ insert φ.free Γ.shift) :
     (all' H dp : T ⊢!ᵈᵉʳ Γ).val = allIntro Γ.val φ.val dp.val := rfl
 
 noncomputable def ex' {φ : Semiformula V L 1} (H : ∃' φ ∈ Γ) (t : Term V L) (dp : T ⊢!ᵈᵉʳ insert (φ.subst ![t]) Γ) : T ⊢!ᵈᵉʳ Γ :=
-  ⟨exIntro Γ.val φ.val t.val dp.val, by simp, Theory.Derivation.exIntro (by simpa) (by simp) (by simpa using dp.derivationOf)⟩
+  ⟨exIntro Γ.val φ.val t.val dp.val, by simp, Theory.Derivation.exIntro (by simpa) (by simp) (by simpa [substs1] using dp.derivationOf)⟩
 
 @[simp] lemma ex'_val {φ : Semiformula V L 1} (H : ∃' φ ∈ Γ) (t : Term V L) (dp : T ⊢!ᵈᵉʳ insert (φ.subst ![t]) Γ) :
     (ex' H t dp : T ⊢!ᵈᵉʳ Γ).val = exIntro Γ.val φ.val t.val dp.val := rfl
@@ -248,11 +250,11 @@ noncomputable def or (dpq : T ⊢!ᵈᵉʳ insert φ (insert ψ Γ)) : T ⊢!ᵈ
 
 noncomputable def all {φ : Semiformula V L 1} (dp : T ⊢!ᵈᵉʳ insert φ.free Γ.shift) : T ⊢!ᵈᵉʳ insert (∀' φ) Γ :=
   Theory.Derivable.toTDerivation _ <| by
-    simpa using Theory.Derivable.all (by simp) (by simpa using dp.toDerivable)
+    simpa using Theory.Derivable.all (by simp) (by simpa [Sequent.shift] using dp.toDerivable)
 
 noncomputable def ex {φ : Semiformula V L 1} (t : Term V L) (dp : T ⊢!ᵈᵉʳ insert (φ.subst ![t]) Γ) : T ⊢!ᵈᵉʳ insert (∃' φ) Γ :=
   Theory.Derivable.toTDerivation _ <| by
-    simpa using Theory.Derivable.ex (by simp) t.isSemiterm (by simpa using dp.toDerivable)
+    simpa using Theory.Derivable.ex (by simp) t.isSemiterm (by simpa [substs1] using dp.toDerivable)
 
 def ofSubset (h : T ⊆ U) (d : T ⊢!ᵈᵉʳ Γ) : U ⊢!ᵈᵉʳ Γ where
   val := d.val
@@ -401,7 +403,7 @@ noncomputable instance : Entailment.Minimal T where
       · exact TDerivation.em r
 
 noncomputable instance : Entailment.Cl T where
-  dne {φ} := by simpa [Axioms.DNE, Semiformula.imp_def] using TDerivation.or (TDerivation.em φ)
+  dne {φ} := by simpa [Axioms.DNE, Semiformula.imp_def] using TDerivation.toTProof (TDerivation.or (TDerivation.em φ))
 
 noncomputable def exIntro (φ : Semiformula V L 1) (t : Term V L) (b : T ⊢! φ.subst ![t]) : T ⊢! (∃' φ) := TDerivation.ex t b
 
@@ -435,11 +437,15 @@ lemma specialize₃! {φ : Semiformula V L 3} (b : T ⊢ ∀' ∀' ∀' φ) (t�
 lemma specialize₄! {φ : Semiformula V L 4} (b : T ⊢ ∀' ∀' ∀' ∀' φ) (t₁ t₂ t₃ t₄ : Term V L) :
     T ⊢ φ.subst ![t₁, t₂, t₃, t₄] := ⟨specialize₄ b.get _ _ _ _⟩
 
-noncomputable def shift {φ : Formula V L} (d : T ⊢! φ) : T ⊢! φ.shift := by simpa using TDerivation.shift d
+noncomputable def shift {φ : Formula V L} (d : T ⊢! φ) : T ⊢! φ.shift := by
+  show T ⊢!ᵈᵉʳ insert φ.shift ∅
+  simpa using TDerivation.shift d
 
-lemma shift! {φ : Formula V L} (d : T ⊢ φ) : T ⊢ φ.shift := ⟨by simpa using TDerivation.shift d.get⟩
+lemma shift! {φ : Formula V L} (d : T ⊢ φ) : T ⊢ φ.shift := ⟨by
+  show T ⊢!ᵈᵉʳ insert φ.shift ∅
+  simpa using TDerivation.shift d.get⟩
 
-noncomputable def all {φ : Semiformula V L 1} (dp : T ⊢! φ.free) : T ⊢! ∀' φ := TDerivation.all (by simpa using dp)
+noncomputable def all {φ : Semiformula V L 1} (dp : T ⊢! φ.free) : T ⊢! ∀' φ := TDerivation.all (by simpa using proof_to_tDerivation dp)
 
 noncomputable def all₂ {φ : Semiformula V L 2}
     (d : T ⊢! φ.shift.shift.subst ![Semiterm.fvar 0, Semiterm.fvar 1]) : T ⊢! ∀' ∀' φ := by
@@ -528,7 +534,7 @@ noncomputable def exImpEx {Γ} {φ ψ : Semiformula V L 1} (d : Γ.map .shift �
 noncomputable def ex_imp_ex! {Γ} {φ ψ : Semiformula V L 1} (d : Γ.map .shift ⊢[T] φ.free ➝ ψ.free) :
     Γ ⊢[T] ∃' φ ➝ ∃' ψ := ⟨exImpEx d.get⟩
 
-noncomputable def ex {φ : Semiformula V L 1} (t) (dp : T ⊢! φ.subst ![t]) : T ⊢! ∃' φ := TDerivation.ex t (by simpa using dp)
+noncomputable def ex {φ : Semiformula V L 1} (t) (dp : T ⊢! φ.subst ![t]) : T ⊢! ∃' φ := TDerivation.ex t (by simpa using proof_to_tDerivation dp)
 
 lemma ex! {φ : Semiformula V L 1} (t) (dp : T ⊢ φ.subst ![t]) : T ⊢ ∃' φ := ⟨ex t dp.get⟩
 

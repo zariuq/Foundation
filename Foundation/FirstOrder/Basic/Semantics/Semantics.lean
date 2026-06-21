@@ -528,11 +528,11 @@ lemma eval_ofEquiv_iff {e : Fin n → N} {ε : ξ → N} {φ : Semiformula L ξ 
   |     φ ⋏ ψ => by simp [eval_ofEquiv_iff (φ := φ), eval_ofEquiv_iff (φ := ψ)]
   |     φ ⋎ ψ => by simp [eval_ofEquiv_iff (φ := φ), eval_ofEquiv_iff (φ := ψ)]
   |      ∀' φ =>
-    ⟨fun h x ↦ by simpa [Matrix.comp_vecCons''] using eval_ofEquiv_iff.mp (h (Θ x)),
-     fun h x ↦ eval_ofEquiv_iff.mpr (by simpa [Matrix.comp_vecCons''] using h (Θ.symm x))⟩
+    ⟨fun h x ↦ by have := eval_ofEquiv_iff.mp (h (Θ x)); simp only [Matrix.comp_vecCons'', Equiv.symm_apply_apply] at this; exact this,
+     fun h x ↦ by apply eval_ofEquiv_iff.mpr; show EvalAux _ _ _ _; simp only [Matrix.comp_vecCons'']; exact h (Θ.symm x)⟩
   |      ∃' φ =>
-    ⟨by rintro ⟨x, h⟩; exists Θ.symm x; simpa [Matrix.comp_vecCons''] using eval_ofEquiv_iff.mp h,
-     by rintro ⟨x, h⟩; exists Θ x; apply eval_ofEquiv_iff.mpr; simpa [Matrix.comp_vecCons''] using h⟩
+    ⟨by rintro ⟨x, h⟩; exists Θ.symm x; have := eval_ofEquiv_iff.mp h; simp only [Matrix.comp_vecCons''] at this; exact this,
+     by rintro ⟨x, h⟩; exists Θ x; apply eval_ofEquiv_iff.mpr; show EvalAux _ _ _ _; simp only [Matrix.comp_vecCons'', Equiv.symm_apply_apply]; exact h⟩
 
 lemma evalf_ofEquiv_iff {ε : ξ → N} {φ : Formula L ξ} :
     Evalf (ofEquiv Θ) ε φ ↔ Evalf s (Θ.symm ∘ ε) φ := by simpa using eval_ofEquiv_iff (Θ := Θ) (ε := ε) (φ := φ) (e := ![])

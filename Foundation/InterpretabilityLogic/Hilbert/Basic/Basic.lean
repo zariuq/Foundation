@@ -53,7 +53,7 @@ instance : Logic.Substitution (Hilbert.Basic Ax) where
   subst {φ} s h := by
     rw [Logic.iff_provable] at h ⊢;
     induction h with
-    | @axm _ s' ih        => simpa using Basic.axm (s := s' ∘ s) ih;
+    | @axm _ s' ih        => show Hilbert.Basic Ax _; simpa using Basic.axm (s := s' ∘ s) ih;
     | mdp hφψ hφ ihφψ ihφ => apply Basic.mdp ihφψ ihφ;
     | nec hφ ihφ          => apply Basic.nec ihφ;
     | implyK φ ψ          => apply Basic.implyK;
@@ -116,6 +116,7 @@ variable [DecidableEq α]
 instance [Ax.HasJ1] : InterpretabilityLogic.Entailment.HasAxiomJ1 (Hilbert.Basic Ax) where
   axiomJ1! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasJ1.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.J1 (.atom (HasJ1.p Ax)) (.atom (HasJ1.q Ax)))
       (s := λ b => if (HasJ1.p Ax) = b then φ else if (HasJ1.q Ax) = b then ψ else (.atom b))
@@ -124,6 +125,7 @@ instance [Ax.HasJ1] : InterpretabilityLogic.Entailment.HasAxiomJ1 (Hilbert.Basic
 instance [Ax.HasJ2] : InterpretabilityLogic.Entailment.HasAxiomJ2 (Hilbert.Basic Ax) where
   axiomJ2! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasJ2.ne_pq, HasJ2.ne_qr, HasJ2.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.J2 (.atom (HasJ2.p Ax)) (.atom (HasJ2.q Ax)) (.atom (HasJ2.r Ax)))
       (s := λ b =>
@@ -136,6 +138,7 @@ instance [Ax.HasJ2] : InterpretabilityLogic.Entailment.HasAxiomJ2 (Hilbert.Basic
 instance [Ax.HasJ3] : InterpretabilityLogic.Entailment.HasAxiomJ3 (Hilbert.Basic Ax) where
   axiomJ3! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasJ3.ne_pq, HasJ3.ne_qr, HasJ3.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.J3 (.atom (HasJ3.p Ax)) (.atom (HasJ3.q Ax)) (.atom (HasJ3.r Ax)))
       (s := λ b =>
@@ -148,6 +151,7 @@ instance [Ax.HasJ3] : InterpretabilityLogic.Entailment.HasAxiomJ3 (Hilbert.Basic
 instance [Ax.HasJ4] : InterpretabilityLogic.Entailment.HasAxiomJ4 (Hilbert.Basic Ax) where
   axiomJ4! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasJ4.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.J4 (.atom (HasJ4.p Ax)) (.atom (HasJ4.q Ax)))
       (s := λ b => if (HasJ4.p Ax) = b then φ else if (HasJ4.q Ax) = b then ψ else (.atom b))
@@ -156,6 +160,7 @@ instance [Ax.HasJ4] : InterpretabilityLogic.Entailment.HasAxiomJ4 (Hilbert.Basic
 instance [Ax.HasJ5] : InterpretabilityLogic.Entailment.HasAxiomJ5 (Hilbert.Basic Ax) where
   axiomJ5! {φ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.J5 (.atom (HasJ5.p Ax)))
       (s := λ b => if (HasJ5.p Ax) = b then φ else (.atom b))
@@ -164,6 +169,7 @@ instance [Ax.HasJ5] : InterpretabilityLogic.Entailment.HasAxiomJ5 (Hilbert.Basic
 instance [Ax.HasM] : InterpretabilityLogic.Entailment.HasAxiomM (Hilbert.Basic Ax) where
   axiomM! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasM.ne_pq, HasM.ne_qr, HasM.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.M (.atom (HasM.p Ax)) (.atom (HasM.q Ax)) (.atom (HasM.r Ax)))
       (s := λ b =>
@@ -176,6 +182,7 @@ instance [Ax.HasM] : InterpretabilityLogic.Entailment.HasAxiomM (Hilbert.Basic A
 instance [Ax.HasM] : InterpretabilityLogic.Entailment.HasAxiomM (Hilbert.Basic Ax) where
   axiomM! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasM.ne_pq, HasM.ne_qr, HasM.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.M (.atom (HasM.p Ax)) (.atom (HasM.q Ax)) (.atom (HasM.r Ax)))
       (s := λ b =>
@@ -188,6 +195,7 @@ instance [Ax.HasM] : InterpretabilityLogic.Entailment.HasAxiomM (Hilbert.Basic A
 instance [Ax.HasM₀] : InterpretabilityLogic.Entailment.HasAxiomM₀ (Hilbert.Basic Ax) where
   axiomM₀! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasM₀.ne_pq, HasM₀.ne_qr, HasM₀.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.M₀ (.atom (HasM₀.p Ax)) (.atom (HasM₀.q Ax)) (.atom (HasM₀.r Ax)))
       (s := λ b =>
@@ -200,6 +208,7 @@ instance [Ax.HasM₀] : InterpretabilityLogic.Entailment.HasAxiomM₀ (Hilbert.B
 instance [Ax.HasP] : InterpretabilityLogic.Entailment.HasAxiomP (Hilbert.Basic Ax) where
   axiomP! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasP.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.P (.atom (HasP.p Ax)) (.atom (HasP.q Ax)))
       (s := λ b => if (HasP.p Ax) = b then φ else if (HasP.q Ax) = b then ψ else (.atom b))
@@ -208,6 +217,7 @@ instance [Ax.HasP] : InterpretabilityLogic.Entailment.HasAxiomP (Hilbert.Basic A
 instance [Ax.HasP₀] : InterpretabilityLogic.Entailment.HasAxiomP₀ (Hilbert.Basic Ax) where
   axiomP₀! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasP₀.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.P₀ (.atom (HasP₀.p Ax)) (.atom (HasP₀.q Ax)))
       (s := λ b => if (HasP₀.p Ax) = b then φ else if (HasP₀.q Ax) = b then ψ else (.atom b))
@@ -216,6 +226,7 @@ instance [Ax.HasP₀] : InterpretabilityLogic.Entailment.HasAxiomP₀ (Hilbert.B
 instance [Ax.HasW] : InterpretabilityLogic.Entailment.HasAxiomW (Hilbert.Basic Ax) where
   axiomW! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasW.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.W (.atom (HasW.p Ax)) (.atom (HasW.q Ax)))
       (s := λ b => if (HasW.p Ax) = b then φ else if (HasW.q Ax) = b then ψ else (.atom b))
@@ -224,6 +235,7 @@ instance [Ax.HasW] : InterpretabilityLogic.Entailment.HasAxiomW (Hilbert.Basic A
 instance [Ax.HasWstar] : InterpretabilityLogic.Entailment.HasAxiomWstar (Hilbert.Basic Ax) where
   axiomWstar! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasWstar.ne_pq, HasWstar.ne_qr, HasWstar.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.Wstar (.atom (HasWstar.p Ax)) (.atom (HasWstar.q Ax)) (.atom (HasWstar.r Ax)))
       (s := λ b =>
@@ -236,6 +248,7 @@ instance [Ax.HasWstar] : InterpretabilityLogic.Entailment.HasAxiomWstar (Hilbert
 instance [Ax.HasKW1Zero] : InterpretabilityLogic.Entailment.HasAxiomKW1Zero (Hilbert.Basic Ax) where
   axiomKW1Zero! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasKW1Zero.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.KW1Zero (.atom (HasKW1Zero.p Ax)) (.atom (HasKW1Zero.q Ax)))
       (s := λ b => if (HasKW1Zero.p Ax) = b then φ else if (HasKW1Zero.q Ax) = b then ψ else (.atom b))
@@ -244,6 +257,7 @@ instance [Ax.HasKW1Zero] : InterpretabilityLogic.Entailment.HasAxiomKW1Zero (Hil
 instance [Ax.HasKW2] : InterpretabilityLogic.Entailment.HasAxiomKW2 (Hilbert.Basic Ax) where
   axiomKW2! {φ ψ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasKW2.ne_pq] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.KW2 (.atom (HasKW2.p Ax)) (.atom (HasKW2.q Ax)))
       (s := λ b => if (HasKW2.p Ax) = b then φ else if (HasKW2.q Ax) = b then ψ else (.atom b))
@@ -252,6 +266,7 @@ instance [Ax.HasKW2] : InterpretabilityLogic.Entailment.HasAxiomKW2 (Hilbert.Bas
 instance [Ax.HasF] : InterpretabilityLogic.Entailment.HasAxiomF (Hilbert.Basic Ax) where
   axiomF! {φ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.F (.atom (HasF.p Ax)))
       (s := λ b => if (HasF.p Ax) = b then φ else (.atom b))
@@ -260,6 +275,7 @@ instance [Ax.HasF] : InterpretabilityLogic.Entailment.HasAxiomF (Hilbert.Basic A
 instance [Ax.HasR] : InterpretabilityLogic.Entailment.HasAxiomR (Hilbert.Basic Ax) where
   axiomR! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasR.ne_pq, HasR.ne_qr, HasR.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.R (.atom (HasR.p Ax)) (.atom (HasR.q Ax)) (.atom (HasR.r Ax)))
       (s := λ b =>
@@ -272,6 +288,7 @@ instance [Ax.HasR] : InterpretabilityLogic.Entailment.HasAxiomR (Hilbert.Basic A
 instance [Ax.HasRstar] : InterpretabilityLogic.Entailment.HasAxiomRstar (Hilbert.Basic Ax) where
   axiomRstar! {φ ψ χ} := by
     constructor;
+    show Hilbert.Basic Ax _
     simpa [HasRstar.ne_pq, HasRstar.ne_qr, HasRstar.ne_rp.symm] using Hilbert.Basic.axm
       (φ := InterpretabilityLogic.Axioms.Rstar (.atom (HasRstar.p Ax)) (.atom (HasRstar.q Ax)) (.atom (HasRstar.r Ax)))
       (s := λ b =>

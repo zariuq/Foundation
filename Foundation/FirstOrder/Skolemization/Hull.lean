@@ -89,7 +89,7 @@ instance (priority := 50) str : Structure L (SkolemHull L s) where
   func k f v := ⟨func f fun i ↦ (v i : M), closed_func (by simp)⟩
   rel k R v := Structure.rel R fun i ↦ (v i : M)
 
-instance set_nonempty : (SkolemHull L s).Nonempty := by
+def set_nonempty : (SkolemHull L s).Nonempty := by
   have : ∃ z, M ⊧/![z] (⊤ : Semisentence L 1) := by simp
   have : ∃ z, z ∈ SkolemHull L s := by
     simpa using closed (s := s) (by simp) this
@@ -144,8 +144,10 @@ instance (priority := 50) elementaryEquiv : (SkolemHull L s) ≡ₑ[L] M where
   models {φ} := by simp [models_iff, Matrix.empty_eq]
 
 instance (priority := 50) eq : Structure.Eq L (SkolemHull L s) := ⟨fun x y ↦ by
-  simp [Operator.val, Matrix.comp_vecCons', Matrix.constant_eq_singleton]
-  simpa [-Eq.eq, Subtype.ext_iff] using Structure.Eq.eq (L := L) x.val y.val⟩
+  rw [Subtype.ext_iff]
+  have := Structure.Eq.eq (L := L) x.val y.val
+  simpa [Semiformula.Operator.val, str_eval, Matrix.comp_vecCons', Matrix.constant_eq_singleton,
+    Matrix.empty_eq] using this⟩
 
 section mem
 
@@ -156,8 +158,10 @@ instance (priority := 50) membership :
 
 instance (priority := 50) mem [Operator.Mem L] [Membership M M] [Structure.Mem L M] :
     Structure.Mem L (SkolemHull L s) := ⟨fun x y ↦ by
-  simp [Operator.val, Matrix.comp_vecCons', Matrix.constant_eq_singleton]
-  simpa [-Mem.mem, Subtype.ext_iff] using Structure.Mem.mem (L := L) x.val y.val⟩
+  show _ ↔ (x.val ∈ y.val)
+  have := Structure.Mem.mem (L := L) x.val y.val
+  simpa [Semiformula.Operator.val, str_eval, Matrix.comp_vecCons', Matrix.constant_eq_singleton,
+    Matrix.empty_eq] using this⟩
 
 end mem
 
@@ -169,12 +173,12 @@ open Cardinal
 
 variable [L.Encodable] {s : Set M}
 
-instance set_countable (hs : s.Countable) : (SkolemHull L s).Countable := by
+def set_countable (hs : s.Countable) : (SkolemHull L s).Countable := by
   have : Countable s := hs
   have : Countable (Term L.skolemFunction₁ s) := Semiterm.countable
   exact Set.countable_range _
 
-instance countable (hs : s.Countable) : Countable (SkolemHull L s) := set_countable hs
+def countable (hs : s.Countable) : Countable (SkolemHull L s) := set_countable hs
 
 instance countable₀ : Countable (SkolemHull₀ L M) := set_countable (by simp)
 

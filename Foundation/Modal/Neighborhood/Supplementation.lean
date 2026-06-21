@@ -86,7 +86,8 @@ instance containsUnit [F.ContainsUnit] : F.supplementation.ContainsUnit := by
   constructor;
   ext x;
   suffices ∃ Y ⊆ Set.univ, Y ∈ F.𝒩 x by
-    simpa only [iff_exists_subset, Set.mem_univ, iff_true, Frame.box] using this;
+    refine iff_of_true ?_ (Set.mem_univ x);
+    exact this;
   use Set.univ;
   constructor;
   . rfl;

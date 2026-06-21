@@ -65,7 +65,7 @@ variable {L}
 section
 
 instance neg.defined : 𝚺₁-Function₁ neg (V := V) L via negGraph L  := .mk fun v ↦ by
-  simpa [negGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using construction.result_defined.defined ![v 0, 0, v 1]
+  simpa [neg, negGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using construction.result_defined.defined ![v 0, 0, v 1]
 
 instance neg.definable : 𝚺₁-Function₁ neg (V := V) L := neg.defined.to_definable
 
@@ -282,7 +282,7 @@ variable {L}
 section
 
 instance shift.defined : 𝚺₁-Function₁[V] shift L via shiftGraph L := .mk fun v ↦ by
-  simpa [shiftGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using (construction L).result_defined.defined ![v 0, 0, v 1]
+  simpa [shift, shiftGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using (construction L).result_defined.defined ![v 0, 0, v 1]
 
 instance shift.definable : 𝚺₁-Function₁[V] shift L := shift.defined.to_definable
 
@@ -481,23 +481,23 @@ lemma isUFormula_subst_ISigma1.sigma1_succ_induction {P : V → V → V → Prop
     (hex : ∀ w p, IsUFormula L p → P (qVec L w) p (subst L (qVec L w) p) → P w (^∃ p) (^∃ (subst L (qVec L w) p))) :
     ∀ {w p}, IsUFormula L p → P w p (subst L w p) := by
   suffices ∀ param p, IsUFormula L p → P param p ((construction L).result L param p) by
-    intro w p hp; simpa using this w p hp
+    intro w p hp; simpa [subst] using this w p hp
   apply (construction L).uformula_result_induction (P := fun param p y ↦ P param p y)
   · definability
-  · intro param k R v hkR hv; simpa using hRel param k R v hkR hv
-  · intro param k R v hkR hv; simpa using hNRel param k R v hkR hv
-  · intro param; simpa using hverum param
-  · intro param; simpa using hfalsum param
+  · intro param k R v hkR hv; simpa [subst, construction] using hRel param k R v hkR hv
+  · intro param k R v hkR hv; simpa [subst, construction] using hNRel param k R v hkR hv
+  · intro param; simpa [subst, construction] using hverum param
+  · intro param; simpa [subst, construction] using hfalsum param
   · intro param p q hp hq ihp ihq
-    simpa [subst] using
+    simpa [subst, construction] using
       hand param p q hp hq (by simpa [subst] using ihp) (by simpa [subst] using ihq)
   · intro param p q hp hq ihp ihq
-    simpa [subst] using
+    simpa [subst, construction] using
       hor param p q hp hq (by simpa [subst] using ihp) (by simpa [subst] using ihq)
   · intro param p hp ihp
-    simpa using hall param p hp (by simpa [construction] using ihp)
+    simpa [subst, construction] using hall param p hp ihp
   · intro param p hp ihp
-    simpa using hex param p hp (by simpa [construction] using ihp)
+    simpa [subst, construction] using hex param p hp ihp
 
 lemma semiformula_subst_induction {P : V → V → V → V → Prop} (hP : 𝚺₁-Relation₄ P)
     (hRel : ∀ n w k R v, L.IsRel k R → IsSemitermVec L k n v → P n w (^relk R v) (^rel k R (termSubstVec L k w v)))
@@ -514,23 +514,23 @@ lemma semiformula_subst_induction {P : V → V → V → V → Prop} (hP : 𝚺�
       P (n + 1) (qVec L w) p (subst L (qVec L w) p) → P n w (^∃ p) (^∃ (subst L (qVec L w) p))) :
     ∀ {n p w}, IsSemiformula L n p → P n w p (subst L w p) := by
   suffices ∀ param n p, IsSemiformula L n p → P n param p ((construction L).result L param p) by
-    intro n p w hp; simpa using this w n p hp
+    intro n p w hp; simpa [subst] using this w n p hp
   apply (construction L).semiformula_result_induction (P := fun param n p y ↦ P n param p y)
   · definability
-  · intro n param k R v hkR hv; simpa using hRel n param k R v hkR hv
-  · intro n param k R v hkR hv; simpa using hNRel n param k R v hkR hv
-  · intro n param; simpa using hverum n param
-  · intro n param; simpa using hfalsum n param
+  · intro n param k R v hkR hv; simpa [subst, construction] using hRel n param k R v hkR hv
+  · intro n param k R v hkR hv; simpa [subst, construction] using hNRel n param k R v hkR hv
+  · intro n param; simpa [subst, construction] using hverum n param
+  · intro n param; simpa [subst, construction] using hfalsum n param
   · intro n param p q hp hq ihp ihq
-    simpa [subst] using
+    simpa [subst, construction] using
       hand n param p q hp hq (by simpa [subst] using ihp) (by simpa [subst] using ihq)
   · intro n param p q hp hq ihp ihq
-    simpa [subst] using
+    simpa [subst, construction] using
       hor n param p q hp hq (by simpa [subst] using ihp) (by simpa [subst] using ihq)
   · intro n param p hp ihp
-    simpa using hall n param p hp (by simpa [construction] using ihp)
+    simpa [subst, construction] using hall n param p hp ihp
   · intro n param p hp ihp
-    simpa using hex n param p hp (by simpa [construction] using ihp)
+    simpa [subst, construction] using hex n param p hp ihp
 
 @[simp] lemma IsSemiformula.subst {n p m w : V} :
     IsSemiformula L n p → IsSemitermVec L n m w → IsSemiformula L m (subst L w p) := by
@@ -875,7 +875,7 @@ variable {L}
 section
 
 instance formulaComplexity.defined : 𝚺₁-Function₁[V] formulaComplexity L via formulaComplexityGraph L := .mk fun v ↦ by
-  simpa [formulaComplexityGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using construction.result_defined.defined ![v 0, 0, v 1]
+  simpa [formulaComplexity, formulaComplexityGraph, Matrix.comp_vecCons', Matrix.constant_eq_singleton] using construction.result_defined.defined ![v 0, 0, v 1]
 
 instance formulaComplexity.definable : 𝚺₁-Function₁[V] formulaComplexity L := formulaComplexity.defined.to_definable
 
@@ -1208,28 +1208,28 @@ notation:78 x:78 " ^< " y:79 => qqLT x y
 notation:78 x:78 " ^≮ " y:79 => qqNLT x y
 
 @[simp] lemma lt_qqEQ_left (x y : V) : x < x ^= y := by
-  simpa using nth_lt_qqRel_of_lt (i := 0) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqEQ] using nth_lt_qqRel_of_lt (i := 0) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqEQ_right (x y : V) : y < x ^= y := by
-  simpa using nth_lt_qqRel_of_lt (i := 1) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqEQ] using nth_lt_qqRel_of_lt (i := 1) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqLT_left (x y : V) : x < x ^< y := by
-  simpa using nth_lt_qqRel_of_lt (i := 0) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqLT] using nth_lt_qqRel_of_lt (i := 0) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqLT_right (x y : V) : y < x ^< y := by
-  simpa using nth_lt_qqRel_of_lt (i := 1) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqLT] using nth_lt_qqRel_of_lt (i := 1) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqNEQ_left (x y : V) : x < x ^≠ y := by
-  simpa using nth_lt_qqNRel_of_lt (i := 0) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqNEQ] using nth_lt_qqNRel_of_lt (i := 0) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqNEQ_right (x y : V) : y < x ^≠ y := by
-  simpa using nth_lt_qqNRel_of_lt (i := 1) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqNEQ] using nth_lt_qqNRel_of_lt (i := 1) (k := 2) (r := (eqIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqNLT_left (x y : V) : x < x ^≮ y := by
-  simpa using nth_lt_qqNRel_of_lt (i := 0) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqNLT] using nth_lt_qqNRel_of_lt (i := 0) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
 
 @[simp] lemma lt_qqNLT_right (x y : V) : y < x ^≮ y := by
-  simpa using nth_lt_qqNRel_of_lt (i := 1) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
+  simpa [qqNLT] using nth_lt_qqNRel_of_lt (i := 1) (k := 2) (r := (ltIndex : V)) (v := ?[x, y]) (by simp)
 
 def _root_.LO.FirstOrder.Arithmetic.qqEQDef : 𝚺₁.Semisentence 3 :=
   .mkSigma “p x y. ∃ v, !mkVec₂Def v x y ∧ !qqRelDef p 2 ↑eqIndex v”

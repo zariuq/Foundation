@@ -50,7 +50,7 @@ instance : Logic.Substitution (Hilbert.WithLoeb Ax) where
   subst {φ} s h := by
     rw [Logic.iff_provable] at h ⊢;
     induction h with
-    | @axm _ s' ih => simpa using axm (s := s' ∘ s) ih;
+    | @axm _ s' ih => show WithLoeb Ax _; simpa using axm (s := s' ∘ s) ih;
     | mdp hφψ hφ ihφψ ihφ => apply mdp ihφψ ihφ;
     | nec hφ ihφ => apply nec ihφ;
     | loeb hφψ ihφψ => apply loeb ihφψ;
@@ -109,6 +109,7 @@ variable [DecidableEq α]
 instance instHasAxiomK [Ax.HasK] : Entailment.HasAxiomK (Hilbert.WithLoeb Ax) where
   K φ ψ := by
     constructor;
+    show WithLoeb Ax _
     simpa [HasK.ne_pq] using Hilbert.WithLoeb.axm
       (φ := Axioms.K (.atom (HasK.p Ax)) (.atom (HasK.q Ax)))
       (s := λ b => if (HasK.p Ax) = b then φ else if (HasK.q Ax) = b then ψ else (.atom b))
@@ -117,6 +118,7 @@ instance instHasAxiomK [Ax.HasK] : Entailment.HasAxiomK (Hilbert.WithLoeb Ax) wh
 instance instHasAxiomFour [Ax.HasFour] : Entailment.HasAxiomFour (Hilbert.WithLoeb Ax) where
   Four φ := by
     constructor;
+    show WithLoeb Ax _
     simpa using Hilbert.WithLoeb.axm
       (φ := Axioms.Four (.atom (HasFour.p Ax)))
       (s := λ b => if (HasFour.p Ax) = b then φ else (.atom b))

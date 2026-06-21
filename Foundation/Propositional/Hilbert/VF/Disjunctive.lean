@@ -14,7 +14,7 @@ open Entailment.Corsi
 
 namespace Hilbert.VF
 
-instance instAczelSlashable (hs : ∀ {φ}, φ ∈ Ax → ∕ₐ[(Hilbert.VF Ax)] φ) : (Hilbert.VF Ax).AczelSlashable where
+def instAczelSlashable (hs : ∀ {φ}, φ ∈ Ax → ∕ₐ[(Hilbert.VF Ax)] φ) : (Hilbert.VF Ax).AczelSlashable where
   iff_ks_provable {φ} := by
     constructor;
     . intro h;
