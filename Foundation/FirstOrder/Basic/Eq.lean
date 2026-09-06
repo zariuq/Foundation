@@ -187,7 +187,14 @@ lemma rel_mk {k} (r : L.Rel k) (v : Fin k → M) : Structure.rel (M := QuotEq L 
 
 lemma val_mk {e} {ε} (t : Semiterm L μ n) :
     Semiterm.valm (QuotEq L M) (fun i ↦ ⟦e i⟧) (fun i ↦ ⟦ε i⟧) t = ⟦Semiterm.valm M e ε t⟧ :=
-  by induction t <;> simp [*, funk_mk, Semiterm.val_func]
+  by
+    induction t with
+    | bvar => rfl
+    | fvar => rfl
+    | func f v ih =>
+      change Structure.func f (fun i => Semiterm.valm (QuotEq L M) _ _ (v i)) = _
+      rw [funext ih]
+      exact funk_mk f _
 
 lemma eval_mk {e} {ε} {φ : Semiformula L μ n} :
     Semiformula.Evalm (QuotEq L M) (fun i ↦ ⟦e i⟧) (fun i ↦ ⟦ε i⟧) φ ↔ Semiformula.Evalm M e ε φ := by
@@ -217,8 +224,14 @@ lemma eval_mk {e} {ε} {φ : Semiformula L μ n} :
       exact this
   case _ => simp [*]
   case _ => simp [*]
-  case _ => simp [*, Semiformula.eval_rel, val_mk, rel_mk]
-  case _ => simp [*, Semiformula.eval_nrel, val_mk, rel_mk]
+  case _ =>
+    change Semiformula.EvalAux _ _ _ _ ↔ _
+    simp [Semiformula.EvalAux, val_mk, rel_mk]
+    rfl
+  case _ =>
+    change Semiformula.EvalAux _ _ _ _ ↔ _
+    simp [Semiformula.EvalAux, val_mk, rel_mk]
+    rfl
   case _ => simp [*]
   case _ => simp [*]
 

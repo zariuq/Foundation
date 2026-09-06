@@ -117,7 +117,7 @@ private instance complete.filteredModel.isFiniteGLPoint3 : Frame.IsFiniteGLPoint
       have := this x y;
       tauto;
     rintro ⟨x, rfl | ⟨Rvx, _⟩⟩ ⟨y, rfl | ⟨Rvy, _⟩⟩ hxy;
-    . simp at hxy;
+    . exact False.elim (hxy (Subtype.ext rfl));
     . tauto;
     . tauto;
     . apply Frame.p_connected' Rvx Rvy ?_;

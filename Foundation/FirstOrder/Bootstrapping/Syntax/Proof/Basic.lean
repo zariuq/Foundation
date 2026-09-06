@@ -487,7 +487,14 @@ noncomputable abbrev provabilityPred (σ : Sentence L) : Sentence ℒₒᵣ := T
 noncomputable def provabilityPred' (σ : Sentence L) : 𝚺₁.Sentence := .mkSigma
   “!T.provable !!(⌜σ⌝)”
 
-@[simp] lemma provabilityPred'_val (σ : Sentence L) : (T.provabilityPred' σ).val = T.provabilityPred σ := by rfl
+private theorem val_sentenceCode_substitution (φ : 𝚺₁.Semisentence 1)
+    (σ : Sentence L) :
+    (.mkSigma “!φ !!(⌜σ⌝)” : 𝚺₁.Sentence).val = φ.val/[⌜σ⌝] := by
+  rfl
+
+@[simp] lemma provabilityPred'_val (σ : Sentence L) :
+    (T.provabilityPred' σ).val = T.provabilityPred σ :=
+  val_sentenceCode_substitution T.provable σ
 
 variable {T}
 

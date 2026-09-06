@@ -208,7 +208,11 @@ instance empty' (𝓜 : M) : 𝓜 ⊧* (∅ : Set F) := ⟨by simp⟩
     𝓜 ⊧* Set.range φ ↔ ∀ i, 𝓜 ⊧ φ i := by simp [modelsSet_iff]
 
 @[simp] lemma setOf_iff {P : F → Prop} {𝓜 : M} :
-    𝓜 ⊧* setOf P ↔ ∀ φ, P φ → 𝓜 ⊧ φ := by simp [modelsSet_iff]
+    𝓜 ⊧* setOf P ↔ ∀ φ, P φ → 𝓜 ⊧ φ := by
+  rw [modelsSet_iff]
+  constructor
+  · intro h φ hφ; exact h hφ
+  · intro h φ hφ; exact h φ hφ
 
 end ModelsSet
 

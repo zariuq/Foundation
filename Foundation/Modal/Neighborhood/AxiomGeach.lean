@@ -183,7 +183,10 @@ protected def isGeachean (g) [Entailment.HasAxiomGeach g 𝓢]
   . obtain ⟨φ, rfl⟩ := iff_not_isNonProofset_exists.mp X_np; clear X_np;
     replace hX : A ∈ proofset 𝓢 (◇^[g.i](□^[g.m]φ)) := by
       rw [← diaItr_proofset, ← boxItr_proofset]; exact hX;
-    suffices A ∈ proofset 𝓢 (□^[g.j](◇^[g.n]φ)) by simpa;
+    suffices A ∈ proofset 𝓢 (□^[g.j](◇^[g.n]φ)) by
+      change A ∈ 𝓒.toModel.box^[g.j] (𝓒.toModel.dia^[g.n] (proofset 𝓢 φ))
+      rw [diaItr_proofset (𝓒 := 𝓒), boxItr_proofset (𝓒 := 𝓒)]
+      exact this
     apply MaximalConsistentSet.mdp_provable ?_ hX;
     simp;
 
@@ -236,14 +239,16 @@ instance [Entailment.HasAxiomFour 𝓢] : (basicCanonicity 𝓢).toModel.IsTrans
   apply Canonicity.isTransitive;
   intro X hX A hA;
   obtain ⟨φ, rfl, hφ⟩ := basicCanonicity.iff_mem_box_exists_fml.mp hA;
-  simp only [Canonicity.boxItr_proofset];
+  change A ∈ (basicCanonicity 𝓢).toModel.box^[2] (proofset 𝓢 φ)
+  rw [Canonicity.boxItr_proofset (𝓒 := basicCanonicity 𝓢)];
   apply proofset.imp_subset.mp axiomFour! hφ;
 
 instance [Entailment.HasAxiomD 𝓢] : (basicCanonicity 𝓢).toModel.IsSerial := by
   apply Canonicity.isSerial;
   intro X hX A hA;
   obtain ⟨φ, rfl, hφ⟩ := basicCanonicity.iff_mem_box_exists_fml.mp hA;
-  simp only [Canonicity.dia_proofset];
+  change A ∈ (basicCanonicity 𝓢).toModel.dia (proofset 𝓢 φ)
+  rw [Canonicity.dia_proofset (𝓒 := basicCanonicity 𝓢)];
   apply proofset.imp_subset.mp axiomD! hφ;
 
 
@@ -284,14 +289,16 @@ protected def isTransitive [Entailment.HasAxiomFour 𝓢]
     . exfalso; exact basicCanonicity.not_isNonproofset_of_mem_box h $ hX;
     . assumption;
 
+omit A in
 protected def isEuclidean [Entailment.HasAxiomFive 𝓢]
   (hP : ∀ X : Proofset 𝓢, X.IsNonproofset → ∀ A, Xᶜ ∉ P A → A ∈ (relativeBasicCanonicity 𝓢 P).toModel.box ((relativeBasicCanonicity 𝓢 P).toModel.dia X))
   : (relativeBasicCanonicity 𝓢 P).toModel.IsEuclidean := by
+  clear A
   apply Canonicity.isEuclidean;
   intro X hX A hA;
   apply hP;
   . assumption;
-  . rcases relativeBasicCanonicity.iff_mem_dia.mp hA with ⟨hA₁, (h | hA₂)⟩
+  . rcases (relativeBasicCanonicity.iff_mem_dia (A := A)).mp hA with ⟨hA₁, (h | hA₂)⟩
     . exfalso;
       obtain ⟨φ, hφ⟩ := iff_not_isNonProofset_exists.mp h;
       apply hX (∼φ);
@@ -306,7 +313,7 @@ protected instance isSymmetric [Entailment.HasAxiomGeach ⟨1, 0, 1, 0⟩ 𝓢]
   intro X hX A hA;
   apply hP₁;
   . assumption;
-  . rcases relativeBasicCanonicity.iff_mem_dia.mp hA with ⟨hA, (⟨φ, hφ⟩ | hA)⟩
+  . rcases (relativeBasicCanonicity.iff_mem_dia (A := A)).mp hA with ⟨hA, (⟨φ, hφ⟩ | hA)⟩
     . rw [hφ] at hA;
       sorry;
     . assumption;

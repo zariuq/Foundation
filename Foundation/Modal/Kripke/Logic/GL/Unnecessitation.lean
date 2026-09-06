@@ -43,7 +43,7 @@ lemma imply_boxdot_plain_of_imply_box_box : Modal.GL ⊢ □φ ➝ □ψ → Mod
   apply GL.Kripke.iff_unprovable_exists_unsatisfies_FiniteTransitiveTree.mpr;
   use M₀, r₀;
   refine ⟨?_, ?_⟩;
-  . exact {};
+  . exact Model.extendRoot.isFiniteTree
   . tauto;
 
 theorem unnecessitation! : Modal.GL ⊢ □φ → Modal.GL ⊢ φ := by

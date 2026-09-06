@@ -13,7 +13,7 @@ variable {α : Type*}
 variable {S} [Entailment S (Formula α)]
 variable {𝓢 : S}
 
-def Tableau (α : Type u) := Set (Formula α) × Set (Formula α)
+abbrev Tableau (α : Type u) := Set (Formula α) × Set (Formula α)
 
 namespace Tableau
 

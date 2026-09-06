@@ -207,11 +207,15 @@ private lemma models_codeAux {c : Code k} {f : List.Vector ℕ k →. ℕ} (hc :
     · rintro ⟨e, hf, hg⟩
       have hf : f (List.Vector.ofFn e) = Part.some y := (ihf _ _).mp hf
       have hg : ∀ i, g i (List.Vector.ofFn v) = Part.some (e i) := fun i => (ihg i _ _).mp (hg i)
-      simp [hg, hf]
+      have sequence : List.Vector.mOfFn (g · (List.Vector.ofFn v)) =
+          Part.some (List.Vector.ofFn e) :=
+        (congrArg List.Vector.mOfFn (funext hg)).trans
+          (List.Vector.mOfFn_pure (m := Part) e)
+      exact (congrArg (fun values => values.bind f) sequence).trans
+        ((Part.bind_some _ _).trans hf)
     · intro h
-      have : ∃ w, (∀ i, List.Vector.get w i ∈ g i (List.Vector.ofFn v)) ∧ y ∈ f w := by
-        simpa using Part.eq_some_iff.mp h
-      rcases this with ⟨w, hw, hy⟩
+      obtain ⟨w, hw, hy⟩ := Part.mem_bind_iff.mp (Part.eq_some_iff.mp h)
+      have hw := Part.mem_vector_mOfFn.mp hw
       exact ⟨w.get, (ihf y w.get).mpr (by simpa [Part.eq_some_iff] using hy),
         fun i ↦ (ihg i (w.get i) v).mpr (by simpa [Part.eq_some_iff] using hw i)⟩
   case rfind c f _ ihf =>
@@ -222,7 +226,14 @@ private lemma models_codeAux {c : Code k} {f : List.Vector ℕ k →. ℕ} (hc :
       simpa [Semiformula.eval_rew, Function.comp_def, Matrix.empty_eq, Matrix.comp_vecCons', ihf, List.Vector.ofFn_vecCons]
     constructor
     · rintro ⟨hy, h⟩
-      simpa [Part.eq_some_iff] using ⟨by simpa using hy, by intro z hz; exact Nat.ne_zero_of_lt (h z hz)⟩
+      apply Part.eq_some_iff.mpr
+      apply Nat.mem_rfind.mpr
+      constructor
+      · apply Part.mem_some_iff.mpr
+        simp [hy]
+      · intro z hz
+        apply Part.mem_some_iff.mpr
+        simp [Nat.ne_zero_of_lt (h z hz)]
     · intro h; simpa [pos_iff_ne_zero] using Nat.mem_rfind.mp (Part.eq_some_iff.mp h)
 
 lemma models_code {c : Code k} {f : List.Vector ℕ k →. ℕ} (hc : c.eval f) (y : ℕ) (v : Fin k → ℕ) :

@@ -65,7 +65,13 @@ def toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop
 @[simp] lemma lMap_toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop)
   (t : Semiterm L ξ n) (h : ∀ k f, ⟨k, f⟩ ∈ t.lang → pf k f) :
     (t.toSubLanguage' pf pr h).lMap L.ofSubLanguage = t :=
-  by induction t <;> simp [*, toSubLanguage', lMap_func]
+  by
+    induction t with
+    | bvar => rfl
+    | fvar => rfl
+    | func f v ih =>
+      change func f (fun i => (toSubLanguage' pf pr (v i) _).lMap L.ofSubLanguage) = func f v
+      exact congrArg (func f) (funext fun i => ih i _)
 
 end Semiterm
 
@@ -125,7 +131,19 @@ def toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop
   (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop) {n} (φ : Semiformula L ξ n)
   (hf : ∀ k f, ⟨k, f⟩ ∈ φ.langFunc → pf k f) (hr : ∀ k r, ⟨k, r⟩ ∈ φ.langRel → pr k r) :
     lMap L.ofSubLanguage (φ.toSubLanguage' pf pr hf hr) = φ := by
-  induction φ using rec' <;> simp [*, toSubLanguage', lMap_rel, lMap_nrel]
+  induction φ using rec' with
+  | hverum => rfl
+  | hfalsum => rfl
+  | hrel r v =>
+    change rel r (fun i => (Semiterm.toSubLanguage' pf pr (v i) _).lMap L.ofSubLanguage) = rel r v
+    exact congrArg (rel r) (funext fun i => Semiterm.lMap_toSubLanguage' _ _ _ _)
+  | hnrel r v =>
+    change nrel r (fun i => (Semiterm.toSubLanguage' pf pr (v i) _).lMap L.ofSubLanguage) = nrel r v
+    exact congrArg (nrel r) (funext fun i => Semiterm.lMap_toSubLanguage' _ _ _ _)
+  | hand φ ψ ihφ ihψ => exact congrArg₂ and (ihφ _ _) (ihψ _ _)
+  | hor φ ψ ihφ ihψ => exact congrArg₂ or (ihφ _ _) (ihψ _ _)
+  | hall φ ih => exact congrArg all (ih _ _)
+  | hex φ ih => exact congrArg ex (ih _ _)
 
 noncomputable def languageFuncIndexed (φ : Semiformula L ξ n) (k) : Finset (L.Func k) :=
   Finset.preimage (langFunc φ) (Sigma.mk k) (Set.injOn_of_injective sigma_mk_injective)

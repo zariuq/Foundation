@@ -224,7 +224,7 @@ lemma trans_rel_of_origin_trans_rel {hx hy} (Rxy : F.Rel.TransGen x y)
 instance instGenerated : (F↾R).IsGenerated (setGenerate.roots) where
   roots_generates := by
     rintro ⟨r, (hr | ⟨t, ht, Rtx⟩)⟩ _;
-    . simp_all;
+    . exact (by assumption : ¬ (r ∈ (R : Set F))) hr |>.elim
     . use ⟨t, by simp_all⟩;
       constructor;
       . simpa;

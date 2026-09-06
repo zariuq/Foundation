@@ -182,7 +182,8 @@ lemma chain_monotone (nwf : ¬WellFounded (SearchTree.Lt T Γ)) {s u : ℕ} (h :
     simpa [Nat.add_sub_of_le h] using this (u - s)
   intro d; induction' d with d ih
   · simp
-  · simpa only [Nat.add_succ] using subset_trans ih <| ReduxNat.antimonotone (chain_spec nwf (s + d))
+  · intro x hx
+    exact ReduxNat.antimonotone (chain_spec nwf (s + d)) (ih hx)
 
 lemma chain_spec' (nwf : ¬WellFounded (SearchTree.Lt T Γ)) (c : Code L) (i : ℕ) :
     ⛓️[(encode c).pair i + 1] ≺[c] ⛓️[(encode c).pair i] := (chain_spec nwf _).toRedux

@@ -74,7 +74,7 @@ noncomputable instance : QPF.{u + 1, u + 1, u + 1} UniverseFunctor.{u} where
 end UniverseFunctor
 
 /-- The standard model of set theory -/
-def Universe : Type (u + 1) := QPF.Fix UniverseFunctor
+abbrev Universe : Type (u + 1) := QPF.Fix UniverseFunctor
 
 namespace Universe
 
@@ -136,11 +136,11 @@ theorem ind
     {P : Universe.{u} → Prop}
     (ind : ∀ x, (∀ y ∈ x, P y) → P x)
     (x : Universe) : P x :=
-  QPF.Fix.ind P (fun s hs ↦ ind (mk s.set) (by
-    rw [UniverseFunctor.liftp_iff] at hs
+  QPF.Fix.ind P (fun s hs ↦ by
+    letI : Small.{u} s.set := s.small
+    apply ind (@mk s.set s.small)
     intro y hy
-    rw [mem_mk] at hy
-    exact hs y hy)) x
+    exact (UniverseFunctor.liftp_iff.mp hs) y (mem_mk.mp hy)) x
 
 lemma wellFounded : WellFounded (α := Universe.{u}) (· ∈ ·) := ⟨ind fun x ih ↦ Acc.intro x ih⟩
 

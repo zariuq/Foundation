@@ -128,6 +128,9 @@ variable {L₁ L₂ M}
   induction φ using Semiformula.rec' <;>
     simp [*, Language.Hom.rel_add₁, Semiformula.eval_rel,
       Semiformula.lMap_rel, Semiformula.eval_nrel, Semiformula.lMap_nrel]
+  all_goals
+    change Semiformula.EvalAux _ _ _ _ ↔ _
+    simp [Semiformula.EvalAux]
 
 @[simp] lemma eval_lMap_add₂ {n} (φ : Semiformula L₂ μ n) (e : Fin n → M) (ε : μ → M) :
     Semiformula.Eval (add L₁ L₂ M) e ε (Semiformula.lMap (Language.Hom.add₂ L₁ L₂) φ)
@@ -135,6 +138,9 @@ variable {L₁ L₂ M}
   induction φ using Semiformula.rec' <;>
     simp [*, Language.Hom.rel_add₂, Semiformula.eval_rel,
       Semiformula.lMap_rel, Semiformula.eval_nrel, Semiformula.lMap_nrel]
+  all_goals
+    change Semiformula.EvalAux _ _ _ _ ↔ _
+    simp [Semiformula.EvalAux]
 
 end add
 
@@ -160,6 +166,9 @@ instance sigma : Structure (Language.sigma L) M where
   induction φ using Semiformula.rec' <;>
     simp [*, Language.Hom.rel_sigma, Semiformula.eval_rel,
       Semiformula.lMap_rel, Semiformula.eval_nrel, Semiformula.lMap_nrel]
+  all_goals
+    change Semiformula.EvalAux _ _ _ _ ↔ _
+    simp [Semiformula.EvalAux]
 
 end sigma
 

@@ -130,11 +130,21 @@ lemma not_root_of_from_root' [F.IsTree r] {x : F.extendRoot n} (h : extendRoot.r
 
 lemma not_root_of_from_root₁ [F.IsTree r] {x : F.extendRoot 1} (h : extendRoot.root ≺ x) :
     x = r ∨ embed r ≺ x := by
-  rcases not_root_of_from_root h with (⟨i, hi, rfl⟩ | hr | hr) <;> simp_all
+  rcases not_root_of_from_root h with (⟨i, hi, rfl⟩ | hr | hr)
+  · have bound : i.val < 1 := i.isLt
+    have positive : 0 < i.val := hi
+    omega
+  · exact Or.inl hr
+  · exact Or.inr hr
 
 lemma not_root_of_from_root'₁ [F.IsTree r] {x : F.extendRoot 1} (h : extendRoot.root ≺ x) :
     x = r ∨ ∃ x₀ : F, x = x₀ ∧ r ≺ x₀ := by
-  rcases not_root_of_from_root' h with (⟨i, hi, rfl⟩ | hr | hr) <;> simp_all
+  rcases not_root_of_from_root' h with (⟨i, hi, rfl⟩ | hr | hr)
+  · have bound : i.val < 1 := i.isLt
+    have positive : 0 < i.val := hi
+    omega
+  · exact Or.inl hr
+  · exact Or.inr hr
 
 lemma eq_inr_of_root_rel [F.IsTree r] {x : F.extendRoot 1} (h : extendRoot.root ≺ x) :
     ∃ x₀ : F, x = x₀ := by

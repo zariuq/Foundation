@@ -116,7 +116,7 @@ instance : (F.mkTreeUnravelling r).IsRootedBy treeUnravelling.root where
     constructor;
     . by_contra hC;
       subst hC;
-      simp at hn;
+      exact hn (Subtype.ext rfl);
     . assumption;
 
 end Frame.treeUnravelling
@@ -157,7 +157,7 @@ instance instFinite [DecidableEq F.World] [F.IsFinite] [F.IsTransitive] [F.IsIrr
      Finite.of_injective
      (β := { x // List.IsChain F.Rel x })
      (fun x => ⟨x.1, x.2.2⟩)
-     (by rintro ⟨x, hx⟩ ⟨y, hy⟩; simp_all);
+     (by intro x y equality; exact Subtype.ext (congrArg (fun entry : {x // List.IsChain F.Rel x} => entry.val) equality));
   apply List.chains_finite;
 
 instance instIsTree : (F.mkTransTreeUnravelling r).IsTree (mkTransTreeUnravelling.root) where

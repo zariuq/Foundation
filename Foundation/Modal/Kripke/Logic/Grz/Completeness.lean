@@ -186,6 +186,16 @@ lemma truthlemma {X : (miniCanonicalModel 𝓢 φ).World} (q_sub : ψ ∈ φ.sub
       . assumption;
       . simpa using iff_not_mem_compl (by grind) |>.not.mp hr;
   | hbox ψ ih =>
+    have subψ : ψ ∈ φ.subformulas := Formula.subformulas.mem_box q_sub
+    have grzψ : ψ ∈ φ.subformulasGrz := Formula.subformulasGrz.mem_of_mem_subformula subψ
+    have grzBox : □ψ ∈ φ.subformulasGrz := Formula.subformulasGrz.mem_of_mem_subformula q_sub
+    have preψ : ψ ∈ □⁻¹'φ.subformulasGrz := by
+      simpa only [Finset.LO.preboxItr, Finset.mem_preimage, Function.iterate_one] using grzBox
+    have grzSpecial : □(ψ ➝ □ψ) ∈ φ.subformulasGrz :=
+      Formula.subformulasGrz.mem_boximpbox (by
+        simpa only [Finset.LO.preboxItr, Finset.mem_preimage, Function.iterate_one] using q_sub)
+    have preSpecial : (ψ ➝ □ψ) ∈ □⁻¹'φ.subformulasGrz := by
+      simpa only [Finset.LO.preboxItr, Finset.mem_preimage, Function.iterate_one] using grzSpecial
     constructor;
     . contrapose;
       by_cases w : ψ ∈ X;
@@ -204,18 +214,17 @@ lemma truthlemma {X : (miniCanonicalModel 𝓢 φ).World} (q_sub : ψ ∈ φ.sub
             left; push_neg;
             use (ψ ➝ □ψ);
             refine ⟨?_, ?_, ?_⟩;
-            . simp [Formula.subformulasGrz, Finset.LO.preboxItr];
-              grind;
+            . exact preSpecial;
             . apply hY.2;
               simp;
             . by_contra hC;
-              have : ↑X *⊢[𝓢] ψ := membership_iff (by grind) |>.mp w;
-              have : ↑X *⊢[𝓢] □(ψ ➝ □ψ) := membership_iff (by simp [Finset.LO.preboxItr]; grind) |>.mp hC;
+              have : ↑X *⊢[𝓢] ψ := membership_iff grzψ |>.mp w;
+              have : ↑X *⊢[𝓢] □(ψ ➝ □ψ) := membership_iff grzSpecial |>.mp hC;
               have : ↑X *⊢[𝓢] (ψ ⋏ □(ψ ➝ □ψ)) ➝ □ψ := Context.of! $ truthlemma_lemma3;
               have : ↑X *⊢[𝓢] □ψ := this ⨀ K!_intro (by assumption) (by assumption);
-              have : □ψ ∈ X := membership_iff (by grind) |>.mpr this;
+              have : □ψ ∈ X := membership_iff grzBox |>.mpr this;
               contradiction;
-        . apply ih (by grind) |>.not.mpr;
+        . apply ih subψ |>.not.mpr;
           apply iff_not_mem_compl (by grind) |>.not.mpr;
           push_neg;
           apply hY.2;
@@ -225,12 +234,12 @@ lemma truthlemma {X : (miniCanonicalModel 𝓢 φ).World} (q_sub : ψ ∈ φ.sub
         use X;
         constructor;
         . apply Frame.refl;
-        . exact ih (by grind) |>.not.mpr w;
+        . exact ih subψ |>.not.mpr w;
     . intro h Y RXY;
-      apply ih (by grind) |>.mpr;
+      apply ih subψ |>.mpr;
       have : ↑Y *⊢[𝓢] □ψ ➝ ψ := Context.of! $ axiomT!;
-      have : ↑Y *⊢[𝓢] ψ := this ⨀ (membership_iff (by grind) |>.mp (RXY.1 ψ (by simp [Finset.LO.preboxItr]; grind) h));
-      exact membership_iff (by grind) |>.mpr this;
+      have : ↑Y *⊢[𝓢] ψ := this ⨀ (membership_iff grzBox |>.mp (RXY.1 ψ preψ h));
+      exact membership_iff grzψ |>.mpr this;
 
 lemma complete_of_mem_miniCanonicalFrame
   (C : Kripke.FrameClass)

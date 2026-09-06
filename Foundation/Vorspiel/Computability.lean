@@ -13,7 +13,16 @@ namespace Part
   |     0, _, _ => by simp [List.Vector.mOfFn, List.Vector.eq_nil]
   | n + 1, w, v => by
     suffices (∃ a ∈ v 0, ∃ u, (∀ (i : Fin n), u.get i ∈ v i.succ) ∧ w = a ::ᵥ u) ↔ ∀ (i : Fin (n + 1)), w.get i ∈ v i by
-      simpa [List.Vector.mOfFn, @mem_vector_mOfFn _ n]
+      refine Iff.trans Part.mem_bind_iff ?_
+      refine Iff.trans ?_ this
+      apply exists_congr
+      intro value
+      apply and_congr_right
+      intro membership
+      refine Iff.trans Part.mem_bind_iff ?_
+      apply exists_congr
+      intro tail
+      exact and_congr (@mem_vector_mOfFn _ n tail (fun i => v i.succ)) Part.mem_some_iff
     constructor
     · rintro ⟨a, ha, v, hv, rfl⟩ i; cases i using Fin.cases <;> simp [ha, hv]
     · intro h; exact ⟨w.head, by simpa using h 0, w.tail,

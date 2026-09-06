@@ -356,7 +356,7 @@ prefix:90 "□'" => List.LO.box
 
 @[simp, grind =] lemma boxItr_nil : (□^[n]'([] : List F)) = [] := by rfl
 
-@[simp, grind =] lemma boxItr_single : (□^[n]'[φ]) = [□^[n]φ] := by dsimp [boxItr];
+@[simp, grind =] lemma boxItr_single : (□^[n]'[φ]) = [□^[n]φ] := by rfl
 
 @[simp, grind =] lemma eq_boxItr_conn : (□^[n]'(ψ :: s)) = (□^[n]ψ) :: (□^[n]'s) := by induction s <;> simp_all [boxItr];
 @[simp, grind =] lemma eq_box_conn : (□' (ψ :: s)) = (□ψ) :: □'s := eq_boxItr_conn (n := 1)
@@ -439,7 +439,7 @@ prefix:90 "◇'⁻¹" => List.LO.predia
 @[simp, grind =] lemma diaItr_nil : (◇^[n]'([] : List F)) = [] := by rfl
 @[simp, grind =] lemma prediaItr_nil : (◇⁻¹^[n]'([] : List F)) = [] := by rfl
 
-@[simp, grind =] lemma diaItr_single : (◇^[n]'[φ]) = [◇^[n]φ] := by dsimp [diaItr];
+@[simp, grind =] lemma diaItr_single : (◇^[n]'[φ]) = [◇^[n]φ] := by rfl
 
 @[simp, grind =] lemma eq_diaItr_conn : (◇^[n]'(ψ :: s)) = (◇^[n]ψ) :: (◇^[n]'s) := by induction s <;> simp_all [diaItr];
 @[simp, grind =] lemma eq_dia_conn : (◇' (ψ :: s)) = (◇ψ) :: ◇'s := eq_diaItr_conn (n := 1)

@@ -121,10 +121,12 @@ instance [Entailment.HasAxiomKrieselPutnam 𝓢] : (canonicalFrame 𝓢).Satisfi
               apply mdp_mem₁_provable (φ := Γ₁.conj) ?_ ?_;
               . apply C!_trans ?_ CFconjNNFconj!;
                 apply CFConj_FConj!_of_subset;
-                intro φ;
-                simp only [Finset.mem_image, Finset.mem_preimage, Finset.mem_filter, forall_exists_index, and_imp, Γ₁, Γ₂];
-                rintro _ _ _ rfl;
-                tauto;
+                intro φ member
+                obtain ⟨ψ, member, rfl⟩ := Finset.mem_image.mp member
+                obtain ⟨χ, member, equality⟩ := Finset.mem_image.mp member
+                have equality : χ = ψ := Formula.neg_inj.mp equality
+                subst χ
+                exact Finset.mem_preimage.mp member;
               . apply iff_mem₁_fconj.mpr;
                 intro φ;
                 simp only [Set.mem_inter_iff, Set.mem_image, Set.mem_setOf_eq, Finset.coe_filter, and_imp, forall_exists_index, Γ₁, ΓNyz];
@@ -140,10 +142,12 @@ instance [Entailment.HasAxiomKrieselPutnam 𝓢] : (canonicalFrame 𝓢).Satisfi
               apply mdp_mem₁_provable (φ := Γ₁.conj) ?_ ?_;
               . apply C!_trans ?_ CFconjNNFconj!;
                 apply CFConj_FConj!_of_subset;
-                intro φ;
-                simp only [Finset.mem_image, Finset.mem_preimage, Finset.mem_filter, forall_exists_index, and_imp, Γ₁, Γ₂];
-                rintro _ _ _ rfl;
-                tauto;
+                intro φ member
+                obtain ⟨ψ, member, rfl⟩ := Finset.mem_image.mp member
+                obtain ⟨χ, member, equality⟩ := Finset.mem_image.mp member
+                have equality : χ = ψ := Formula.neg_inj.mp equality
+                subst χ
+                exact Finset.mem_preimage.mp member;
               . apply iff_mem₁_fconj.mpr;
                 intro φ;
                 simp only [Set.mem_inter_iff, Set.mem_image, Set.mem_setOf_eq, Finset.coe_filter, and_imp, forall_exists_index, Γ₁, ΓNyz];

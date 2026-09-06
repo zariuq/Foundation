@@ -187,7 +187,7 @@ instance : (tailModel₀ M o).IsRootedBy (tailModel₀.root) where
   root_generates := by
     intro x h;
     match x with
-    | .inl _ => simp [tailModel₀.root] at h;
+    | .inl u => exact (h (congrArg Sum.inl (Subsingleton.elim u ()))).elim
     | .inr $ _ =>
       apply Relation.TransGen.single;
       simp [tailModel₀, tailModel₀.root];
@@ -265,8 +265,10 @@ lemma iff_root_rel_not_root {x : tailModel₀ M o} : tailModel₀.root ≺ x ↔
   constructor;
   . rintro h rfl;
     simp [Frame.Rel', tailModel₀] at h;
-  . intro h;
-    simp_all [Frame.Rel', tailModel₀];
+  . intro h
+    rcases x with u | x
+    · exact (h (congrArg Sum.inl (Subsingleton.elim u ()))).elim
+    · cases x <;> trivial
 
 protected def pMorphism_original : M →ₚ (tailModel₀ M o) where
   toFun := embed_original

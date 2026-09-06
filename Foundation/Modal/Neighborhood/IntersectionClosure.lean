@@ -62,8 +62,22 @@ lemma symm_𝒩 : F.quasiFiltering.𝒩 = F.supplementation.intersectionClosure.
     rw [this];
     use Ys.image (λ Yi => Yi ∪ (X \ Y));
     refine ⟨?_, ?_, ?_⟩;
-    . simpa;
-    . simp; rfl;
+    . exact fun h => hYs₁ (Finset.image_eq_empty.mp h)
+    . apply Set.Subset.antisymm
+      · intro a ha
+        apply Set.mem_iInter.mpr
+        intro Z
+        apply Set.mem_iInter.mpr
+        intro hZ
+        obtain ⟨Yi, hYi, rfl⟩ := Finset.mem_image.mp hZ
+        exact Set.mem_iInter.mp (Set.mem_iInter.mp ha Yi) hYi
+      · intro a ha
+        apply Set.mem_iInter.mpr
+        intro Yi
+        apply Set.mem_iInter.mpr
+        intro hYi
+        exact Set.mem_iInter.mp (Set.mem_iInter.mp ha _)
+          (Finset.mem_image.mpr ⟨Yi, hYi, rfl⟩)
     . intro Zi hZi;
       obtain ⟨Yi, hYi, rfl⟩ := Finset.mem_image.mp hZi;
       exact ⟨Yi, Set.subset_union_left, hYs₂ Yi hYi⟩;
@@ -71,14 +85,14 @@ lemma symm_𝒩 : F.quasiFiltering.𝒩 = F.supplementation.intersectionClosure.
     let Zs := Finset.image (α := Ys) (λ ⟨Yi, hYi⟩ => hYs₂ Yi hYi |>.choose) Finset.univ;
     use (⋂ Zi ∈ Zs, Zi);
     constructor;
-    . rintro a ha _ ⟨Y, _, rfl⟩;
-      suffices Y ∈ Ys → a ∈ Y by simpa;
-      rintro hY;
-      apply hYs₂ Y hY |>.choose_spec |>.1;
-      simp only [Set.mem_setOf_eq, Finset.univ_eq_attach, Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists, Set.iInter_exists, Set.mem_iInter, Zs] at ha;
-      apply ha;
-      . rfl;
-      . assumption;
+    . intro a ha
+      apply Set.mem_iInter.mpr
+      intro Y
+      apply Set.mem_iInter.mpr
+      intro hY
+      apply (hYs₂ Y hY).choose_spec.1
+      exact Set.mem_iInter.mp (Set.mem_iInter.mp ha _) (Finset.mem_image.mpr
+        ⟨⟨Y, hY⟩, Finset.mem_univ _, rfl⟩)
     . use Zs;
       refine ⟨?_, ?_, ?_⟩;
       . simpa [Zs];

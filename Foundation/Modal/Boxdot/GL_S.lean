@@ -25,11 +25,21 @@ lemma iff_provable_boxdot_GL_provable_boxdot_S : Modal.GL ⊢ φᵇ ↔ Modal.S 
     intro M r _;
     obtain ⟨i, hi⟩ := Kripke.Model.extendRoot.inr_satisfies_axiomT_set (M := M) (Γ := □⁻¹'φᵇ.subformulas);
     let M₁ := M.extendRoot ⟨(□⁻¹'φᵇ.subformulas).card + 1, by omega⟩;
+    let tree : M₁.IsFiniteTree Model.extendRoot.root :=
+      Model.extendRoot.isFiniteTree (M := M) (r := r)
+    let : M₁.IsFinite := tree.toIsFinite
+    let : M₁.IsAsymmetric := ⟨tree.asymm⟩
+    let : M₁.IsTransitive := ⟨tree.trans⟩
     let i₁ : M₁.World := Sum.inl i;
     refine Model.extendRoot.inl_satisfies_boxdot_iff.mpr
       $ Model.pointGenerate.modal_equivalent_at_root (r := i₁) |>.mp
       $ @h (M₁↾i₁) Model.pointGenerate.root ?_ ?_;
-    . exact {};
+    . exact {
+        toIsFinite := by dsimp [Model.pointGenerate]; infer_instance
+        toIsTree := {
+          toIsRootedBy := inferInstance
+          asymm := (Model.pointGenerate.isAsymmetric (M := M₁) (r := i₁)).asymm
+          trans := (Model.pointGenerate.isTransitive (M := M₁) (r := i₁)).trans } }
     . apply @Model.pointGenerate.modal_equivalent_at_root (r := i₁) |>.mpr
       apply Satisfies.fconj_def.mpr;
       intro ψ hψ;

@@ -153,7 +153,7 @@ attribute [simp, grind] def_𝒩 def_V
 
 variable {𝓒 : Canonicity 𝓢}
 
-def toModel (𝓒 : Canonicity 𝓢) : Model where
+abbrev toModel (𝓒 : Canonicity 𝓢) : Model where
   World := MaximalConsistentSet 𝓢
   𝒩 := 𝓒.𝒩
   Val := 𝓒.V
@@ -168,20 +168,23 @@ lemma box_proofset : 𝓒.toModel.box (proofset 𝓢 φ) = (proofset 𝓢 (□φ
 lemma boxItr_proofset : 𝓒.toModel.box^[n] (proofset 𝓢 φ) = (proofset 𝓢 (□^[n]φ)) := by
   induction n generalizing φ with
   | zero => simp;
-  | succ n ih => simp only [Function.iterate_succ, Function.comp_apply, box_proofset, ih];
+  | succ n ih =>
+      exact (congrArg (𝓒.toModel.box^[n]) (box_proofset (𝓒 := 𝓒) (φ := φ))).trans
+        (ih (φ := □φ))
 
 @[simp]
 lemma dia_proofset : 𝓒.toModel.dia (proofset 𝓢 φ) = (proofset 𝓢 (◇φ)) := by
   suffices 𝓒.toModel.dia (proofset 𝓢 φ) = (proofset 𝓢 (∼(□(∼φ)))) by tauto;
   show (𝓒.toModel.box (proofset 𝓢 φ)ᶜ)ᶜ = _
   rw [proofset.eq_neg (φ := □(∼φ)), ← box_proofset (𝓒 := 𝓒) (φ := ∼φ), proofset.eq_neg (φ := φ)];
-  rfl;
 
 @[simp]
 lemma diaItr_proofset : 𝓒.toModel.dia^[n] (proofset 𝓢 φ) = (proofset 𝓢 (◇^[n]φ)) := by
   induction n generalizing φ with
   | zero => simp;
-  | succ n ih => simp only [Function.iterate_succ, Function.comp_apply, dia_proofset, ih];
+  | succ n ih =>
+      exact (congrArg (𝓒.toModel.dia^[n]) (dia_proofset (𝓒 := 𝓒) (φ := φ))).trans
+        (ih (φ := ◇φ))
 
 @[grind]
 lemma iff_box {Γ : 𝓒.toModel} : □φ ∈ Γ.1 ↔ Γ ∈ 𝓒.toModel.box (proofset 𝓢 φ) := by apply 𝓒.def_𝒩
@@ -202,7 +205,7 @@ lemma truthlemma : (proofset 𝓢 φ) = (𝓒.toModel φ) := by
   induction φ with
   | hatom => apply 𝓒.def_V _ |>.symm;
   | hfalsum => simp only [proofset.eq_bot]; rfl;
-  | himp φ ψ ihφ ihψ => simp only [proofset.eq_imp, Model.truthset.eq_imp, ihφ, ihψ]; rfl;
+  | himp φ ψ ihφ ihψ => simp only [proofset.eq_imp, Model.truthset.eq_imp, ihφ, ihψ];
   | hbox φ ihφ =>
     suffices proofset 𝓢 (□φ) = 𝓒.toModel.box (𝓒.toModel.truthset φ) by simpa;
     rw [←ihφ, box_proofset];
@@ -306,7 +309,6 @@ protected lemma iff_mem_dia :
   rw [relativeBasicCanonicity.iff_mem_box.not]
   set_option push_neg.use_distrib true in push_neg
   simp only [iff_not_isNonProofset_exists]
-  tauto
 
 end relativeBasicCanonicity
 

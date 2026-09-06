@@ -206,22 +206,21 @@ attribute [simp] Filtration.B_def Filtration.V_def
 
 variable {Fi : Filtration M T}
 
-def toModel {M : Model} {T : FormulaSet ℕ} [T.IsSubformulaClosed] (Fi : Filtration M T) : Model where
-  toFrame := Frame.mk_ℬ (FilterEqvQuotient M T) Fi.B
+abbrev toModel {M : Model} {T : FormulaSet ℕ} [T.IsSubformulaClosed] (Fi : Filtration M T) : Model where
+  toFrame := { World := FilterEqvQuotient M T, 𝒩 := fun x => { X | x ∈ Fi.B X } }
   Val := Fi.V
 
 @[simp, grind =_]
-lemma toModel_def : Fi.toModel.box X = Fi.B X := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]; rfl
+lemma toModel_def : Fi.toModel.box X = Fi.B X := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]
 
 theorem filtration (Fi : Filtration M T) (φ) (hφ : φ ∈ T) : (Fi.toModel φ) = 【M φ】 := by
   induction φ with
   | hatom a => apply Fi.V_def;
-  | hfalsum => simp only [Model.truthset.eq_bot, toFilterEquivSet.empty]; rfl;
+  | hfalsum => simp only [Model.truthset.eq_bot, toFilterEquivSet.empty];
   | himp φ ψ ihφ ihψ =>
     replace ihφ := ihφ (by grind);
     replace ihψ := ihψ (by grind);
     simp_all [toFilterEquivSet.union, toFilterEquivSet.compl_truthset (show φ ∈ T by grind)];
-    rfl;
   | hbox φ ihφ =>
     replace ihφ := ihφ (by grind);
     apply ihφ ▸ Fi.B_def φ (by grind);
@@ -237,19 +236,14 @@ lemma filtration_satisfies (Fi : Filtration M T) (φ) (hφ : φ ∈ T) {x : M} :
 lemma truthlemma (Fi : Filtration M T) {φ ψ} (hφ : φ ∈ T) (hψ : ψ ∈ T) :
   (Fi.toModel φ) = (Fi.toModel ψ) ↔ (【M φ】 : Set (FilterEqvQuotient M T)) = (【M ψ】) := by
   rw [filtration Fi φ hφ, filtration Fi ψ hψ];
-  rfl;
 
 @[grind .]
 lemma iff_mem_toModel_box_mem_B {Fi : Filtration M T} : W ∈ Fi.toModel.box Y ↔ W ∈ Fi.B Y := by
   simp [Filtration.toModel, Frame.mk_ℬ, Frame.box];
-  rfl;
 
 @[grind =>]
-lemma box_in_out {Fi : Filtration M T} (hφ : □φ ∈ T) : Fi.B 【M φ】 = 【M (□φ)】 := calc
-  _ = Fi.toModel.box 【M.truthset φ】 := by simp [Filtration.toModel, Frame.mk_ℬ, Frame.box]; rfl;
-  _ = Fi.toModel.box (Fi.toModel φ) := by rw [filtration Fi φ (by grind)];
-  _ = (Fi.toModel (□φ)) := by simp;
-  _ = 【M (□φ)】 := filtration Fi _ hφ
+lemma box_in_out {Fi : Filtration M T} (hφ : □φ ∈ T) : Fi.B 【M φ】 = 【M (□φ)】 :=
+  Fi.B_def φ hφ
 
 @[grind =>]
 lemma mem_box_in_out (hψ : □φ ∈ T) : X ∈ Fi.B 【M φ】 ↔ X ∈ 【M (□φ)】 := by grind;
@@ -573,7 +567,7 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
           grind only [= Set.subset_def, = Finset.mem_union, = Set.setOf_true, of_mem_box,
             Satisfies.def_box', = Finset.mem_filter, Model.truthset.eq_box,
             FilterEqvQuotient.iff_eq, toFilterEquivSet.mem_of_mem, Satisfies.def_box,
-            usr Set.mem_setOf_eq, = Set.setOf_false, !Frame.trans,
+            = Set.mem_ofPred_eq, = Set.setOf_false, !Frame.trans,
             !toFilterEquivSet.iff_mem_truthset, = Model.truthset.eq_boxItr, Satisfies.def_boxItr']
       . suffices ∀ ψ : Ψ, w ∈ M (□ψ) by
           apply toFilterEquivSet.mem_of_mem;
@@ -621,11 +615,11 @@ def quasiFilteringTransitiveFiltration (M : Model) [M.IsMonotonic] [M.IsTransiti
         replace hv₁ : v ∈ M.box^[2] (M ξ) := M.trans hv₁;
         grind only [= Set.subset_def, = Finset.mem_union, = Set.setOf_true, of_mem_box,
           Satisfies.def_box', = Finset.mem_filter, Model.truthset.eq_box, FilterEqvQuotient.iff_eq,
-          toFilterEquivSet.mem_of_mem, usr Set.mem_setOf_eq, = Set.setOf_false, !Frame.trans,
+          toFilterEquivSet.mem_of_mem, = Set.mem_ofPred_eq, = Set.setOf_false, !Frame.trans,
           !toFilterEquivSet.iff_mem_truthset, = Model.truthset.eq_boxItr, Satisfies.def_boxItr']
       . exfalso;
         apply hYs₁;
-        suffices (Vs = ∅ ∧ Us = ∅) by simp [eYVU, this.1, this.2]; rfl;
+        suffices (Vs = ∅ ∧ Us = ∅) by simp [eYVU, this.1, this.2];
         constructor;
         . suffices ∀ Yi ∈ Ys, ∀ ψ, □ψ ∈ T → Yi = 【M ψ】 → ⟦w⟧ ∉ 【M (□ψ)】 by simpa [Vs];
           rintro _ _ ψ hψ rfl;

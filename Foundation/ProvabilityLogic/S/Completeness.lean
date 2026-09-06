@@ -38,12 +38,13 @@ variable {M₁ : Kripke.Model} {r₁ : M₁} [M₁.IsFiniteTree r₁] {A : Formu
 lemma refl_mainlemma_aux (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
   let M₀ := M₁.extendRoot 1
   let r₀ : M₀ := Model.extendRoot.root
-  have : Fintype M₀.World := Fintype.ofFinite _
+  have : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M₁) (r := r₁)
+  let : Fintype M₀.World := Fintype.ofFinite _
   let S := SolovaySentences.standard T M₀.toFrame
   ∀ B ∈ A.subformulas,
   (r₁ ⊧ B → 𝗜𝚺₁ ⊢ (S r₀) ➝ (S.realization B)) ∧
   (r₁ ⊭ B → 𝗜𝚺₁ ⊢ (S r₀) ➝ ∼(S.realization B)) := by
-  intro M₀ r₀ _ S B B_sub;
+  intro M₀ r₀ _ _ S B B_sub;
 
   replace hA := Formula.Kripke.Satisfies.imp_def.not.mp hA;
   push_neg at hA;
@@ -135,14 +136,16 @@ lemma refl_mainlemma_aux (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
 lemma rfl_mainlemma (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
   letI M₀ := M₁.extendRoot 1
   letI r₀ : M₀ := Model.extendRoot.root
-  haveI : Fintype M₀.World := Fintype.ofFinite _
+  have : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M₁) (r := r₁)
+  let : Fintype M₀.World := Fintype.ofFinite _
   letI S := SolovaySentences.standard T M₀.toFrame
   ∀ B ∈ A.subformulas, r₁ ⊧ B → 𝗜𝚺₁ ⊢ (S r₀) ➝ (S.realization B) := fun B B_sub => (refl_mainlemma_aux hA B B_sub).1
 
 lemma rfl_mainlemma_neg (hA : ¬r₁ ⊧ (A.rflSubformula.conj ➝ A)) :
   letI M₀ := M₁.extendRoot 1
   letI r₀ : M₀ := Model.extendRoot.root
-  haveI : Fintype M₀.World := Fintype.ofFinite _
+  have : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M₁) (r := r₁)
+  let : Fintype M₀.World := Fintype.ofFinite _
   letI S := SolovaySentences.standard T M₀.toFrame
   ∀ B ∈ A.subformulas, r₁ ⊭ B → 𝗜𝚺₁ ⊢ (S r₀) ➝ ∼(S.realization B) := λ B B_sub => (refl_mainlemma_aux hA B B_sub).2
 
@@ -178,13 +181,14 @@ lemma GL_S_TFAE :
 
     let M₀ := Model.extendRoot M₁ 1;
     let r₀ : M₀.World := Model.extendRoot.root;
-    have : Fintype M₀.World := Fintype.ofFinite _
+    have : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M₁) (r := r₁)
+    let : Fintype M₀.World := Fintype.ofFinite _
     let S := SolovaySentences.standard T M₀.toFrame
     use S.realization;
 
     have := Formula.Kripke.Satisfies.not_imp_def.mp hA |>.2;
     have : ℕ ⊧ₘ S r₀ ➝ ∼S.realization A := models_of_provable inferInstance $ by
-      convert SolovaySentences.rfl_mainlemma_neg (T := T) hA A (by grind) $ Formula.Kripke.Satisfies.not_imp_def.mp hA |>.2;
+      exact SolovaySentences.rfl_mainlemma_neg (T := T) hA A (by grind) $ Formula.Kripke.Satisfies.not_imp_def.mp hA |>.2;
     simp only [Models, LO.Semantics.Not.models_not, LO.Semantics.Imp.models_imply] at this;
     exact this <| by
       simpa [models_iff, S, SolovaySentences.standard_σ_def] using FirstOrder.Arithmetic.Bootstrapping.SolovaySentences.solovay_root_sound

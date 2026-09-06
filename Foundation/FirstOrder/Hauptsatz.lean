@@ -332,7 +332,7 @@ def ofMinimalProof {φ : SyntacticFormulaᵢ L} : 𝗠𝗶𝗻¹ ⊢! φ → ⊩
   termination_by b => HilbertProofᵢ.depth b
 
 def relRefl {k} (R : L.Rel k) (v : Fin k → SyntacticTerm L) : [.rel R v] ⊩ rel R v :=
-  relEquiv.symm ⟨Derivation.axL _ _, by simp⟩
+  relEquiv.symm ⟨Derivation.axL _ _, Derivation.IsCutFree.axL _ _⟩
 
 protected def refl.or (ihφ : [φ] ⊩ φᴺ) (ihψ : [ψ] ⊩ ψᴺ) : [φ ⋎ ψ] ⊩ (φ ⋎ ψ)ᴺ :=
   implyOf fun q dq ↦
@@ -365,7 +365,7 @@ protected def refl.ex (d : ∀ x, [φ/[&x]] ⊩ (φ/[&x])ᴺ) : [∃' φ] ⊩ (�
 
 protected def refl : (φ : SyntacticFormula L) → [φ] ⊩ φᴺ
   |         ⊤ => implyEquiv.symm fun q sqp dφ ↦ dφ
-  |         ⊥ => falsumEquiv.symm ⟨Derivation.verum, by simp⟩
+  |         ⊥ => falsumEquiv.symm ⟨Derivation.verum, Derivation.IsCutFree.verum⟩
   |  .rel R v => implyOf fun q dq ↦
     let b : [.rel R v] ⊓ q ⊩ rel R v := (relRefl R v).monotone (StrongerThan.minLeLeft _ _)
     dq.implyEquiv ([.rel R v] ⊓ q) (StrongerThan.minLeRight _ _) b

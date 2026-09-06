@@ -473,11 +473,12 @@ lemma provable_TBB_of_mem_trace {n : ℕ} (h : n ∈ (T.ProvabilityLogic U).trac
   obtain ⟨A, hA₁, ⟨M, r, _, _, rfl, h₂⟩⟩ := by simpa using h;
   replace hA₁ : ∀ f : T.StandardRealization, U ⊢ f A := ProvabilityLogic.provable_iff.mp (by grind);
 
+  let : M.IsFiniteTree r := { toIsFinite := inferInstance, toIsTree := inferInstance }
   let M₀ := M.extendRoot 1;
   let r₀ : M₀ := Frame.extendRoot.root
-  have Rr₀ : ∀ {x : M}, r₀ ≺ x := λ {x} => Frame.root_genaretes'! (r := r₀) x (by simp)
+  have Rr₀ : ∀ {x : M}, r₀ ≺ x := fun {x} => Frame.extendRoot.rooted_original
 
-  have : M₀.IsFiniteTree r₀ := {};
+  let : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M) (r := r)
   let S : SolovaySentences T.standardProvability M₀.toFrame r₀ := SolovaySentences.standard T M₀.toFrame;
 
   have : M₀ ⊧ A ➝ (Modal.TBB M.height) := by
@@ -561,7 +562,8 @@ lemma provable_TBBMinus_of_mem_trace (h : ¬(T.ProvabilityLogic U) ⊆ Modal.S) 
 
   let M₀ := Model.extendRoot M₁ 1;
   let r₀ : M₀.World := Model.extendRoot.root;
-  have : Fintype M₀.World := Fintype.ofFinite _
+  let : M₀.IsFiniteTree r₀ := Model.extendRoot.isFiniteTree (M := M₁) (r := r₁)
+  let : Fintype M₀.World := Fintype.ofFinite _
 
   let R := Set.Finite.inter_of_left (s := (Finset.range M₁.height)) (t := (T.ProvabilityLogic U).trace) (Finset.finite_toSet _) |>.toFinset;
 
@@ -577,7 +579,6 @@ lemma provable_TBBMinus_of_mem_trace (h : ¬(T.ProvabilityLogic U) ⊆ Modal.S) 
       apply provable_TBB_of_mem_trace;
       simp_all [R, Logic.trace];
 
-  have : M₁.IsFiniteTree r₁ := {};
   let S := SolovaySentences.standard T M₀.toFrame;
 
   have H₁ : 𝗜𝚺₁ ⊢ (S.realization B ➝ S.realization (∼⩕ n ∈ (cofinite_of_not_subset_S h).toFinset, TBB n)) := by

@@ -116,8 +116,8 @@ lemma lt_def : a < b ↔ ∃ c, a + c + 1 = b := by
   | ⊤, .some n => simp [(show ¬(⊤ : OmegaAddOne) < .some n by tauto)];
   | .some m, ⊤ =>
     simp only [(show .some m < (⊤ : OmegaAddOne) by tauto), true_iff];
-    use ⊤;
-    simp;
+    refine ⟨⊤, ?_⟩
+    exact (congrArg (· + 1) (add_top (a := .some m))).trans top_add
   | .some m, .some n =>
     apply Iff.trans (show some m < some n ↔ m < n by rfl);
     apply Iff.trans Nat.iff_lt_exists_add_succ;

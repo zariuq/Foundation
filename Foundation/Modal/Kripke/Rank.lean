@@ -127,13 +127,12 @@ lemma eq_original_height : Frame.rank (x : F.extendRoot 1) = Frame.rank x := by
     apply extendRoot.embed_rel_iterate_embed_iff_rel.mpr;
     exact Rxy;
   . rintro (_ | y) Rxy (_ | z);
-    . simp;
+    . simp [Frame.Rel', Frame.extendRoot]; omega;
     . -- TODO: extract no loop lemma (x ≺^[n] i cannot happen where x is original and i is new elements by extension)
       exfalso;
-      have : extendRoot.root ≺ (x : F.extendRoot 1) := Frame.root_genaretes'! (F := F.extendRoot 1) x (by simp);
       have : (x : F.extendRoot 1) ≺ x :=
         Rel.Iterate.unwrap_of_trans_of_pos (by omega) $
-        Rel.Iterate.comp (m := 1) |>.mp ⟨_, Rxy, by simpa⟩;
+        Rel.Iterate.comp (m := 1) |>.mp ⟨_, Rxy, ⟨(x : F.extendRoot 1), trivial, rfl⟩⟩;
       exact Frame.irrefl _ this;
     . apply Frame.asymm;
       exact Frame.root_genaretes'! (F := F.extendRoot 1) y (by simp);
@@ -192,7 +191,10 @@ lemma height_pos_of_dia {i : M} (hA : i ⊧ ◇ A) : 0 < M.rank i := by
   apply lt_fcwHeight hj (by simp)
 
 @[simp]
-lemma Model.extendRoot.height₁ : (M.extendRoot 1).height = M.height + 1 := Frame.extendRoot.height_succ
+lemma Model.extendRoot.height₁ :
+    (M.toFrame.extendRoot (r := r) 1).height =
+      Frame.height (F := M.toFrame) (r := r) + 1 :=
+  Frame.extendRoot.height_succ (F := M.toFrame) (r := r)
 
 end
 

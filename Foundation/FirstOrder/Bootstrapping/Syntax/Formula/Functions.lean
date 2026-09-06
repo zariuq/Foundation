@@ -395,8 +395,8 @@ noncomputable def blueprint : UformulaRec1.Blueprint where
   or     := .mkSigma “y param p₁ p₂ y₁ y₂. !qqOrDef y y₁ y₂”
   all    := .mkSigma “y param p₁ y₁. !qqAllDef y y₁”
   ex     := .mkSigma “y param p₁ y₁. !qqExDef y y₁”
-  allChanges := .mkSigma “param' param. !(qVecGraph L) param' param”
-  exChanges  := .mkSigma “param' param. !(qVecGraph L) param' param”
+  allChanges := qVecGraph L
+  exChanges  := qVecGraph L
 
 noncomputable def construction : UformulaRec1.Construction V (blueprint L) where
   rel (param)  := fun k R v ↦ ^rel k R (termSubstVec L k param v)
@@ -417,8 +417,8 @@ noncomputable def construction : UformulaRec1.Construction V (blueprint L) where
   or_defined := .mk fun v ↦ by simp [blueprint]
   all_defined := .mk fun v ↦ by simp [blueprint]
   ex_defined := .mk fun v ↦ by simp [blueprint]
-  allChanges_defined := .mk fun v ↦ by simp [blueprint]
-  exChanges_defined := .mk fun v ↦ by simp [blueprint]
+  allChanges_defined := qVec.defined
+  exChanges_defined := qVec.defined
 
 end Substs
 

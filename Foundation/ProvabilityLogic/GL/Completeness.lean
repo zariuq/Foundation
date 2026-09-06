@@ -24,6 +24,8 @@ theorem unprovable_realization_exists
     ∃ f : T.StandardRealization, T ⊬ f A := by
   let M₀ := M₁.extendRoot 1
   let r₀ : M₀ := Frame.extendRoot.root
+  let : M₀.IsFiniteTree r₀ :=
+    Model.extendRoot.isFiniteTree (M := M₁) (r := r₁) (n := 1)
   have hdnA : r₀ ⊧ ◇(∼A) := by
     suffices ∃ i, r₀ ≺ i ∧ i ⊭ A by simpa [Formula.Kripke.Satisfies]
     refine ⟨.inr r₁, ?_, ?_⟩
@@ -38,7 +40,9 @@ theorem unprovable_realization_exists
     apply Order.le_of_lt_add_one
     calc
       (Theory.standardProvability T).height < M₀.height := S.theory_height hdnA hC
-      _                                     = M₁.height + 1 := by simp [M₀]
+      _                                     = M₁.height + 1 := by
+        have hheight := Model.extendRoot.height₁ (M := M₁) (r := r₁)
+        exact (congrArg (fun k : ℕ => (k : ℕ∞)) hheight).trans (by simp)
   exact not_lt_of_ge this h
 
 /-- Arithmetical completeness of $\mathsf{GL}$-/

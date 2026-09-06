@@ -243,7 +243,7 @@ def rewrite (f : ℕ → SyntacticTerm L) : Λ ⊢! φ → Λ ⊢! Rew.rewrite f
   | gen b ih =>
     show ‖HilbertProofᵢ.gen _‖ = ‖HilbertProofᵢ.gen b‖
     show ‖HilbertProofᵢ.cast _ _‖ + 1 = ‖b‖ + 1
-    rw [depth_cast, ih]
+    exact congrArg (· + 1) ((depth_cast _ _).trans (ih _))
   | all₁ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
   | all₂ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl
   | ex₁ => show ‖HilbertProofᵢ.cast _ _‖ = _; rw [depth_cast]; rfl

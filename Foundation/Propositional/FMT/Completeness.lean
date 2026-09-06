@@ -112,16 +112,16 @@ lemma next_consistent (H_consis : H.Consistent L) : (next L ψ H).Consistent L :
     grind;
 
 lemma next_monotone₁ : H.1 ⊆ (next L ψ H).1 := by
-  simp [next, insert₁, insert₂];
-  split <;> grind;
+  unfold next
+  split <;> simp [insert₁, insert₂];
 
 lemma next_monotone₂ : H.2 ⊆ (next L ψ H).2 := by
-  simp [next, insert₁, insert₂];
-  split <;> grind;
+  unfold next
+  split <;> simp [insert₁, insert₂];
 
 lemma next_either_mem (ψ) : ψ ∈ (next L ψ H).1 ∨ ψ ∈ (next L ψ H).2 := by
-  simp [next, insert₁, insert₂];
-  split <;> grind;
+  unfold next
+  split <;> simp [insert₁, insert₂];
 
 noncomputable def enum (L : Logic ℕ) (H : HintikkaPair φ) : List (SubformulaOf φ) → HintikkaPair φ
   | [] => H
@@ -369,7 +369,8 @@ open Formula.FMT in
 lemma HintikkaModel.truthlemma {H : HintikkaModel L φ} (hsub : ψ ∈ φ.subformulas) : ⟨ψ, hsub⟩ ∈ H.1.1 ↔ H ⊩ ψ := by
   induction ψ generalizing H with
   | hatom a => tauto;
-  | hfalsum => simp;
+  | hfalsum =>
+    exact iff_false_intro (ConsistentSaturatedHintikkaPair.no_bot hsub);
   | hand => apply Iff.trans $ ConsistentSaturatedHintikkaPair.iff_mem_and hsub; grind;
   | hor => apply Iff.trans $ ConsistentSaturatedHintikkaPair.iff_mem_or hsub; grind;
   | himp χ ξ ihχ ihξ =>

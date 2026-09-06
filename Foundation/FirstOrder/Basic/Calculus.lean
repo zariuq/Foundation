@@ -309,7 +309,7 @@ def compact {Γ : Sequent L} : 𝓢 ⟹ Γ → (s : { s : Finset (SyntacticFormu
     let ⟨s₁, d₁⟩ := compact d₁
     let ⟨s₂, d₂⟩ := compact d₂
     ⟨⟨(s₁ ∪ s₂ : Finset (SyntacticFormula L)), by simp [s₁.prop, s₂.prop]⟩,
-      and (Tait.ofAxiomSubset (by simp) d₁) (Tait.ofAxiomSubset (by simp) d₂)⟩
+      and (Tait.ofAxiomSubset (by intro x hx; exact Finset.mem_union.mpr (Or.inl hx)) d₁) (Tait.ofAxiomSubset (by intro x hx; exact Finset.mem_union.mpr (Or.inr hx)) d₂)⟩
   | or d      =>
     let ⟨s, d⟩ := compact d
     ⟨s, or d⟩
@@ -320,7 +320,7 @@ def compact {Γ : Sequent L} : 𝓢 ⟹ Γ → (s : { s : Finset (SyntacticFormu
     let ⟨s₁, d₁⟩ := compact d₁
     let ⟨s₂, d₂⟩ := compact d₂
     ⟨⟨(s₁ ∪ s₂ : Finset (SyntacticFormula L)), by simp [s₁.prop, s₂.prop]⟩,
-      cut (Tait.ofAxiomSubset (by simp) d₁) (Tait.ofAxiomSubset (by simp) d₂)⟩
+      cut (Tait.ofAxiomSubset (by intro x hx; exact Finset.mem_union.mpr (Or.inl hx)) d₁) (Tait.ofAxiomSubset (by intro x hx; exact Finset.mem_union.mpr (Or.inr hx)) d₂)⟩
   | axm (φ := φ) h =>
     ⟨⟨{φ}, by simp [h]⟩, axm (by simp)⟩
   | all d          =>
@@ -333,7 +333,7 @@ def compact {Γ : Sequent L} : 𝓢 ⟹ Γ → (s : { s : Finset (SyntacticFormu
 instance : Entailment.Compact (Schema L) where
   Γ b := (compact b).1
   ΓPrf b := (compact b).2
-  Γ_subset b := by simpa using (compact b).1.prop
+  Γ_subset b := (compact b).1.prop
   Γ_finite b := by simp
 
 def deductionAux {Γ : Sequent L} : 𝓢 ⟹ Γ → 𝓢 \ {φ} ⟹ ∼(φ.univCl') :: Γ
@@ -349,13 +349,13 @@ def deductionAux {Γ : Sequent L} : 𝓢 ⟹ Γ → 𝓢 \ {φ} ⟹ ∼(φ.univC
     have : 𝓢 \ {φ} ⟹. ψ := axm (by simp [h, Ne.symm hq])
     wk this (by simp)
 
-def deduction (d : insert φ 𝓢 ⟹ Γ) : 𝓢 ⟹ ∼(φ.univCl') :: Γ := Tait.ofAxiomSubset (by intro x; simp; tauto) (deductionAux d (φ := φ))
+def deduction (d : insert φ 𝓢 ⟹ Γ) : 𝓢 ⟹ ∼(φ.univCl') :: Γ := Tait.ofAxiomSubset (by intro x hx; exact hx.1.resolve_left hx.2) (deductionAux d (φ := φ))
 
 def provable_iff_inconsistent : 𝓢 ⊢ φ ↔ Entailment.Inconsistent (insert (∼φ.univCl') 𝓢) := by
   constructor
   · rintro b
     exact Entailment.inconsistent_of_provable_of_unprovable
-      (Entailment.wk! (by simp) (toClose! b)) (Entailment.by_axm _ (by simp))
+      (Entailment.wk! (by intro x hx; exact Or.inr hx) (toClose! b)) (Entailment.by_axm _ (by simp))
   · intro h
     rcases Tait.inconsistent_iff_provable.mp h with ⟨d⟩
     have : 𝓢 ⊢! φ.univCl' :=  Derivation.cast (deduction d) (by rw [univCl'_eq_self_of (∼(φ.univCl')) (by simp)]; simp)
@@ -462,9 +462,9 @@ end Derivation
 
 namespace Schema
 
-instance {𝓢 U : Schema L} : 𝓢 ⪯ 𝓢 ∪ U := Entailment.Axiomatized.weakerThanOfSubset (by simp)
+instance {𝓢 U : Schema L} : 𝓢 ⪯ 𝓢 ∪ U := Entailment.Axiomatized.weakerThanOfSubset (by intro x hx; exact Or.inl hx)
 
-instance {𝓢 U : Schema L} : U ⪯ 𝓢 ∪ U := Entailment.Axiomatized.weakerThanOfSubset (by simp)
+instance {𝓢 U : Schema L} : U ⪯ 𝓢 ∪ U := Entailment.Axiomatized.weakerThanOfSubset (by intro x hx; exact Or.inr hx)
 
 def deduction [L.DecidableEq] {𝓢 : Schema L} {φ ψ} (b : insert φ 𝓢 ⊢! ψ) : 𝓢 ⊢! φ.univCl' ➝ ψ :=
   have : 𝓢 ⟹ [∼φ.univCl', ψ] := Derivation.deduction b
@@ -504,7 +504,7 @@ open Entailment
 
 instance : Axiomatized (Theory L) where
   prfAxm {T} σ h := ofSyntacticProof <| Axiomatized.prfAxm (by simpa using h)
-  weakening {σ T B} h b := ofSyntacticProof <| Axiomatized.weakening (by simpa using h) b
+  weakening {σ T B} h b := ofSyntacticProof <| Axiomatized.weakening (Theory.coe_subset_coe.mpr h) b
 
 def deduction [L.DecidableEq] {T : Theory L} {σ τ} (b : insert σ T ⊢! τ) : T ⊢! σ ➝ τ :=
   have : insert ↑σ T.toSchema ⊢! ↑τ := by simpa using toSyntacticProof b
@@ -539,7 +539,7 @@ def compact! [L.DecidableEq] {T : Theory L} {φ : Sentence L} :
 instance [L.DecidableEq] : Entailment.Compact (Theory L) where
   Γ b := (compact! b).1
   ΓPrf b := (compact! b).2
-  Γ_subset b := by simpa using (compact! b).1.prop
+  Γ_subset b := (compact! b).1.prop
   Γ_finite b := by simp
 
 theorem compact [L.DecidableEq] {T : Theory L} {φ : Sentence L} (b : T ⊢ φ) :
@@ -587,13 +587,12 @@ lemma inconsistent_lMap {T : Theory L₁} (Φ : L₁ →ᵥ L₂) :
   refine inconsistent_iff_provable_bot.mpr <| provable_def.mpr ?_
   suffices ↑(lMap Φ T) ⊢ ⊥ by simpa
   apply Axiomatized.weakening! ?_ this
-  simp only [Schema.lMap, toSchema, Set.image_subset_iff]
-  intro φ hφ
-  simpa using ⟨(Semiformula.lMap Φ) φ, Set.mem_image_of_mem _ hφ, Eq.symm (lMap_emb φ)⟩
+  rintro φ ⟨ψ, ⟨σ, hσ, rfl⟩, rfl⟩
+  exact ⟨Semiformula.lMap Φ σ, ⟨σ, hσ, rfl⟩, (lMap_emb σ).symm⟩
 
-instance {T U : Theory L} : T ⪯ T + U := Entailment.Axiomatized.weakerThanOfSubset (by simp [add_def])
+instance {T U : Theory L} : T ⪯ T + U := Entailment.Axiomatized.weakerThanOfSubset (by intro x hx; exact Or.inl hx)
 
-instance {T U : Theory L} : U ⪯ T + U := Entailment.Axiomatized.weakerThanOfSubset (by simp [add_def])
+instance {T U : Theory L} : U ⪯ T + U := Entailment.Axiomatized.weakerThanOfSubset (by intro x hx; exact Or.inr hx)
 
 end Theory
 

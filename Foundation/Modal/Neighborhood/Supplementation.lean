@@ -59,7 +59,7 @@ lemma itl_reduce : F.supplementation.supplementation.box X = F.supplementation.b
   . rintro ⟨Y, RYX, Z, RZY, hZ⟩;
     use Z;
     constructor;
-    . tauto_set;
+    . exact fun _ hx => RYX (RZY hx)
     . assumption;
   . apply subset;
 
@@ -91,7 +91,7 @@ instance containsUnit [F.ContainsUnit] : F.supplementation.ContainsUnit := by
   use Set.univ;
   constructor;
   . rfl;
-  . simp;
+  . exact F.univ_mem x
 
 instance isTransitive [F.IsTransitive] : F.supplementation.IsTransitive := by
   constructor;
@@ -105,11 +105,11 @@ instance isRegular [F.IsRegular] : F.supplementation.IsRegular := by
   constructor;
   rintro X Y w ⟨hX, hY⟩;
   apply iff_exists_subset.mpr;
-  obtain ⟨X', _⟩ := iff_exists_subset.mp hX;
-  obtain ⟨Y', _⟩ := iff_exists_subset.mp hY;
+  obtain ⟨X', hXX, hwX⟩ := iff_exists_subset.mp hX;
+  obtain ⟨Y', hYY, hwY⟩ := iff_exists_subset.mp hY;
   use X' ∩ Y';
   constructor;
-  . tauto_set;
+  . intro x hx; exact ⟨hXX hx.1, hYY hx.2⟩
   . apply @Frame.regular F _ X' Y';
     tauto;
 

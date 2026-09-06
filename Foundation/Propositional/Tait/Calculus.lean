@@ -93,7 +93,10 @@ def compact {Γ : Sequent α} : T ⟹ Γ → (s : { s : Finset (NNFormula α) //
     let ⟨s₁, d₁⟩ := compact d₁
     let ⟨s₂, d₂⟩ := compact d₂
     ⟨⟨(s₁ ∪ s₂ : Finset (NNFormula α)), by simp [s₁.prop, s₂.prop]⟩,
-      and (Tait.ofAxiomSubset (by simp) d₁) (Tait.ofAxiomSubset (by simp) d₂)⟩
+      and (Tait.ofAxiomSubset (𝓛 := ((s₁ ∪ s₂ : Finset (NNFormula α)) : Theory α))
+        (fun _ h => Finset.mem_union.mpr (Or.inl h)) d₁)
+        (Tait.ofAxiomSubset (𝓛 := ((s₁ ∪ s₂ : Finset (NNFormula α)) : Theory α))
+          (fun _ h => Finset.mem_union.mpr (Or.inr h)) d₂)⟩
   | or d      =>
     let ⟨s, d⟩ := compact d
     ⟨s, or d⟩
@@ -104,14 +107,17 @@ def compact {Γ : Sequent α} : T ⟹ Γ → (s : { s : Finset (NNFormula α) //
     let ⟨s₁, d₁⟩ := compact d₁
     let ⟨s₂, d₂⟩ := compact d₂
     ⟨⟨(s₁ ∪ s₂ : Finset (NNFormula α)), by simp [s₁.prop, s₂.prop]⟩,
-      cut (Tait.ofAxiomSubset (by simp) d₁) (Tait.ofAxiomSubset (by simp) d₂)⟩
+      cut (Tait.ofAxiomSubset (𝓛 := ((s₁ ∪ s₂ : Finset (NNFormula α)) : Theory α))
+        (fun _ h => Finset.mem_union.mpr (Or.inl h)) d₁)
+        (Tait.ofAxiomSubset (𝓛 := ((s₁ ∪ s₂ : Finset (NNFormula α)) : Theory α))
+          (fun _ h => Finset.mem_union.mpr (Or.inr h)) d₂)⟩
   | axm (φ := φ) h =>
     ⟨⟨{φ}, by simp [h]⟩, axm (by simp)⟩
 
 instance : Entailment.Compact (Theory α) where
   Γ b := (compact b).1
   ΓPrf b := (compact b).2
-  Γ_subset b := by simpa using (compact b).1.prop
+  Γ_subset b := (compact b).1.prop
   Γ_finite b := by simp
 
 def deductionAux {Γ : Sequent α} {φ} : T ⟹ Γ → T \ {φ} ⟹ ∼φ :: Γ
@@ -126,14 +132,18 @@ def deductionAux {Γ : Sequent α} {φ} : T ⟹ Γ → T \ {φ} ⟹ ∼φ :: Γ
     if hq : φ = ψ then em (φ := φ) (by simp [hq]) (by simp) else
       Tait.wk (show T \ {φ} ⟹ [ψ] from Tait.axm (by simp [h, Ne.symm hq])) (by simp)
 
-def deduction {Γ : Sequent α} {φ} (d : insert φ T ⟹ Γ) : T ⟹ ∼φ :: Γ := Tait.ofAxiomSubset (by simp) (deductionAux d)
+def deduction {Γ : Sequent α} {φ} (d : insert φ T ⟹ Γ) : T ⟹ ∼φ :: Γ := Tait.ofAxiomSubset (fun _ h => by
+  rcases h with ⟨h, absent⟩
+  rcases h with equal | member
+  · exact False.elim (absent equal)
+  · exact member) (deductionAux d)
 
 lemma inconsistent_iff_provable :
     Entailment.Inconsistent (insert φ T) ↔ T ⊢ ∼φ := by
   constructor
   · intro h; exact ⟨deduction (Tait.inconsistent_iff_provable.mp h).get⟩
   · rintro b
-    exact Entailment.inconsistent_of_provable_of_unprovable (φ := φ) (Entailment.by_axm _ <| by simp) (Entailment.wk! (by simp) b)
+    exact Entailment.inconsistent_of_provable_of_unprovable (φ := φ) (Entailment.by_axm _ <| by simp) (Entailment.wk! (fun _ h => Or.inr h) b)
 
 lemma consistent_iff_unprovable :
     Entailment.Consistent (insert φ T) ↔ T ⊬ ∼φ := by simp [←Entailment.not_inconsistent_iff_consistent, inconsistent_iff_provable]
@@ -145,7 +155,7 @@ omit [DecidableEq α]
   · intro h
     exact Entailment.inconsistent_iff_provable_bot.mpr
       <| Entailment.StrongCut.cut! (by simp) <| Entailment.inconsistent_iff_provable_bot.mp h
-  · intro h; exact h.of_supset (by simpa using Entailment.Axiomatized.axm_subset T)
+  · intro h; exact h.of_supset (Entailment.Axiomatized.axm_subset T)
 
 @[simp] lemma consistent_theory_iff :
     Entailment.Consistent (Entailment.theory T) ↔ Entailment.Consistent T := by simp [←Entailment.not_inconsistent_iff_consistent, inconsistent_theory_iff]
